@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.common.security;
+package com.fittrackcrm.core.auth.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -7,11 +7,12 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import com.fittrackcrm.core.auth.service.model.UserDetailsImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.common.config.JwtProperties;
+import com.fittrackcrm.core.auth.config.JwtProperties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -24,7 +25,7 @@ public class JwtUtils {
 
     private final JwtProperties jwtProperties;
 
-    public String generateToken(User user) {
+    public String generateToken(UserDetailsImpl user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("firstName", user.getFirstName());

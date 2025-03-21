@@ -1,1 +1,1 @@
-CREATE SCHEMA IF NOT EXISTS fitonyashka;
+CREATE SCHEMA IF NOT EXISTS fittrackcrm;

@@ -1,7 +1,5 @@
 package com.fittrackcrm.core.user.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,9 +11,11 @@ import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsExcepti
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,10 +30,8 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    @Override
     @Transactional(readOnly = true)
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Admin not found with email: " + email));
+    public Optional<User> findByEmail(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email);
     }
 } 

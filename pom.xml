@@ -8,7 +8,7 @@
 		<version>3.3.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.fitonyashka</groupId>
+	<groupId>com.fittrackcrm</groupId>
 	<artifactId>core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>core</name>
@@ -18,6 +18,8 @@
 		<springdoc.version>2.6.0</springdoc.version>
 		<jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
+		<jjwt.version>0.12.6</jjwt.version>
+
 		<testcontainers.version>1.19.7</testcontainers.version>
 		<postgresql.version>42.7.3</postgresql.version>
 		<json-unit-spring.version>4.1.0</json-unit-spring.version>
@@ -46,18 +48,18 @@
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
-			<version>0.12.6</version>
+			<version>${jjwt.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-impl</artifactId>
-			<version>0.12.6</version>
+			<version>${jjwt.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-jackson</artifactId>
-			<version>0.12.6</version>
+			<version>${jjwt.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		

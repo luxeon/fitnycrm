@@ -1,7 +1,6 @@
-package com.fittrackcrm.core.common.config;
+package com.fittrackcrm.core.auth.config;
 
-import com.fittrackcrm.core.common.security.JwtAuthenticationEntryPoint;
-import com.fittrackcrm.core.common.security.JwtAuthenticationFilter;
+import com.fittrackcrm.core.auth.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

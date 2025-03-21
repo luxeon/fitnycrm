@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.common.security;
+package com.fittrackcrm.core.auth.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
