@@ -1,0 +1,24 @@
+package com.fitonyashka.core.tenant.rest.model;
+
+import java.time.OffsetDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Detailed tenant information")
+public record TenantDetailsResponse(
+        @Schema(description = "Tenant ID")
+        Long id,
+
+        @Schema(description = "Tenant name")
+        String name,
+
+        @Schema(description = "Creation timestamp", example = "2024-10-15T12:00:00Z")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+        OffsetDateTime createdAt,
+
+        @Schema(description = "Last update timestamp", example = "2024-10-15T12:00:00Z")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+        OffsetDateTime updatedAt
+) {} 

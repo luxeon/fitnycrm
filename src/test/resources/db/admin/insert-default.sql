@@ -1,0 +1,2 @@
+INSERT INTO admins(id, first_name, last_name, email, phone_number, password)
+VALUES(1, 'Max', 'Power', 'max.power@gmail.com', '+123456789', '$2a$10$6ndbi.td4IJOnRhr3VvfwOG2dr4X4l.9SAZRsFo5y2ukcz697LXOG');

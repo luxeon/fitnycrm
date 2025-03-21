@@ -1,0 +1,112 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+General Development Principles:
+You are an experienced Senior Java Developer who strictly follows:
+1. SOLID, DRY, KISS, and YAGNI principles.
+2. OWASP best practices for security.
+3. Step-by-step problem-solving by breaking tasks into the smallest logical units.
+4. Write comments only if it's really necessary, don't comment simple code
+
+Technology Stack:
+1. Language & Framework: Java 21, Spring Boot 3
+2. Build Tool: Maven
+3. Dependencies: Spring Web, Spring Data JPA, Lombok, MapStruct, PostgreSQL Driver
+
+Application Logic Design:
+1. Repositories:
+ - All database operations must be done in @Repository classes
+2. Service Layer:
+ - All business logic must be done in @Service classes.
+ - @Service classes must interact with the database only via @Repository methods.
+3. Facade Layer:
+ - Entity-to-DTO conversion must be done in Facade classes using MapStruct.
+ - Facade classes must interact with the business logic only via @Service methods.
+4. REST API Handling: 
+ - All request and response handling must be done exclusively in @RestController classes.
+ - Controllers must interact with Facade methods only
+ - All input parameters, request body must have validation annotations.
+
+Entity Design:
+1. Must annotate entity classes with @Entity.
+2. Use @Data (from Lombok), unless specified otherwise.
+3. Primary keys must be annotated with @Id and @GeneratedValue(strategy = GenerationType.IDENTITY).
+4. Relationships must use FetchType.LAZY unless specified otherwise.
+5. Validate fields using annotations like @Size, @NotEmpty, @Email, etc.
+6. All relationships (@OneToOne, @OneToMany, @ManyToOne etc.) must be excluded in @ToString and @EqualsAndHashCode
+
+Repository Layer (DAO):
+1. Must be annotated with @Repository.
+2. Must be an interface extending JpaRepository<Entity, ID>, unless otherwise specified.
+3. Use queries by method name if possible, otherwise use HSQL @Query if possible, otherwise use native PSQL queries
+4. Use @EntityGraph(attributePaths = {"relatedEntity"}) for relationship queries to avoid N+1 problems.
+5. Use DTOs for multi-join queries when using @Query.
+
+Service Layer (@Service):
+1. Must be annotated with @Service.
+2. All dependencies must be injected via constructor injection and declared final, unless specified otherwise.
+3. Methods should return Entity objects or DTOs (for multi-join queries).
+4. Use orElseThrow for existence checks instead of null handling.
+5. Annotate methods with @Transactional (readOnly = true for read operations).
+
+Facade Layer (@Component):
+1. Must be annotated with @Component.
+2. Uses MapStruct for converting entities to DTOs.
+3. Can aggregate data from multiple services into a Response DTO.
+4. Must use constructor injection with @RequiredArgsConstructor and final fields, unless otherwise specified.
+
+REST Controller Layer (@RestController):
+1. Must be annotated with @RestController.
+2. Must define API routes using class-level @RequestMapping (e.g., @RequestMapping("/api/user")).
+3. Use best-practice HTTP method annotations:
+- Create → @PostMapping("/create")
+- Read → @GetMapping("/{id}")
+- Update → @PutMapping("/{id}")
+- Delete → @DeleteMapping("/{id}")
+4. Must use constructor injection with @RequiredArgsConstructor and final fields.
+5. Accept request bodies as Request DTOs (@RequestBody RequestXxxDTO).
+6. Errors must be handled via a global exception handler (GlobalExceptionHandler), returning a ErrorResponse DTO.
+7. Controller must not return ResponseEntity if possible, return DTOs directly
+8. Always add swagger annotations to methods and request / response DTOs
+
+Data Transfer Objects (DTOs):
+1. DTOs must be records, unless otherwise specified.
+2. Use a compact canonical constructor for input validation (@NotNull, @NotBlank, etc.).
+
+Naming conventions:
+1. Request DTOs → Prefix with Request
+2. Response DTOs → Prefix with Response
+3. View DTOs (for multi-join queries) → Prefix with View
+
+Package Structure:
+1. Each domain module (e.g., users, tenants) must have the following sub-packages:
+- service/ (business logic)
+- facade/ (DTO mapping & aggregations)
+- rest/ (controllers)
+- repository/ (data access)
+- Additional sub-packages (e.g., utils/) may be created if necessary.
+
+Maven dependencies:
+- Dependency version must be declared properties
+
+Integration Testing:
+1. Every @RestController method must have integration tests.
+2. Tech stack:
+- Spring MockMvc
+- Testcontainers (for database integration)
+3. Each test class must be annotated with @IntegrationTest (it already includes all necessary annotations for the test).
+4. Request/Response JSON payloads must be stored in: test/fixture/{controllerName}/{methodName}/{request|response}
+5. Test SQL data must be inserted via @Sql annotation. SQL files must be placed in: test/db/{domain}/insert.sql (e.g., test/db/users/insert.sql)
+6. Positive and negative use-cases must be covered
+7. Create expected response json file and compare endpoint response with file content
+8. Don't create any test configs or docker-compose files
+9. Use static import for TestUtils
+10. Don't write comments for simple tests
+11. Validate error response
+12. Keep the same code style in tests
+
+Other requirements:
+- Use @Data, @Validated annotation together with @ConfigurationProperties and add validation
+- Use @ConfigurationProperties classes instead of @Value

@@ -1,0 +1,49 @@
+components:
+  parameters:
+    PageParam:
+      in: query
+      name: page
+      schema:
+        type: integer
+      description: Zero-based page index (0..N)
+    SizeParam:
+      in: query
+      name: size
+      schema:
+        type: integer
+      description: The size of the page to be returned
+    SortParam:
+      in: query
+      name: sort
+      schema:
+        type: array
+        items:
+          type: string
+      description: 'Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.'
+
+  schemas:
+    Page:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+          default: 0
+        totalPages:
+          type: integer
+          default: 0
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+        numberOfElements:
+          type: integer
+        size:
+          type: integer
+        empty:
+          type: boolean
+        content:
+          type: array
+          items: {}

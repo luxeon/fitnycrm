@@ -1,0 +1,201 @@
+openapi: 3.0.0
+info:
+  title: Tenant API
+  version: 1.0.0
+paths:
+  /tenants:
+    get:
+      summary: Get a paginated list of tenants
+      operationId: getAll
+      x-spring-paginated: true
+      tags:
+        - tenant
+      parameters:
+        - $ref: 'pagination.yaml#/components/parameters/PageParam'
+        - $ref: 'pagination.yaml#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: A paginated list of tenants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantPageResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    post:
+      summary: Create a new tenant
+      operationId: create
+      tags:
+        - tenant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTenantRequest'
+      responses:
+        '201':
+          description: Tenant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDetailsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /tenants/{id}:
+    get:
+      summary: Get a tenant by ID
+      operationId: getOne
+      tags:
+        - tenant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the tenant to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tenant found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDetailsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    put:
+      summary: Update an existing tenant
+      operationId: update
+      tags:
+        - tenant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the tenant to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTenantRequest'
+      responses:
+        '200':
+          description: Tenant updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantDetailsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    delete:
+      summary: Delete a tenant by ID
+      operationId: delete
+      tags:
+        - tenant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the tenant to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Tenant deleted successfully
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  schemas:
+    CreateTenantRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Tenant Name"
+      required:
+        - name
+
+    UpdateTenantRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          example: "Updated Tenant Name"
+      required:
+        - name
+
+    TenantDetailsResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-10-15T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-10-15T12:00:00Z"
+      required:
+        - id
+        - name
+        - created_at
+        - updated_at
+
+    TenantPageResponse:
+      type: object
+      allOf:
+        - $ref: 'pagination.yaml#/components/schemas/Page'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/TenantItemResponse'
+
+    TenantItemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          maxLength: 255
+      required:
+        - id
+        - name
+
+  responses:
+    ErrorResponse:
+      description: Default error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "An error occurred"
+              details:
+                type: string
+                example: "Detailed error information"

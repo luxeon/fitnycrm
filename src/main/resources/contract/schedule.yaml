@@ -1,0 +1,375 @@
+openapi: 3.0.0
+info:
+  title: Schedules API
+  version: 1.0.0
+paths:
+  /tenants/{tenantId}/locations/{locationId}/services/{serviceId}/schedules:
+    get:
+      summary: Get a paginated list of schedule entries with optional filters
+      operationId: getAll
+      tags:
+        - schedules
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          description: ID of the tenant
+          schema:
+            type: integer
+            format: int64
+        - name: locationId
+          in: path
+          required: true
+          description: ID of the location
+          schema:
+            type: integer
+            format: int64
+        - name: serviceId
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+            format: int64
+        - name: dateFrom
+          in: query
+          required: false
+          description: Filter schedules from this date (inclusive)
+          schema:
+            type: string
+            format: date
+        - name: dateTo
+          in: query
+          required: false
+          description: Filter schedules to this date (inclusive)
+          schema:
+            type: string
+            format: date
+        - name: instructorId
+          in: query
+          required: false
+          description: Filter schedules by instructor ID
+          schema:
+            type: integer
+            format: int64
+        - $ref: 'pagination.yaml#/components/parameters/PageParam'
+        - $ref: 'pagination.yaml#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: A paginated list of schedule entries
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulesPageResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    post:
+      summary: Create a new schedule entry for a service
+      operationId: create
+      tags:
+        - schedules
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          description: ID of the tenant
+          schema:
+            type: integer
+            format: int64
+        - name: locationId
+          in: path
+          required: true
+          description: ID of the location
+          schema:
+            type: integer
+            format: int64
+        - name: serviceId
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSchedulesRequest'
+      responses:
+        '201':
+          description: Schedule entry created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulesDetailResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /tenants/{tenantId}/locations/{locationId}/services/{serviceId}/schedules/{id}:
+    get:
+      summary: Get a schedule entry by ID
+      operationId: getOne
+      tags:
+        - schedules
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          description: ID of the tenant
+          schema:
+            type: integer
+            format: int64
+        - name: locationId
+          in: path
+          required: true
+          description: ID of the location
+          schema:
+            type: integer
+            format: int64
+        - name: serviceId
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          required: true
+          description: ID of the schedule entry
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Schedule entry found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulesDetailResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    put:
+      summary: Update a schedule entry
+      operationId: update
+      tags:
+        - schedules
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          description: ID of the tenant
+          schema:
+            type: integer
+            format: int64
+        - name: locationId
+          in: path
+          required: true
+          description: ID of the location
+          schema:
+            type: integer
+            format: int64
+        - name: serviceId
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          required: true
+          description: ID of the schedule entry
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSchedulesRequest'
+      responses:
+        '200':
+          description: Schedule entry updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulesDetailResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+    delete:
+      summary: Delete a schedule entry by ID
+      operationId: delete
+      tags:
+        - schedules
+      parameters:
+        - name: tenantId
+          in: path
+          required: true
+          description: ID of the tenant
+          schema:
+            type: integer
+            format: int64
+        - name: locationId
+          in: path
+          required: true
+          description: ID of the location
+          schema:
+            type: integer
+            format: int64
+        - name: serviceId
+          in: path
+          required: true
+          description: ID of the service
+          schema:
+            type: integer
+            format: int64
+        - name: id
+          in: path
+          required: true
+          description: ID of the schedule entry
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Schedule entry deleted successfully
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  schemas:
+    CreateSchedulesRequest:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          example: "Monday"
+        startTime:
+          type: string
+          format: time
+          example: "09:00:00"
+        endTime:
+          type: string
+          format: time
+          example: "10:00:00"
+        defaultInstructorId:
+          type: integer
+          format: int64
+      required:
+        - dayOfWeek
+        - startTime
+        - endTime
+
+    UpdateSchedulesRequest:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          example: "Tuesday"
+        startTime:
+          type: string
+          format: time
+          example: "14:00:00"
+        endTime:
+          type: string
+          format: time
+          example: "15:00:00"
+        defaultInstructorId:
+          type: integer
+          format: int64
+      required:
+        - dayOfWeek
+        - startTime
+        - endTime
+
+    SchedulesDetailResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        serviceId:
+          type: integer
+          format: int64
+        locationId:
+          type: integer
+          format: int64
+        dayOfWeek:
+          type: string
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+        defaultInstructorId:
+          type: integer
+          format: int64
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - serviceId
+        - locationId
+        - dayOfWeek
+        - startTime
+        - endTime
+        - createdAt
+        - updatedAt
+
+    SchedulesPageResponse:
+      type: object
+      allOf:
+        - $ref: 'pagination.yaml#/components/schemas/Page'
+        - type: object
+          properties:
+            content:
+              type: array
+              items:
+                $ref: '#/components/schemas/SchedulesItemResponse'
+
+    SchedulesItemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        serviceId:
+          type: integer
+          format: int64
+        dayOfWeek:
+          type: string
+        startTime:
+          type: string
+          format: time
+        endTime:
+          type: string
+          format: time
+      required:
+        - id
+        - serviceId
+        - dayOfWeek
+        - startTime
+        - endTime
+
+  responses:
+    ErrorResponse:
+      description: Default error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "An error occurred"
