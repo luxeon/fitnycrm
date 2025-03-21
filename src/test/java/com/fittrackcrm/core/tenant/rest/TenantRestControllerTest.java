@@ -22,7 +22,7 @@ import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 @Sql(executionPhase =
         Sql.ExecutionPhase.BEFORE_TEST_METHOD,
         value = "classpath:db/user/insert-default.sql")
-class TenantControllerTest {
+class TenantRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants";
 

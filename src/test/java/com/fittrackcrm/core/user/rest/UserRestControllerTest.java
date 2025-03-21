@@ -12,7 +12,7 @@ import com.fittrackcrm.core.common.annotation.IntegrationTest;
 import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 
 @IntegrationTest
-class UserControllerTest {
+class UserRestControllerTest {
 
     private static final String BASE_URL = "/api/users";
 

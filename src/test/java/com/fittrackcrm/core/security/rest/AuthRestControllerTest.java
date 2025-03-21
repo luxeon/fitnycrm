@@ -14,7 +14,7 @@ import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 
 @IntegrationTest
-class AuthControllerTest {
+class AuthRestControllerTest {
 
     private static final String AUTH_URL = "/api/auth";
     private static final String USER_URL = "/api/users";

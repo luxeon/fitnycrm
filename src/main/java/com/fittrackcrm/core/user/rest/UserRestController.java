@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Tag(name = "user", description = "User management endpoints")
-public class UserController {
+public class UserRestController {
 
     private final UserFacade userFacade;
 
