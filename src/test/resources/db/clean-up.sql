@@ -1,2 +1,2 @@
 DELETE FROM tenants;
-DELETE FROM admins;
+DELETE FROM users;
