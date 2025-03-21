@@ -1,13 +1,13 @@
-package com.fittrackcrm.core.auth.rest;
+package com.fittrackcrm.core.security.rest;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fittrackcrm.core.auth.rest.model.AuthRequest;
-import com.fittrackcrm.core.auth.rest.model.AuthResponse;
-import com.fittrackcrm.core.auth.service.AuthService;
+import com.fittrackcrm.core.security.rest.model.AuthRequest;
+import com.fittrackcrm.core.security.rest.model.AuthResponse;
+import com.fittrackcrm.core.security.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

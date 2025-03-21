@@ -1,6 +1,6 @@
-package com.fittrackcrm.core.auth.filter;
+package com.fittrackcrm.core.security.filter;
 
-import com.fittrackcrm.core.auth.util.JwtUtils;
+import com.fittrackcrm.core.security.util.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;

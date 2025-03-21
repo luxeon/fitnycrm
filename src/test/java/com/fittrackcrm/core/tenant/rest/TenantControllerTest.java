@@ -1,7 +1,7 @@
 package com.fittrackcrm.core.tenant.rest;
 
 import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.auth.config.JwtProperties;
+import com.fittrackcrm.core.security.config.JwtProperties;
 import com.fittrackcrm.core.common.util.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

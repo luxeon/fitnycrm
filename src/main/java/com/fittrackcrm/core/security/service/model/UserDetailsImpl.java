@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.service.model;
+package com.fittrackcrm.core.security.service.model;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

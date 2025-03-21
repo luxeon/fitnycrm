@@ -12,7 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
 import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.auth.config.JwtProperties;
+import com.fittrackcrm.core.security.config.JwtProperties;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

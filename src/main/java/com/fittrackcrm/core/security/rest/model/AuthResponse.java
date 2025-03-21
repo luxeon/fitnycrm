@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.rest.model;
+package com.fittrackcrm.core.security.rest.model;
 
 public record AuthResponse(
     String token

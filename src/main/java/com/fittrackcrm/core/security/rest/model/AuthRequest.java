@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.rest.model;
+package com.fittrackcrm.core.security.rest.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

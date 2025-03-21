@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.rest;
+package com.fittrackcrm.core.security.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

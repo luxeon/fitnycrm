@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.service.exception;
+package com.fittrackcrm.core.security.service.exception;
 
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException() {

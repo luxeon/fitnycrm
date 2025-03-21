@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.config;
+package com.fittrackcrm.core.security.config;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

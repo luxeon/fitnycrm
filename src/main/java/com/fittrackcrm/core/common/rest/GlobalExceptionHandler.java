@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsException;
-import com.fittrackcrm.core.auth.service.exception.InvalidCredentialsException;
+import com.fittrackcrm.core.security.service.exception.InvalidCredentialsException;
 import com.fittrackcrm.core.common.rest.model.ErrorResponse;
 import com.fittrackcrm.core.common.rest.model.ValidationError;
 import com.fittrackcrm.core.tenant.exception.TenantNotFoundException;

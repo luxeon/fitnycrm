@@ -1,7 +1,6 @@
-package com.fittrackcrm.core.auth.service;
+package com.fittrackcrm.core.security.service;
 
-import com.fittrackcrm.core.auth.service.mapper.UserDetailsMapper;
-import com.fittrackcrm.core.user.repository.entity.User;
+import com.fittrackcrm.core.security.service.mapper.UserDetailsMapper;
 import com.fittrackcrm.core.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

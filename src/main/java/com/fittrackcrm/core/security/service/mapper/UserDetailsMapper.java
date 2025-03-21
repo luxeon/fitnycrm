@@ -1,6 +1,6 @@
-package com.fittrackcrm.core.auth.service.mapper;
+package com.fittrackcrm.core.security.service.mapper;
 
-import com.fittrackcrm.core.auth.service.model.UserDetailsImpl;
+import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import com.fittrackcrm.core.user.repository.entity.User;
 import com.fittrackcrm.core.user.repository.entity.UserRole;
 import org.mapstruct.Mapper;

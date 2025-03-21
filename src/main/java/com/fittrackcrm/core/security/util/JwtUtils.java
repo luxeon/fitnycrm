@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.auth.util;
+package com.fittrackcrm.core.security.util;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -7,12 +7,11 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import com.fittrackcrm.core.auth.service.model.UserDetailsImpl;
+import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.auth.config.JwtProperties;
+import com.fittrackcrm.core.security.config.JwtProperties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
