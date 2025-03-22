@@ -8,6 +8,8 @@ import com.fittrackcrm.core.tenant.service.TenantService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class TenantFacade {
@@ -15,7 +17,7 @@ public class TenantFacade {
     private final TenantService tenantService;
     private final TenantMapper tenantMapper;
 
-    public TenantDetailsResponse getById(Long id) {
-        return tenantMapper.toDetailsResponse(tenantService.getById(id));
+    public TenantDetailsResponse getById(String id) {
+        return tenantMapper.toDetailsResponse(tenantService.getById(UUID.fromString(id)));
     }
 } 

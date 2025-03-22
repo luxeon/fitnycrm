@@ -7,11 +7,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class UserDetailsImpl implements UserDetails {
 
-    private Long id;
+    private UUID id;
     private String email;
     private String firstName;
     private String lastName;

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.hibernate.validator.constraints.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,7 @@ public class TenantRestController {
     })
     @GetMapping("/{id}")
     public TenantDetailsResponse getOne(@Parameter(description = "ID of the tenant to retrieve", required = true)
-                                            @PathVariable Long id) {
+                                            @PathVariable @UUID String id) {
         return tenantFacade.getById(id);
     }
 } 

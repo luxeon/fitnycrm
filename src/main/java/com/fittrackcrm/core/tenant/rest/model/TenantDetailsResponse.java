@@ -1,6 +1,7 @@
 package com.fittrackcrm.core.tenant.rest.model;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -9,7 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Detailed tenant information")
 public record TenantDetailsResponse(
         @Schema(description = "Tenant ID")
-        Long id,
+        UUID id,
 
         @Schema(description = "Tenant name")
         String name,

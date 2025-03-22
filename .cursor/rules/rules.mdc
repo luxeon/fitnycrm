@@ -36,6 +36,7 @@ Entity Design:
 4. Relationships must use FetchType.LAZY unless specified otherwise.
 5. Validate fields using annotations like @Size, @NotEmpty, @Email, etc.
 6. All relationships (@OneToOne, @OneToMany, @ManyToOne etc.) must be excluded in @ToString and @EqualsAndHashCode
+7. Use uuid as id
 
 Repository Layer (DAO):
 1. Must be annotated with @Repository.
