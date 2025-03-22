@@ -1,23 +1,21 @@
 package com.fittrackcrm.core.tenant.rest;
 
+import com.fittrackcrm.core.common.annotation.IntegrationTest;
 import com.fittrackcrm.core.security.util.JwtTokenCreator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fittrackcrm.core.common.annotation.IntegrationTest;
 
 import java.util.UUID;
 
 import static com.fittrackcrm.core.common.util.TestUtils.readFile;
-
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 @Sql(executionPhase =
@@ -62,5 +60,54 @@ class TenantRestControllerTest {
         mockMvc.perform(get(BASE_URL + "/{id}", TENANT_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void create_whenValidRequest_thenCreateTenant() throws Exception {
+        var request = readFile("fixture/tenant/create/request/valid-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/create/response/tenant-created.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void create_whenInvalidRequest_thenReturn400() throws Exception {
+        var request = readFile("fixture/tenant/create/request/invalid-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/create/response/validation-error.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void create_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/tenant/create/request/valid-tenant.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void create_whenNameIsNull_thenReturn400() throws Exception {
+        var request = readFile("fixture/tenant/create/request/null-name-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/create/response/null-name-error.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

@@ -1,0 +1,9 @@
+{
+  "message": "Bad Request",
+  "errors": [
+    {
+      "field": "name",
+      "message": "Tenant name is required"
+    }
+  ]
+}

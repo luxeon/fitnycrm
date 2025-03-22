@@ -1,0 +1,6 @@
+{
+  "id": "${json-unit.any-string}",
+  "name": "New Test Tenant",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+} 
