@@ -18,7 +18,7 @@ public class UserFacade {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserDetailsResponse signup(UUID tenantId, UserSignupRequest request) {
+    public UserDetailsResponse createClient(UUID tenantId, UserSignupRequest request) {
         return userMapper.toResponse(
             userService.createClient(
                 userMapper.toEntity(tenantId, request)

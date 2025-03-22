@@ -1,11 +1,10 @@
 package com.fittrackcrm.core.user.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.OffsetDateTime;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "User details response")
 public record UserDetailsResponse(

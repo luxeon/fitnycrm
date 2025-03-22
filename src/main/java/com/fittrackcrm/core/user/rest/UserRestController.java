@@ -37,6 +37,6 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDetailsResponse createClient(@PathVariable UUID tenantId,
                                             @RequestBody @Valid UserSignupRequest request) {
-        return userFacade.signup(tenantId, request);
+        return userFacade.createClient(tenantId, request);
     }
 } 

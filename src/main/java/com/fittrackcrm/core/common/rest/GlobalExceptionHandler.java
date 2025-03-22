@@ -14,7 +14,7 @@ import com.fittrackcrm.core.security.service.exception.InvalidCredentialsExcepti
 import com.fittrackcrm.core.common.rest.model.ErrorResponse;
 import com.fittrackcrm.core.common.rest.model.ValidationError;
 import com.fittrackcrm.core.tenant.exception.TenantNotFoundException;
-import com.fittrackcrm.core.user.service.exception.AdminRoleNotFoundException;
+import com.fittrackcrm.core.user.service.exception.RoleNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,9 +37,9 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(e.getMessage());
     }
 
-    @ExceptionHandler(AdminRoleNotFoundException.class)
+    @ExceptionHandler(RoleNotFoundException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleAdminRoleNotFoundException(AdminRoleNotFoundException e) {
+    public ErrorResponse handleAdminRoleNotFoundException(RoleNotFoundException e) {
         return ErrorResponse.of(e.getMessage());
     }
 

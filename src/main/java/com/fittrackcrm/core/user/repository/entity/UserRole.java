@@ -26,7 +26,7 @@ public class UserRole {
 
     public enum Name {
 
-        ADMIN
+        ADMIN, INSTRUCTOR, CLIENT
 
     }
 }
