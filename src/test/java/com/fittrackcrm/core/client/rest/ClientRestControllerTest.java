@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.user.rest;
+package com.fittrackcrm.core.client.rest;
 
 import com.fittrackcrm.core.common.annotation.IntegrationTest;
 import com.fittrackcrm.core.security.util.JwtTokenCreator;
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
-class UserRestControllerTest {
+class ClientRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/clients";
 
@@ -28,8 +28,8 @@ class UserRestControllerTest {
 
     @Test
     void createClient_whenValidRequest_thenCreateClient() throws Exception {
-        var request = readFile("fixture/user/createClient/request/valid-request.json");
-        var expectedResponse = readFile("fixture/user/createClient/response/success.json");
+        var request = readFile("fixture/client/create/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/create/response/success.json");
 
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -41,8 +41,8 @@ class UserRestControllerTest {
 
     @Test
     void createClient_whenInvalidEmail_thenReturnBadRequest() throws Exception {
-        var request = readFile("fixture/user/createClient/request/invalid-email.json");
-        var expectedResponse = readFile("fixture/user/createClient/response/invalid-email.json");
+        var request = readFile("fixture/client/create/request/invalid-email.json");
+        var expectedResponse = readFile("fixture/client/create/response/invalid-email.json");
 
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,8 +54,8 @@ class UserRestControllerTest {
 
     @Test
     void createClient_whenEmailAlreadyExists_thenReturnConflict() throws Exception {
-        var request = readFile("fixture/user/createClient/request/valid-request.json");
-        var expectedResponse = readFile("fixture/user/createClient/response/email-exists.json");
+        var request = readFile("fixture/client/create/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/create/response/email-exists.json");
 
         // Create first client
         mockMvc.perform(post(BASE_URL)
@@ -75,7 +75,7 @@ class UserRestControllerTest {
 
     @Test
     void createClient_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
-        var request = readFile("fixture/user/createClient/request/valid-request.json");
+        var request = readFile("fixture/client/create/request/valid-request.json");
 
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)

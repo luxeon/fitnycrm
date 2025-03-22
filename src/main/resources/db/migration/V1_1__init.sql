@@ -1,4 +1,3 @@
--- Table: tenants
 CREATE TABLE IF NOT EXISTS tenants
 (
     id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -7,7 +6,6 @@ CREATE TABLE IF NOT EXISTS tenants
     updated_at TIMESTAMP
 );
 
--- Table: locations
 CREATE TABLE IF NOT EXISTS locations
 (
     id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -21,7 +19,6 @@ CREATE TABLE IF NOT EXISTS locations
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
--- Table: users
 CREATE TABLE IF NOT EXISTS users
 (
     id                            uuid                         DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -54,7 +51,20 @@ CREATE TABLE IF NOT EXISTS user_roles
     UNIQUE (user_id, role_id)
 );
 
--- Table: services
+CREATE TABLE IF NOT EXISTS clients
+(
+    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    tenant_id    uuid         NOT NULL,
+    first_name   VARCHAR(255) NOT NULL,
+    last_name    VARCHAR(255) NOT NULL,
+    email        VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    created_at   TIMESTAMP,
+    updated_at   TIMESTAMP,
+    UNIQUE (tenant_id, email),
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+);
+
 CREATE TABLE IF NOT EXISTS services
 (
     id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -66,7 +76,6 @@ CREATE TABLE IF NOT EXISTS services
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
--- Table: schedule
 CREATE TABLE IF NOT EXISTS schedule
 (
     id                    uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -81,7 +90,6 @@ CREATE TABLE IF NOT EXISTS schedule
     FOREIGN KEY (default_instructor_id) REFERENCES users (id)
 );
 
--- Table: sessions
 CREATE TABLE IF NOT EXISTS sessions
 (
     id            uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -94,7 +102,6 @@ CREATE TABLE IF NOT EXISTS sessions
     FOREIGN KEY (instructor_id) REFERENCES users (id)
 );
 
--- Table: visits
 CREATE TABLE IF NOT EXISTS visits
 (
     id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -104,7 +111,6 @@ CREATE TABLE IF NOT EXISTS visits
     FOREIGN KEY (session_id) REFERENCES sessions (id)
 );
 
--- Table: client_payments
 CREATE TABLE IF NOT EXISTS client_payments
 (
     id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,

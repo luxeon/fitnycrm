@@ -1,11 +1,11 @@
-package com.fittrackcrm.core.user.rest;
+package com.fittrackcrm.core.client.rest;
 
+import com.fittrackcrm.core.client.rest.model.ClientDetailsResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import com.fittrackcrm.core.user.facade.UserFacade;
-import com.fittrackcrm.core.user.rest.model.UserDetailsResponse;
-import com.fittrackcrm.core.user.rest.model.UserSignupRequest;
+import com.fittrackcrm.core.client.facade.ClientFacade;
+import com.fittrackcrm.core.client.rest.model.ClientSignupRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,22 +21,22 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants/{tenantId}")
-@Tag(name = "user", description = "User management endpoints")
-public class UserRestController {
+@Tag(name = "client", description = "Client management endpoints")
+public class ClientRestController {
 
-    private final UserFacade userFacade;
+    private final ClientFacade clientFacade;
 
     @Operation(summary = "Create a new client account")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Client account created",
-                    content = @Content(schema = @Schema(implementation = UserDetailsResponse.class))),
+                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
     @PostMapping("/clients")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDetailsResponse createClient(@PathVariable UUID tenantId,
-                                            @RequestBody @Valid UserSignupRequest request) {
-        return userFacade.createClient(tenantId, request);
+    public ClientDetailsResponse createClient(@PathVariable UUID tenantId,
+                                              @RequestBody @Valid ClientSignupRequest request) {
+        return clientFacade.createClient(tenantId, request);
     }
 } 

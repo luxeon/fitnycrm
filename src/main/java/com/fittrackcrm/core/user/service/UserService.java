@@ -28,33 +28,24 @@ public class UserService {
     private final EmailService emailService;
 
     @Transactional
-    public User createClient(User user) {
-        return createUser(user, UserRole.Name.CLIENT);
-    }
-
-    @Transactional
-    public User createAdmin(User user) {
-        return createUser(user, UserRole.Name.ADMIN);
-    }
-
-    private User createUser(User user, UserRole.Name roleName) {
+    public User create(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
-        
-        UserRole role = roleRepository.findByName(roleName).orElseThrow(() ->
-                new RoleNotFoundException(roleName));
-                
+
+        UserRole role = roleRepository.findByName(UserRole.Name.ADMIN).orElseThrow(() ->
+                new RoleNotFoundException(UserRole.Name.ADMIN));
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Set.of(role));
         user.setEmailConfirmed(false);
         user.setConfirmationToken(TokenUtils.generateToken());
         user.setConfirmationTokenExpiresAt(TokenUtils.calculateExpirationTime());
-        
+
         user = userRepository.save(user);
-        
+
         emailService.sendConfirmationEmail(user.getEmail(), user.getConfirmationToken());
-        
+
         return user;
     }
 

@@ -3,6 +3,7 @@ package com.fittrackcrm.core.common.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fittrackcrm.core.client.service.exception.ClientEmailAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,7 +29,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserEmailAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAdminEmailAlreadyExistsException(UserEmailAlreadyExistsException e) {
+    public ErrorResponse handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException e) {
+        return ErrorResponse.of(e.getMessage());
+    }
+
+    @ExceptionHandler(ClientEmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleClientEmailAlreadyExistsException(ClientEmailAlreadyExistsException e) {
         return ErrorResponse.of(e.getMessage());
     }
 

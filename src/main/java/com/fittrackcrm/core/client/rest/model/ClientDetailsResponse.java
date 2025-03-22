@@ -1,4 +1,4 @@
-package com.fittrackcrm.core.user.rest.model;
+package com.fittrackcrm.core.client.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Schema(description = "User details response")
-public record UserDetailsResponse(
+public record ClientDetailsResponse(
     @Schema(description = "User ID")
     UUID id,
 

@@ -25,7 +25,7 @@ public class AuthFacade {
 
     public AdminDetailsResponse signup(AdminSignupRequest request) {
         User user = mapper.toUser(request);
-        user = userService.createAdmin(user);
+        user = userService.create(user);
         return mapper.toAdminDetailsResponse(user);
     }
 

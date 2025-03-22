@@ -30,7 +30,7 @@ public class UserRole {
 
     public enum Name {
 
-        ADMIN, INSTRUCTOR, CLIENT
+        ADMIN, INSTRUCTOR
 
     }
 }

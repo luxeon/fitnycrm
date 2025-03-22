@@ -1,7 +1,6 @@
 {
     "firstName": "John",
     "lastName": "Doe",
-    "email": "john.doe@example.com",
-    "password": "Password1@",
+    "email": "invalid-email",
     "phoneNumber": "+12345678901"
 } 
