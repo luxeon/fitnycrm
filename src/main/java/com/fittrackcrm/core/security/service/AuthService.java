@@ -1,7 +1,7 @@
 package com.fittrackcrm.core.security.service;
 
-import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import com.fittrackcrm.core.security.service.exception.InvalidCredentialsException;
+import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import com.fittrackcrm.core.security.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

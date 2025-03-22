@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsException;
 import com.fittrackcrm.core.security.service.exception.InvalidCredentialsException;
+import com.fittrackcrm.core.security.service.exception.InvalidEmailConfirmationTokenException;
 import com.fittrackcrm.core.common.rest.model.ErrorResponse;
 import com.fittrackcrm.core.common.rest.model.ValidationError;
 import com.fittrackcrm.core.tenant.exception.TenantNotFoundException;
@@ -40,6 +41,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoleNotFoundException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleAdminRoleNotFoundException(RoleNotFoundException e) {
+        return ErrorResponse.of(e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidEmailConfirmationTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidTokenException(InvalidEmailConfirmationTokenException e) {
         return ErrorResponse.of(e.getMessage());
     }
 

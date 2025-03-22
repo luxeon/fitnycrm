@@ -92,6 +92,18 @@
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- Email -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		
+		<!-- Template Engine -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		
 		<!-- API Documentation -->
 		<dependency>
 			<groupId>org.springdoc</groupId>

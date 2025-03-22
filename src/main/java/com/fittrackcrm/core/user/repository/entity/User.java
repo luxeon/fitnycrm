@@ -40,6 +40,15 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "email_confirmed", nullable = false)
+    private boolean emailConfirmed;
+
+    @Column(name = "confirmation_token")
+    private String confirmationToken;
+
+    @Column(name = "confirmation_token_expires_at")
+    private OffsetDateTime confirmationTokenExpiresAt;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false,
             updatable = false)

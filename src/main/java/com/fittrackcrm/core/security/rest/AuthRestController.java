@@ -48,4 +48,14 @@ public class AuthRestController {
     public AdminDetailsResponse signup(@RequestBody @Valid AdminSignupRequest request) {
         return facade.signup(request);
     }
+
+    @Operation(summary = "Confirm email address")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Email confirmed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired token")
+    })
+    @GetMapping("/confirm-email")
+    public void confirmEmail(@RequestParam String token) {
+        facade.confirmEmail(token);
+    }
 } 

@@ -28,4 +28,8 @@ public class AuthFacade {
         user = userService.createAdmin(user);
         return mapper.toAdminDetailsResponse(user);
     }
+
+    public void confirmEmail(String token) {
+        userService.confirmEmail(token);
+    }
 }

@@ -1,5 +1,8 @@
 package com.fittrackcrm.core.user.service;
 
+import com.fittrackcrm.core.email.service.EmailService;
+import com.fittrackcrm.core.email.util.TokenUtils;
+import com.fittrackcrm.core.security.service.exception.InvalidEmailConfirmationTokenException;
 import com.fittrackcrm.core.user.repository.UserRepository;
 import com.fittrackcrm.core.user.repository.UserRoleRepository;
 import com.fittrackcrm.core.user.repository.entity.User;
@@ -22,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Transactional
     public User createClient(User user) {
@@ -37,11 +41,36 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
+        
         UserRole role = roleRepository.findByName(roleName).orElseThrow(() ->
                 new RoleNotFoundException(roleName));
+                
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Set.of(role));
-        return userRepository.save(user);
+        user.setEmailConfirmed(false);
+        user.setConfirmationToken(TokenUtils.generateToken());
+        user.setConfirmationTokenExpiresAt(TokenUtils.calculateExpirationTime());
+        
+        user = userRepository.save(user);
+        
+        emailService.sendConfirmationEmail(user.getEmail(), user.getConfirmationToken());
+        
+        return user;
+    }
+
+    @Transactional
+    public void confirmEmail(String token) {
+        User user = userRepository.findByConfirmationToken(token)
+                .orElseThrow(() -> new InvalidEmailConfirmationTokenException("Invalid confirmation token"));
+
+        if (TokenUtils.isTokenExpired(user.getConfirmationTokenExpiresAt())) {
+            throw new InvalidEmailConfirmationTokenException("Confirmation token has expired");
+        }
+
+        user.setEmailConfirmed(true);
+        user.setConfirmationToken(null);
+        user.setConfirmationTokenExpiresAt(null);
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)
