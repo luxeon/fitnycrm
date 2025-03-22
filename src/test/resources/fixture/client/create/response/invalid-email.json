@@ -1,9 +1,9 @@
 {
-    "message": "Bad Request",
+    "message": "Validation failed",
     "errors": [
         {
             "field": "email",
-            "message": "Invalid email format"
+            "message": "must be a well-formed email address"
         }
     ]
 } 

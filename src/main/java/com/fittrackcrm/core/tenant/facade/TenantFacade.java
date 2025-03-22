@@ -22,8 +22,8 @@ public class TenantFacade {
     private final TenantService tenantService;
     private final TenantMapper tenantMapper;
 
-    public TenantDetailsResponse getById(String id) {
-        return tenantMapper.toDetailsResponse(tenantService.getById(UUID.fromString(id)));
+    public TenantDetailsResponse getById(UUID id) {
+        return tenantMapper.toDetailsResponse(tenantService.getById(id));
     }
 
     public TenantDetailsResponse create(AuthenticatedUserDetails user, CreateTenantRequest request) {
@@ -35,8 +35,8 @@ public class TenantFacade {
         return tenantMapper.toDetailsResponse(tenant);
     }
 
-    public TenantDetailsResponse update(String id, UpdateTenantRequest request) {
-        Tenant tenant = tenantService.update(UUID.fromString(id), request);
+    public TenantDetailsResponse update(UUID id, UpdateTenantRequest request) {
+        Tenant tenant = tenantService.update(id, request);
         return tenantMapper.toDetailsResponse(tenant);
     }
 } 

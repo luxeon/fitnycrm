@@ -2,12 +2,13 @@ package com.fittrackcrm.core.security.rest.model;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record AuthRequest(
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @NotNull
+    @Email
     String email,
 
-    @NotBlank(message = "Password is required")
+    @NotBlank
     String password
 ) {} 

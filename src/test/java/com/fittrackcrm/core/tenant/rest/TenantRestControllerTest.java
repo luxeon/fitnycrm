@@ -20,6 +20,7 @@ import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -137,5 +138,52 @@ class TenantRestControllerTest {
                         .content(request))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void update_whenValidRequest_thenUpdateTenant() throws Exception {
+        var request = readFile("fixture/tenant/update/request/valid-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/update/response/tenant-updated.json");
+
+        mockMvc.perform(put(BASE_URL + "/{id}", TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void update_whenInvalidRequest_thenReturn400() throws Exception {
+        var request = readFile("fixture/tenant/update/request/invalid-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/update/response/validation-error.json");
+
+        mockMvc.perform(put(BASE_URL + "/{id}", TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void update_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/tenant/update/request/valid-tenant.json");
+
+        mockMvc.perform(put(BASE_URL + "/{id}", TENANT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void update_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/tenant/update/request/valid-tenant.json");
+
+        mockMvc.perform(put(BASE_URL + "/{id}", DIFFERENT_TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isForbidden());
     }
 } 
