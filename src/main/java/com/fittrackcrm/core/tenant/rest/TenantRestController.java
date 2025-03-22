@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.fittrackcrm.core.tenant.rest.model.TenantDetailsResponse;
 import com.fittrackcrm.core.tenant.rest.model.CreateTenantRequest;
+import com.fittrackcrm.core.tenant.rest.model.UpdateTenantRequest;
 import com.fittrackcrm.core.tenant.facade.TenantFacade;
 
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,22 @@ public class TenantRestController {
     @ResponseStatus(HttpStatus.CREATED)
     public TenantDetailsResponse create(@AuthenticationPrincipal AuthenticatedUserDetails user, @RequestBody @Valid CreateTenantRequest request) {
         return tenantFacade.create(user, request);
+    }
+
+    @Operation(summary = "Update tenant name")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tenant updated successfully",
+                    content = @Content(schema = @Schema(implementation = TenantDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Tenant not found"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @PutMapping("/{id}")
+    @PreAuthorize("@tenantAccessValidator.check(#id)")
+    public TenantDetailsResponse update(@Parameter(description = "ID of the tenant to update", required = true)
+                                        @PathVariable @UUID String id,
+                                        @RequestBody @Valid UpdateTenantRequest request) {
+        return tenantFacade.update(id, request);
     }
 
     @Operation(summary = "Get a tenant by ID")

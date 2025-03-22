@@ -3,6 +3,7 @@ package com.fittrackcrm.core.tenant.facade;
 import com.fittrackcrm.core.security.service.model.AuthenticatedUserDetails;
 import com.fittrackcrm.core.tenant.exception.TenantAlreadyCreatedException;
 import com.fittrackcrm.core.tenant.rest.model.CreateTenantRequest;
+import com.fittrackcrm.core.tenant.rest.model.UpdateTenantRequest;
 import org.springframework.stereotype.Component;
 
 import com.fittrackcrm.core.tenant.rest.model.TenantDetailsResponse;
@@ -31,6 +32,11 @@ public class TenantFacade {
         }
         Tenant tenant = tenantMapper.toEntity(request);
         tenant = tenantService.create(user.getId(), tenant);
+        return tenantMapper.toDetailsResponse(tenant);
+    }
+
+    public TenantDetailsResponse update(String id, UpdateTenantRequest request) {
+        Tenant tenant = tenantService.update(UUID.fromString(id), request);
         return tenantMapper.toDetailsResponse(tenant);
     }
 } 
