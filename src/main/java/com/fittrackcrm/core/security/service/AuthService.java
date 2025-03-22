@@ -1,7 +1,7 @@
 package com.fittrackcrm.core.security.service;
 
 import com.fittrackcrm.core.security.service.exception.InvalidCredentialsException;
-import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
+import com.fittrackcrm.core.security.service.model.AuthenticatedUserDetails;
 import com.fittrackcrm.core.security.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,7 +23,7 @@ public class AuthService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)
             );
-            UserDetailsImpl user = (UserDetailsImpl) authentication.getPrincipal();
+            AuthenticatedUserDetails user = (AuthenticatedUserDetails) authentication.getPrincipal();
             return jwtUtils.generateToken(user);
         } catch (Exception e) {
             throw new InvalidCredentialsException();

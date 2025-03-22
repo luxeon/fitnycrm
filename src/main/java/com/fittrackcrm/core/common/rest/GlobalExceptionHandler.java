@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.fittrackcrm.core.client.service.exception.ClientEmailAlreadyExistsException;
+import com.fittrackcrm.core.tenant.exception.TenantAlreadyCreatedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,9 +46,9 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(e.getMessage());
     }
 
-    @ExceptionHandler(RoleNotFoundException.class)
+    @ExceptionHandler({RoleNotFoundException.class, TenantAlreadyCreatedException.class})
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleAdminRoleNotFoundException(RoleNotFoundException e) {
+    public ErrorResponse handleAdminRoleNotFoundException(RuntimeException e) {
         return ErrorResponse.of(e.getMessage());
     }
 

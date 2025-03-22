@@ -2,21 +2,10 @@ package com.fittrackcrm.core.common.util;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.crypto.SecretKey;
-
-import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
-import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.security.config.JwtProperties;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

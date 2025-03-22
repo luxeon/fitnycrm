@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -68,4 +69,15 @@ public class UserService {
     public Optional<User> findByEmail(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email);
     }
-} 
+
+    @Transactional(readOnly = true)
+    public User findById(UUID id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found by id: " + id));
+    }
+
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
+    }
+}

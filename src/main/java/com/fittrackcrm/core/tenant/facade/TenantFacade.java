@@ -1,5 +1,7 @@
 package com.fittrackcrm.core.tenant.facade;
 
+import com.fittrackcrm.core.security.service.model.AuthenticatedUserDetails;
+import com.fittrackcrm.core.tenant.exception.TenantAlreadyCreatedException;
 import com.fittrackcrm.core.tenant.rest.model.CreateTenantRequest;
 import org.springframework.stereotype.Component;
 
@@ -23,11 +25,12 @@ public class TenantFacade {
         return tenantMapper.toDetailsResponse(tenantService.getById(UUID.fromString(id)));
     }
 
-    public TenantDetailsResponse create(CreateTenantRequest request) {
+    public TenantDetailsResponse create(AuthenticatedUserDetails user, CreateTenantRequest request) {
+        if (user.getTenantId() != null) {
+            throw new TenantAlreadyCreatedException();
+        }
         Tenant tenant = tenantMapper.toEntity(request);
-        
-        tenant = tenantService.create(tenant);
-        
+        tenant = tenantService.create(user.getId(), tenant);
         return tenantMapper.toDetailsResponse(tenant);
     }
 } 

@@ -1,7 +1,11 @@
 package com.fittrackcrm.core.tenant.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fittrackcrm.core.common.annotation.IntegrationTest;
 import com.fittrackcrm.core.security.util.JwtTokenCreator;
+import com.fittrackcrm.core.tenant.rest.model.TenantDetailsResponse;
+import com.fittrackcrm.core.user.repository.UserRepository;
+import com.fittrackcrm.core.user.repository.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +17,7 @@ import java.util.UUID;
 
 import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -25,12 +30,19 @@ class TenantRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants";
     private static final UUID TENANT_ID = UUID.fromString("7a7632b1-e932-48fd-9296-001036b4ec19");
+    private static final UUID USER_WITHOUT_TENANT_ID = UUID.fromString("a35ac7f5-3e4f-462a-a76d-524bd3a5fd02");
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private JwtTokenCreator jwtTokenCreator;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void getOne_whenTenantExists_thenReturnTenant() throws Exception {
@@ -67,12 +79,18 @@ class TenantRestControllerTest {
         var request = readFile("fixture/tenant/create/request/valid-tenant.json");
         var expectedResponse = readFile("fixture/tenant/create/response/tenant-created.json");
 
-        mockMvc.perform(post(BASE_URL)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+        String response = mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminWithoutTenantTestJwtToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isCreated())
-                .andExpect(json().isEqualTo(expectedResponse));
+                .andExpect(json().isEqualTo(expectedResponse))
+                .andReturn().getResponse().getContentAsString();
+
+        TenantDetailsResponse tenantDetails = objectMapper.readValue(response, TenantDetailsResponse.class);
+
+        User user = userRepository.findById(USER_WITHOUT_TENANT_ID).orElseThrow();
+        assertThat(user.getTenantId()).isEqualTo(tenantDetails.id());
     }
 
     @Test
@@ -108,6 +126,19 @@ class TenantRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void create_whenUserHasAssignedTenant_thenReturn422() throws Exception {
+        var request = readFile("fixture/tenant/create/request/valid-tenant.json");
+        var expectedResponse = readFile("fixture/tenant/create/response/tenant-already-created-error.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

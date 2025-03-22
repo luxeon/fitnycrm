@@ -1,5 +1,6 @@
 package com.fittrackcrm.core.tenant.rest;
 
+import com.fittrackcrm.core.security.service.model.AuthenticatedUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.fittrackcrm.core.tenant.rest.model.TenantDetailsResponse;
@@ -34,8 +36,8 @@ public class TenantRestController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TenantDetailsResponse create(@RequestBody @Valid CreateTenantRequest request) {
-        return tenantFacade.create(request);
+    public TenantDetailsResponse create(@AuthenticationPrincipal AuthenticatedUserDetails user, @RequestBody @Valid CreateTenantRequest request) {
+        return tenantFacade.create(user, request);
     }
 
     @Operation(summary = "Get a tenant by ID")

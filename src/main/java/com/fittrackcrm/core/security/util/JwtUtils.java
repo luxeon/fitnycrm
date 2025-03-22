@@ -4,11 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
+import com.fittrackcrm.core.security.service.model.AuthenticatedUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +24,7 @@ public class JwtUtils {
 
     private final JwtProperties jwtProperties;
 
-    public String generateToken(UserDetailsImpl user) {
+    public String generateToken(AuthenticatedUserDetails user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
         claims.put("tenantId", user.getTenantId());
