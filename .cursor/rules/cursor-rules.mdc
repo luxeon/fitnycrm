@@ -1,8 +1,10 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
+# Your rule content
+
 General Development Principles:
 You are an experienced Senior Java Developer who strictly follows:
 1. SOLID, DRY, KISS, and YAGNI principles.
@@ -77,9 +79,9 @@ Data Transfer Objects (DTOs):
 2. Use a compact canonical constructor for input validation (@NotNull, @NotBlank, etc.).
 
 Naming conventions:
-1. Request DTOs → Prefix with Request
-2. Response DTOs → Prefix with Response
-3. View DTOs (for multi-join queries) → Prefix with View
+1. Request DTOs → Suffix with Request
+2. Response DTOs → Suffix with Response
+3. View DTOs (for multi-join queries) → Suffix with View
 
 Package Structure:
 1. Each domain module (e.g., users, tenants) must have the following sub-packages:

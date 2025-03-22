@@ -20,4 +20,9 @@ public class TenantService {
         return tenantRepository.findById(id)
                 .orElseThrow(() -> new TenantNotFoundException(id));
     }
+
+    @Transactional
+    public Tenant create(Tenant tenant) {
+       return tenantRepository.save(tenant);
+    }
 } 
