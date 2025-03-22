@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,9 +45,11 @@ public class TenantRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tenant found",
                     content = @Content(schema = @Schema(implementation = TenantDetailsResponse.class))),
-            @ApiResponse(responseCode = "404", description = "Tenant not found")
+            @ApiResponse(responseCode = "404", description = "Tenant not found"),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/{id}")
+    @PreAuthorize("@tenantAccessValidator.check(#id)")
     public TenantDetailsResponse getOne(@Parameter(description = "ID of the tenant to retrieve", required = true)
                                             @PathVariable @UUID String id) {
         return tenantFacade.getById(id);

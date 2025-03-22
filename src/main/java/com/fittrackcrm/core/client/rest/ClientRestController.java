@@ -2,6 +2,7 @@ package com.fittrackcrm.core.client.rest;
 
 import com.fittrackcrm.core.client.rest.model.ClientDetailsResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.fittrackcrm.core.client.facade.ClientFacade;
@@ -31,10 +32,12 @@ public class ClientRestController {
             @ApiResponse(responseCode = "201", description = "Client account created",
                     content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
     @PostMapping("/clients")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
     public ClientDetailsResponse createClient(@PathVariable UUID tenantId,
                                               @RequestBody @Valid ClientSignupRequest request) {
         return clientFacade.createClient(tenantId, request);

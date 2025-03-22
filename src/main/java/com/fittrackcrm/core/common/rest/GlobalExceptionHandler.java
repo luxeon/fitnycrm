@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import com.fittrackcrm.core.client.service.exception.ClientEmailAlreadyExistsException;
 import com.fittrackcrm.core.tenant.exception.TenantAlreadyCreatedException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -71,5 +72,11 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
 
         return ErrorResponse.of("Bad Request", validationErrors);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+        return ErrorResponse.of("Access denied");
     }
 } 

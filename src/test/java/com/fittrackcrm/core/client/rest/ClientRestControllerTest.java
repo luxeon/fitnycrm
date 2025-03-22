@@ -14,11 +14,14 @@ import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
 class ClientRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/clients";
+    private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
 
     @Autowired
     private MockMvc mockMvc;
@@ -81,5 +84,18 @@ class ClientRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void createClient_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/client/create/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
+
+        mockMvc.perform(post("/api/tenants/{tenantId}/clients", DIFFERENT_TENANT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

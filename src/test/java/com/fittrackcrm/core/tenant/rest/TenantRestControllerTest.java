@@ -31,6 +31,7 @@ class TenantRestControllerTest {
     private static final String BASE_URL = "/api/tenants";
     private static final UUID TENANT_ID = UUID.fromString("7a7632b1-e932-48fd-9296-001036b4ec19");
     private static final UUID USER_WITHOUT_TENANT_ID = UUID.fromString("a35ac7f5-3e4f-462a-a76d-524bd3a5fd02");
+    private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,22 +57,18 @@ class TenantRestControllerTest {
     }
 
     @Test
-    void getOne_whenTenantDoesNotExist_thenReturn404() throws Exception {
-        var nonExistentTenantId = UUID.fromString("ac0e73c4-5a55-44a7-b05f-c4f13a8971ab");
-        var expectedResponse = readFile("fixture/tenant/getOne/response/tenant-not-found.json");
-
-        mockMvc.perform(get(BASE_URL + "/{id}", nonExistentTenantId)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @Test
     void getOne_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", TENANT_ID)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getOne_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{id}", DIFFERENT_TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     @Test
