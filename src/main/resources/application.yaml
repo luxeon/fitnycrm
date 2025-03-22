@@ -3,15 +3,22 @@ spring:
         name: core
     jpa:
         open-in-view: false
+    mail:
+        host: ${MAIL_HOST:smtp.gmail.com}
+        port: ${MAIL_PORT:587}
+        username: ${MAIL_USERNAME}
+        password: ${MAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
 
 jwt:
     secret: ${JWT_SECRET:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
     expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
 
 mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
     from: ${MAIL_FROM:noreply@fittrackcrm.com}
     confirmationUrl: ${MAIL_CONFIRMATION_URL:http://localhost:8080/api/auth/confirm-email}

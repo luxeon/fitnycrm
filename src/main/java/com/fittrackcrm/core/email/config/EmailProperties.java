@@ -12,18 +12,6 @@ import org.springframework.validation.annotation.Validated;
 @Configuration
 @ConfigurationProperties(prefix = "mail")
 public class EmailProperties {
-
-    @NotBlank
-    private String host;
-    
-    @NotNull
-    private Integer port;
-    
-    @NotBlank
-    private String username;
-    
-    @NotBlank
-    private String password;
     
     @NotBlank
     private String from;

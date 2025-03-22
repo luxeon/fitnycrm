@@ -1,24 +1,33 @@
 package com.fittrackcrm.core.security.rest;
 
+import com.fittrackcrm.core.common.annotation.IntegrationTest;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static com.fittrackcrm.core.common.util.TestUtils.readFile;
+import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.fittrackcrm.core.common.annotation.IntegrationTest;
-import static com.fittrackcrm.core.common.util.TestUtils.readFile;
-
-import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
 class AuthRestControllerTest {
 
     private static final String AUTH_URL = "/api/auth";
+
+    @RegisterExtension
+    static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withConfiguration(GreenMailConfiguration.aConfig().withUser("test@fittrackcrm.com", "test"));
 
     @Autowired
     private MockMvc mockMvc;
@@ -27,8 +36,8 @@ class AuthRestControllerTest {
     void login_whenValidCredentials_thenReturnToken() throws Exception {
         var loginRequest = readFile("fixture/auth/login/request/valid-request.json");
         mockMvc.perform(post(AUTH_URL + "/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequest))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists());
     }
@@ -39,8 +48,8 @@ class AuthRestControllerTest {
         var expectedResponse = readFile("fixture/auth/login/response/invalid-credentials.json");
 
         mockMvc.perform(post(AUTH_URL + "/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequest))
                 .andExpect(status().isUnauthorized())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
@@ -51,14 +60,14 @@ class AuthRestControllerTest {
         var expectedResponse = readFile("fixture/auth/login/response/invalid-credentials.json");
 
         mockMvc.perform(post(AUTH_URL + "/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(loginRequest))
                 .andExpect(status().isUnauthorized())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 
     @Test
-    void createAdmin_whenValidRequest_thenCreateAdmin() throws Exception {
+    void createAdmin_whenValidRequest_thenCreateAdminAndSendEmail() throws Exception {
         var request = readFile("fixture/auth/signup/request/valid-request.json");
         var expectedResponse = readFile("fixture/auth/signup/response/success.json");
 
@@ -67,6 +76,14 @@ class AuthRestControllerTest {
                         .content(request))
                 .andExpect(status().isCreated())
                 .andExpect(json().isEqualTo(expectedResponse));
+
+        // Verify email was sent
+        MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        assertThat(receivedMessages).hasSize(1);
+        MimeMessage receivedMessage = receivedMessages[0];
+        assertThat(receivedMessage.getAllRecipients()).hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("john.doe@example.com");
+        assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your email");
     }
 
     @Test
