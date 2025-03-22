@@ -56,14 +56,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (ExpiredJwtException e) {
-            log.error("JWT token has expired: {}", e.getMessage());
+            log.error("JWT accessToken has expired: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("JWT token has expired");
+            response.getWriter().write("JWT accessToken has expired");
             return;
         } catch (JwtException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
+            log.error("Invalid JWT accessToken: {}", e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid JWT token");
+            response.getWriter().write("Invalid JWT accessToken");
             return;
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());

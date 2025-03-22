@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/tenants/{tenantId}")
 @RequiredArgsConstructor
+@RequestMapping("/api/tenants/{tenantId}")
 @Tag(name = "user", description = "User management endpoints")
 public class UserRestController {
 

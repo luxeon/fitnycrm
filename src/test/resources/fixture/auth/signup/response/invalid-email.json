@@ -1,0 +1,9 @@
+{
+    "message": "Bad Request",
+    "errors": [
+        {
+            "field": "email",
+            "message": "Invalid email format"
+        }
+    ]
+} 

@@ -1,14 +1,11 @@
 package com.fittrackcrm.core.security.rest;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.fittrackcrm.core.security.facade.AuthFacade;
+import com.fittrackcrm.core.security.rest.model.AdminDetailsResponse;
+import com.fittrackcrm.core.security.rest.model.AdminSignupRequest;
 import com.fittrackcrm.core.security.rest.model.AuthRequest;
 import com.fittrackcrm.core.security.rest.model.AuthResponse;
-import com.fittrackcrm.core.security.service.AuthService;
-
+import com.fittrackcrm.core.user.rest.model.UserDetailsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "auth", description = "Authentication endpoints")
 public class AuthRestController {
 
-    private final AuthService authService;
+    private final AuthFacade facade;
 
     @Operation(summary = "Authenticate user")
     @ApiResponses(value = {
@@ -34,7 +33,19 @@ public class AuthRestController {
     })
     @PostMapping("/login")
     public AuthResponse login(@RequestBody @Valid AuthRequest request) {
-        String token = authService.authenticate(request.email(), request.password());
-        return new AuthResponse(token);
+        return facade.authenticate(request);
+    }
+
+    @Operation(summary = "Create a new admin account")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Admin account created",
+                    content = @Content(schema = @Schema(implementation = UserDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "409", description = "User with this email already exists")
+    })
+    @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AdminDetailsResponse signup(@RequestBody @Valid AdminSignupRequest request) {
+        return facade.signup(request);
     }
 } 

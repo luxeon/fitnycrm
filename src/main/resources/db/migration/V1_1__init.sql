@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS locations (
 -- Table: users
 CREATE TABLE IF NOT EXISTS users (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id uuid NOT NULL,
+    tenant_id uuid,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS user_roles (
     user_id uuid NOT NULL,
     role_id uuid NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (role_id) REFERENCES roles(id)
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    UNIQUE (user_id, role_id)
 );
 
 -- Table: services

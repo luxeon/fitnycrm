@@ -3,6 +3,8 @@ package com.fittrackcrm.core.user.repository.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "roles")
+@ToString(exclude = "users")
+@EqualsAndHashCode(exclude = "users")
 public class UserRole {
 
     @Id
@@ -22,7 +26,7 @@ public class UserRole {
     private Name name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> employees = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
     public enum Name {
 

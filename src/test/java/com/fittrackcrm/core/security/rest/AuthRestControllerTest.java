@@ -30,7 +30,7 @@ class AuthRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(loginRequest))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").exists());
+                .andExpect(jsonPath("$.accessToken").exists());
     }
 
     @Test
@@ -54,6 +54,49 @@ class AuthRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(loginRequest))
                 .andExpect(status().isUnauthorized())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void createAdmin_whenValidRequest_thenCreateAdmin() throws Exception {
+        var request = readFile("fixture/auth/signup/request/valid-request.json");
+        var expectedResponse = readFile("fixture/auth/signup/response/success.json");
+
+        mockMvc.perform(post(AUTH_URL + "/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void createAdmin_whenInvalidEmail_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/auth/signup/request/invalid-email.json");
+        var expectedResponse = readFile("fixture/auth/signup/response/invalid-email.json");
+
+        mockMvc.perform(post(AUTH_URL + "/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void createAdmin_whenEmailAlreadyExists_thenReturnConflict() throws Exception {
+        var request = readFile("fixture/auth/signup/request/valid-request.json");
+        var expectedResponse = readFile("fixture/auth/signup/response/email-exists.json");
+
+        // Create first admin
+        mockMvc.perform(post(AUTH_URL + "/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated());
+
+        // Try to create second admin with same email
+        mockMvc.perform(post(AUTH_URL + "/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isConflict())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

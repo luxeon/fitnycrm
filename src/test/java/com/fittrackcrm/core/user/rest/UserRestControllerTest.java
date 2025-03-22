@@ -1,5 +1,6 @@
 package com.fittrackcrm.core.user.rest;
 
+import com.fittrackcrm.core.common.annotation.IntegrationTest;
 import com.fittrackcrm.core.security.util.JwtTokenCreator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,14 +9,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static com.fittrackcrm.core.common.util.TestUtils.readFile;
+import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-
-import com.fittrackcrm.core.common.annotation.IntegrationTest;
-
-import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
@@ -60,14 +57,14 @@ class UserRestControllerTest {
         var request = readFile("fixture/user/createClient/request/valid-request.json");
         var expectedResponse = readFile("fixture/user/createClient/response/email-exists.json");
 
-        // Create first admin
+        // Create first client
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isCreated());
 
-        // Try to create second admin with same email
+        // Try to create second client with same email
         mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)

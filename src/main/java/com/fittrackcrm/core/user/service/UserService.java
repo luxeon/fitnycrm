@@ -1,22 +1,19 @@
 package com.fittrackcrm.core.user.service;
 
+import com.fittrackcrm.core.user.repository.UserRepository;
 import com.fittrackcrm.core.user.repository.UserRoleRepository;
+import com.fittrackcrm.core.user.repository.entity.User;
 import com.fittrackcrm.core.user.repository.entity.UserRole;
 import com.fittrackcrm.core.user.service.exception.RoleNotFoundException;
+import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fittrackcrm.core.user.repository.UserRepository;
-import com.fittrackcrm.core.user.repository.entity.User;
-import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsException;
-
-import lombok.RequiredArgsConstructor;
-
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +26,11 @@ public class UserService {
     @Transactional
     public User createClient(User user) {
         return createUser(user, UserRole.Name.CLIENT);
+    }
+
+    @Transactional
+    public User createAdmin(User user) {
+        return createUser(user, UserRole.Name.ADMIN);
     }
 
     private User createUser(User user, UserRole.Name roleName) {
