@@ -1,11 +1,7 @@
 package com.fittrackcrm.core.user.rest;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.fittrackcrm.core.user.facade.UserFacade;
 import com.fittrackcrm.core.user.rest.model.UserDetailsResponse;
@@ -20,24 +16,27 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/tenants/{tenantId}")
 @RequiredArgsConstructor
 @Tag(name = "user", description = "User management endpoints")
 public class UserRestController {
 
     private final UserFacade userFacade;
 
-    @Operation(summary = "Create a new user account")
+    @Operation(summary = "Create a new client account")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User account created",
+            @ApiResponse(responseCode = "201", description = "Client account created",
                     content = @Content(schema = @Schema(implementation = UserDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PostMapping("/signup")
+    @PostMapping("/clients")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDetailsResponse signup(@RequestBody @Valid UserSignupRequest request) {
-        return userFacade.signup(request);
+    public UserDetailsResponse createClient(@PathVariable UUID tenantId,
+                                            @RequestBody @Valid UserSignupRequest request) {
+        return userFacade.signup(tenantId, request);
     }
 } 

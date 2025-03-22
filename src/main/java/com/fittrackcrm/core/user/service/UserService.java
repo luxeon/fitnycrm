@@ -12,6 +12,7 @@ import com.fittrackcrm.core.user.service.exception.UserEmailAlreadyExistsExcepti
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +22,10 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public User signup(User user) {
+    public User createClient(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

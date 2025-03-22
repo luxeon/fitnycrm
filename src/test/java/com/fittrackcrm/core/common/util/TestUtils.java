@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import com.fittrackcrm.core.security.service.model.UserDetailsImpl;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
@@ -28,24 +29,5 @@ public final class TestUtils {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read file: " + path, e);
         }
-    }
-
-    public static String generateTestJwtToken(User user, JwtProperties jwtProperties) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", user.getId());
-        claims.put("firstName", user.getFirstName());
-        claims.put("lastName", user.getLastName());
-        claims.put("email", user.getEmail());
-        claims.put("phoneNumber", user.getPhoneNumber());
-        claims.put("role", "ROLE_ADMIN");
-
-        SecretKey key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-        return Jwts.builder()
-                .claims(claims)
-                .subject(user.getEmail())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpirationMs()))
-                .signWith(key)
-                .compact();
     }
 } 

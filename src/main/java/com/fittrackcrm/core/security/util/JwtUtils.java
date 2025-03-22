@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -27,11 +28,12 @@ public class JwtUtils {
     public String generateToken(UserDetailsImpl user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
+        claims.put("tenantId", user.getTenantId());
         claims.put("firstName", user.getFirstName());
         claims.put("lastName", user.getLastName());
         claims.put("email", user.getEmail());
         claims.put("phoneNumber", user.getPhoneNumber());
-        claims.put("roles", "ROLE_ADMIN");
+        claims.put("roles", user.getAuthorities());
         return createToken(claims, user.getUsername());
     }
 

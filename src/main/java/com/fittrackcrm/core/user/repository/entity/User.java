@@ -18,6 +18,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
 
+    @Column(nullable = false)
+    private UUID tenantId;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

@@ -13,6 +13,7 @@ import java.util.UUID;
 public class UserDetailsImpl implements UserDetails {
 
     private UUID id;
+    private UUID tenantId;
     private String email;
     private String firstName;
     private String lastName;

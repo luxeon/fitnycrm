@@ -3,6 +3,7 @@ package com.fittrackcrm.core.security.rest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,24 +15,16 @@ import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 
 @IntegrationTest
+@Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
 class AuthRestControllerTest {
 
     private static final String AUTH_URL = "/api/auth";
-    private static final String USER_URL = "/api/users";
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
     void login_whenValidCredentials_thenReturnToken() throws Exception {
-        // Create admin account first
-        var signupRequest = readFile("fixture/user/signup/request/valid-request.json");
-        mockMvc.perform(post(USER_URL + "/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupRequest))
-                .andExpect(status().isCreated());
-
-        // Try to login
         var loginRequest = readFile("fixture/auth/login/request/valid-request.json");
         mockMvc.perform(post(AUTH_URL + "/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -41,16 +34,8 @@ class AuthRestControllerTest {
     }
 
     @Test
-    void login_whenInvalidCredentials_thenReturn401() throws Exception {
-        // Create admin account first
-        var signupRequest = readFile("fixture/user/signup/request/valid-request.json");
-        mockMvc.perform(post(USER_URL + "/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(signupRequest))
-                .andExpect(status().isCreated());
-
-        // Try to login with wrong password
-        var loginRequest = readFile("fixture/auth/login/request/invalid-credentials.json");
+    void login_whenInvalidPassword_thenReturn401() throws Exception {
+        var loginRequest = readFile("fixture/auth/login/request/invalid-password.json");
         var expectedResponse = readFile("fixture/auth/login/response/invalid-credentials.json");
 
         mockMvc.perform(post(AUTH_URL + "/login")
@@ -62,7 +47,7 @@ class AuthRestControllerTest {
 
     @Test
     void login_whenNonExistentEmail_thenReturn401() throws Exception {
-        var loginRequest = readFile("fixture/auth/login/request/valid-request.json");
+        var loginRequest = readFile("fixture/auth/login/request/invalid-email.json");
         var expectedResponse = readFile("fixture/auth/login/response/invalid-credentials.json");
 
         mockMvc.perform(post(AUTH_URL + "/login")

@@ -9,6 +9,8 @@ import com.fittrackcrm.core.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class UserFacade {
@@ -16,10 +18,10 @@ public class UserFacade {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserDetailsResponse signup(UserSignupRequest request) {
+    public UserDetailsResponse signup(UUID tenantId, UserSignupRequest request) {
         return userMapper.toResponse(
-            userService.signup(
-                userMapper.toEntity(request)
+            userService.createClient(
+                userMapper.toEntity(tenantId, request)
             )
         );
     }
