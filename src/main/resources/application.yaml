@@ -1,6 +1,8 @@
 spring:
     application:
         name: core
+    jackson:
+        time-zone: UTC
     jpa:
         open-in-view: false
     mail:

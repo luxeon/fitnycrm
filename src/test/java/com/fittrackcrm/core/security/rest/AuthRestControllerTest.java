@@ -1,6 +1,10 @@
 package com.fittrackcrm.core.security.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fittrackcrm.core.common.annotation.IntegrationTest;
+import com.fittrackcrm.core.security.rest.model.AdminDetailsResponse;
+import com.fittrackcrm.core.user.repository.UserRepository;
+import com.fittrackcrm.core.user.repository.entity.User;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -12,15 +16,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.UUID;
+
 import static com.fittrackcrm.core.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
-@Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
+@Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql", "/db/user/insert-unconfirmed-user.sql"})
 class AuthRestControllerTest {
 
     private static final String AUTH_URL = "/api/auth";
@@ -31,6 +38,12 @@ class AuthRestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void login_whenValidCredentials_thenReturnToken() throws Exception {
@@ -71,11 +84,19 @@ class AuthRestControllerTest {
         var request = readFile("fixture/auth/signup/request/valid-request.json");
         var expectedResponse = readFile("fixture/auth/signup/response/success.json");
 
-        mockMvc.perform(post(AUTH_URL + "/signup")
+        String response = mockMvc.perform(post(AUTH_URL + "/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isCreated())
-                .andExpect(json().isEqualTo(expectedResponse));
+                .andExpect(json().isEqualTo(expectedResponse))
+                .andReturn()
+                .getResponse().getContentAsString();
+
+        AdminDetailsResponse adminDetails = objectMapper.readValue(response, AdminDetailsResponse.class);
+        User user = userRepository.findById(adminDetails.id()).orElseThrow();
+        assertThat(user.getConfirmationToken()).isNotNull();
+        assertThat(user.getConfirmationTokenExpiresAt()).isNotNull();
+        assertThat(user.isEmailConfirmed()).isFalse();
 
         // Verify email was sent
         MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
@@ -114,6 +135,43 @@ class AuthRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
                 .andExpect(status().isConflict())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void confirmEmail_whenValidToken_thenConfirmEmail() throws Exception {
+        var token = "valid-confirmation-token";
+        
+        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+                        .param("token", token))
+                .andExpect(status().isOk());
+
+        // Verify that email is confirmed in database
+        var user = userRepository.findById(UUID.fromString("935ac7f5-3e4f-462a-a76d-524bd3a5fd01"))
+                        .orElseThrow();
+        assertThat(user.isEmailConfirmed()).isTrue();
+        assertThat(user.getConfirmationToken()).isNull();
+    }
+
+    @Test
+    void confirmEmail_whenInvalidToken_thenReturnBadRequest() throws Exception {
+        var token = "invalid-token";
+        var expectedResponse = readFile("fixture/auth/confirm-email/response/invalid-token.json");
+
+        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+                        .param("token", token))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void confirmEmail_whenExpiredToken_thenReturnBadRequest() throws Exception {
+        var token = "expired-token";
+        var expectedResponse = readFile("fixture/auth/confirm-email/response/expired-token.json");
+
+        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+                        .param("token", token))
+                .andExpect(status().isBadRequest())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 } 
