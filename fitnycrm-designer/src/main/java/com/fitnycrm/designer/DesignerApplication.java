@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.TimeZone;
 
 @SpringBootApplication
-public class CoreApplication {
+public class DesignerApplication {
 
 	public static void main(String[] args) {
 		// Set the default timezone to UTC
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-		SpringApplication.run(CoreApplication.class, args);
+		SpringApplication.run(DesignerApplication.class, args);
 	}
 
 }

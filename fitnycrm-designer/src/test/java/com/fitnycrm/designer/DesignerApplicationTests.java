@@ -4,7 +4,7 @@ import com.fitnycrm.designer.common.annotation.IntegrationTest;
 import org.junit.jupiter.api.Test;
 
 @IntegrationTest
-class CoreApplicationTests {
+class DesignerApplicationTests {
 
 	@Test
 	void contextLoads() {

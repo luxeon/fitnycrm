@@ -1,17 +1,11 @@
 package com.fitnycrm.designer.common.rest;
 
-import com.fitnycrm.designer.client.service.exception.ClientEmailAlreadyExistsException;
 import com.fitnycrm.designer.common.rest.model.ErrorResponse;
 import com.fitnycrm.designer.common.rest.model.ValidationError;
-import com.fitnycrm.designer.security.service.exception.InvalidCredentialsException;
-import com.fitnycrm.designer.security.service.exception.InvalidEmailConfirmationTokenException;
-import com.fitnycrm.designer.tenant.exception.TenantAlreadyCreatedException;
-import com.fitnycrm.designer.tenant.exception.TenantNotFoundException;
-import com.fitnycrm.designer.user.service.exception.RoleNotFoundException;
-import com.fitnycrm.designer.user.service.exception.UserEmailAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -24,42 +18,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(TenantNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleTenantNotFoundException(TenantNotFoundException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
-
-    @ExceptionHandler(UserEmailAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleUserEmailAlreadyExistsException(UserEmailAlreadyExistsException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
-
-    @ExceptionHandler(ClientEmailAlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleClientEmailAlreadyExistsException(ClientEmailAlreadyExistsException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
-
-    @ExceptionHandler(InvalidCredentialsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleInvalidCredentialsException(InvalidCredentialsException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
-
-    @ExceptionHandler({RoleNotFoundException.class, TenantAlreadyCreatedException.class})
-    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
-    public ErrorResponse handleAdminRoleNotFoundException(RuntimeException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
-
-    @ExceptionHandler(InvalidEmailConfirmationTokenException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidEmailConfirmationTokenException(InvalidEmailConfirmationTokenException e) {
-        return ErrorResponse.of(e.getMessage());
-    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -79,7 +37,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HandlerMethodValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleHandlerMethodValidationException(HandlerMethodValidationException e) {
-        List<ValidationError> validationErrors = e.getAllValidationResults()
+        List<ValidationError> validationErrors = e.getParameterValidationResults()
                 .stream()
                 .map(error -> new ValidationError(
                         error.getMethodParameter().getParameterName(),
@@ -88,12 +46,6 @@ public class GlobalExceptionHandler {
                 .collect(Collectors.toList());
 
         return ErrorResponse.of("Validation failed", validationErrors);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-        return ErrorResponse.of("Access denied");
     }
 
     @ExceptionHandler(Exception.class)
