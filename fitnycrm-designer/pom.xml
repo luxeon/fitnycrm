@@ -9,6 +9,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <artifactId>fitnycrm-designer</artifactId>
+    <name>FitnyCRM Designer</name>
 
     <dependencies>
         <!-- Spring Boot Starters -->

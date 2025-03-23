@@ -36,3 +36,4 @@ build/
 /mvnw.cmd
 /fitnycrm-designer-ui/src/main/webapp/build/**
 /fitnycrm-designer-ui/src/main/webapp/node_modules/**
+**/application-local.yaml
