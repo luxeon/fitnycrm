@@ -1,6 +1,6 @@
 package com.fitnycrm.designer.tenant.rest;
 
-import com.fitnycrm.designer.security.service.model.AuthenticatedUserDetails;
+import com.fitnycrm.designer.user.service.model.AuthenticatedUserDetails;
 import com.fitnycrm.designer.tenant.facade.TenantFacade;
 import com.fitnycrm.designer.tenant.rest.model.CreateTenantRequest;
 import com.fitnycrm.designer.tenant.rest.model.TenantDetailsResponse;

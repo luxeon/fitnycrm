@@ -1,12 +1,11 @@
 package com.fitnycrm.designer.client.rest;
 
 import com.fitnycrm.designer.common.annotation.IntegrationTest;
-import com.fitnycrm.designer.security.util.JwtTokenCreator;
+import com.fitnycrm.designer.user.util.JwtTokenCreator;
 import com.fitnycrm.designer.user.repository.entity.UserRole;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +13,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static com.fitnycrm.designer.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;

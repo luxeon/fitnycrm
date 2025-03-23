@@ -1,6 +1,6 @@
 package com.fitnycrm.designer.tenant.facade;
 
-import com.fitnycrm.designer.security.service.model.AuthenticatedUserDetails;
+import com.fitnycrm.designer.user.service.model.AuthenticatedUserDetails;
 import com.fitnycrm.designer.tenant.exception.TenantAlreadyCreatedException;
 import com.fitnycrm.designer.tenant.rest.model.CreateTenantRequest;
 import com.fitnycrm.designer.tenant.rest.model.UpdateTenantRequest;

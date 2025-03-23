@@ -2,7 +2,7 @@ package com.fitnycrm.designer.user.service;
 
 import com.fitnycrm.designer.email.service.EmailService;
 import com.fitnycrm.designer.email.util.TokenUtils;
-import com.fitnycrm.designer.security.service.exception.InvalidEmailConfirmationTokenException;
+import com.fitnycrm.designer.user.service.exception.InvalidEmailConfirmationTokenException;
 import com.fitnycrm.designer.user.repository.UserRepository;
 import com.fitnycrm.designer.user.repository.UserRoleRepository;
 import com.fitnycrm.designer.user.repository.entity.User;

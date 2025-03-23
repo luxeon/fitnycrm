@@ -2,7 +2,7 @@ package com.fitnycrm.designer.tenant.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnycrm.designer.common.annotation.IntegrationTest;
-import com.fitnycrm.designer.security.util.JwtTokenCreator;
+import com.fitnycrm.designer.user.util.JwtTokenCreator;
 import com.fitnycrm.designer.tenant.rest.model.TenantDetailsResponse;
 import com.fitnycrm.designer.user.repository.UserRepository;
 import com.fitnycrm.designer.user.repository.entity.User;
