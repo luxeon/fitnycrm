@@ -17,7 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.UUID;
 
 @IntegrationTest
-@Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
+@Sql({"/db/tenant/insert.sql", "/db/user/insert.sql"})
 class ClientRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/clients";

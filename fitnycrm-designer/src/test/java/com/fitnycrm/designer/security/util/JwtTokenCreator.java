@@ -1,6 +1,7 @@
 package com.fitnycrm.designer.security.util;
 
 import com.fitnycrm.designer.security.service.model.AuthenticatedUserDetails;
+import com.fitnycrm.designer.user.repository.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,25 @@ public class JwtTokenCreator {
     private static final String USER_WITHOUT_TENANT_EMAIL = "jane.smith@gmail.com";
     private static final String USER_WITHOUT_TENANT_PHONE = "+111222333";
 
+    private static final UUID TEST_USER_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
+    private static final String TEST_USER_FIRST_NAME = "Test";
+    private static final String TEST_USER_LAST_NAME = "User";
+    private static final String TEST_USER_EMAIL = "test.user@gmail.com";
+    private static final String TEST_USER_PHONE = "+444555666";
+
     private final JwtUtils jwtUtils;
+
+    public String generateTestJwtToken(UserRole.Name role) {
+        AuthenticatedUserDetails user = new AuthenticatedUserDetails();
+        user.setId(TEST_USER_ID);
+        user.setTenantId(TENANT_ID);
+        user.setFirstName(TEST_USER_FIRST_NAME);
+        user.setLastName(TEST_USER_LAST_NAME);
+        user.setEmail(TEST_USER_EMAIL);
+        user.setPhoneNumber(TEST_USER_PHONE);
+        user.setAuthorities(List.<SimpleGrantedAuthority>of(new SimpleGrantedAuthority("ROLE_" + role)));
+        return BEARER + jwtUtils.generateToken(user);
+    }
 
     public String generateAdminTestJwtToken() {
         AuthenticatedUserDetails user = new AuthenticatedUserDetails();

@@ -6,7 +6,10 @@ import com.fitnycrm.designer.security.util.JwtTokenCreator;
 import com.fitnycrm.designer.tenant.rest.model.TenantDetailsResponse;
 import com.fitnycrm.designer.user.repository.UserRepository;
 import com.fitnycrm.designer.user.repository.entity.User;
+import com.fitnycrm.designer.user.repository.entity.UserRole;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @IntegrationTest
 @Sql(executionPhase =
         Sql.ExecutionPhase.BEFORE_TEST_METHOD,
-        scripts = {"/db/tenant/insert.sql", "/db/user/insert-admin.sql"})
+        scripts = {"/db/tenant/insert.sql", "/db/user/insert.sql"})
 class TenantRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants";
@@ -68,6 +71,15 @@ class TenantRestControllerTest {
     void getOne_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", DIFFERENT_TENANT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void getOne_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{id}", TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }

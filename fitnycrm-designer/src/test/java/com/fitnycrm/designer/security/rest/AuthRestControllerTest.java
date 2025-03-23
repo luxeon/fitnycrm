@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
-@Sql({"/db/tenant/insert.sql", "/db/user/insert-admin.sql", "/db/user/insert-unconfirmed-user.sql"})
+@Sql({"/db/tenant/insert.sql", "/db/user/insert.sql", "/db/user/insert-unconfirmed-user.sql"})
 class AuthRestControllerTest {
 
     private static final String AUTH_URL = "/api/auth";
