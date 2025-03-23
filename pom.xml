@@ -16,7 +16,6 @@
 
 	<modules>
 		<module>fitnycrm-designer</module>
-		<module>fitnycrm-designer-ui</module>
 	</modules>
 
 	<properties>
