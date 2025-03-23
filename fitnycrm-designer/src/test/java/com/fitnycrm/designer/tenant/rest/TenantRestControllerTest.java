@@ -198,4 +198,28 @@ class TenantRestControllerTest {
                         .content(request))
                 .andExpect(status().isForbidden());
     }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void create_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/tenant/create/request/valid-tenant.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isForbidden());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void update_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/tenant/update/request/valid-tenant.json");
+
+        mockMvc.perform(put(BASE_URL + "/{id}", TENANT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isForbidden());
+    }
 } 
