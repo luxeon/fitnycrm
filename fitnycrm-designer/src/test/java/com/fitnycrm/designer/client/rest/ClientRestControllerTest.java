@@ -2,19 +2,24 @@ package com.fitnycrm.designer.client.rest;
 
 import com.fitnycrm.designer.common.annotation.IntegrationTest;
 import com.fitnycrm.designer.security.util.JwtTokenCreator;
+import com.fitnycrm.designer.user.repository.entity.UserRole;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.UUID;
+import java.util.stream.Stream;
+
 import static com.fitnycrm.designer.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.UUID;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql"})
@@ -97,5 +102,17 @@ class ClientRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
                 .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void createClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/client/create/request/valid-request.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
     }
 } 
