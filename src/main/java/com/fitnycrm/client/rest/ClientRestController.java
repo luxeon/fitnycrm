@@ -1,6 +1,9 @@
 package com.fitnycrm.client.rest;
 
 import com.fitnycrm.client.rest.model.ClientDetailsResponse;
+import com.fitnycrm.client.rest.model.ClientPageItemResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +76,19 @@ public class ClientRestController {
     public ClientDetailsResponse findById(@PathVariable UUID tenantId,
                                         @PathVariable UUID clientId) {
         return clientFacade.findById(tenantId, clientId);
+    }
+
+    @Operation(summary = "Get paginated list of clients for a tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of clients retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ClientPageItemResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @GetMapping("/clients")
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public Page<ClientPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
+                                                      Pageable pageable) {
+        return clientFacade.findByTenantId(tenantId, pageable);
     }
 
     @Operation(summary = "Delete a client")

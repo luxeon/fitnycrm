@@ -2,10 +2,13 @@ package com.fitnycrm.client.facade;
 
 import com.fitnycrm.client.facade.mapper.ClientMapper;
 import com.fitnycrm.client.rest.model.ClientDetailsResponse;
+import com.fitnycrm.client.rest.model.ClientPageItemResponse;
 import com.fitnycrm.client.rest.model.ClientSignupRequest;
 import com.fitnycrm.client.rest.model.ClientUpdateRequest;
 import com.fitnycrm.client.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -18,7 +21,7 @@ public class ClientFacade {
     private final ClientMapper mapper;
 
     public ClientDetailsResponse create(UUID tenantId, ClientSignupRequest request) {
-        return mapper.toResponse(
+        return mapper.toDetailsResponse(
                 clientService.create(
                         mapper.toEntity(tenantId, request)
                 )
@@ -26,7 +29,7 @@ public class ClientFacade {
     }
 
     public ClientDetailsResponse update(UUID tenantId, UUID clientId, ClientUpdateRequest request) {
-        return mapper.toResponse(
+        return mapper.toDetailsResponse(
                 clientService.update(
                         tenantId,
                         clientId,
@@ -40,8 +43,13 @@ public class ClientFacade {
     }
 
     public ClientDetailsResponse findById(UUID tenantId, UUID clientId) {
-        return mapper.toResponse(
+        return mapper.toDetailsResponse(
                 clientService.findById(tenantId, clientId)
         );
+    }
+
+    public Page<ClientPageItemResponse> findByTenantId(UUID tenantId, Pageable pageable) {
+        return clientService.findByTenantId(tenantId, pageable)
+                .map(mapper::toPageItemResponse);
     }
 } 

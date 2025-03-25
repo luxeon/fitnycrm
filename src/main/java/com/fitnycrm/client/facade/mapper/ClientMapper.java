@@ -2,6 +2,7 @@ package com.fitnycrm.client.facade.mapper;
 
 import com.fitnycrm.client.repository.entity.Client;
 import com.fitnycrm.client.rest.model.ClientDetailsResponse;
+import com.fitnycrm.client.rest.model.ClientPageItemResponse;
 import com.fitnycrm.client.rest.model.ClientSignupRequest;
 import com.fitnycrm.client.rest.model.ClientUpdateRequest;
 import org.mapstruct.Mapper;
@@ -23,5 +24,7 @@ public interface ClientMapper {
     @Mapping(target = "updatedAt", ignore = true)
     Client toEntity(UUID tenantId, ClientUpdateRequest request);
 
-    ClientDetailsResponse toResponse(Client client);
+    ClientDetailsResponse toDetailsResponse(Client client);
+
+    ClientPageItemResponse toPageItemResponse(Client client);
 } 

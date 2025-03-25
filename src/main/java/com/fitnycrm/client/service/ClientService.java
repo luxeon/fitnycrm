@@ -5,6 +5,8 @@ import com.fitnycrm.client.repository.entity.Client;
 import com.fitnycrm.client.service.exception.ClientEmailAlreadyExistsException;
 import com.fitnycrm.client.service.exception.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,5 +70,10 @@ public class ClientService {
         }
 
         return client;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Client> findByTenantId(UUID tenantId, Pageable pageable) {
+        return repository.findByTenantId(tenantId, pageable);
     }
 }
