@@ -38,4 +38,10 @@ public class ClientFacade {
     public void delete(UUID tenantId, UUID clientId) {
         clientService.delete(tenantId, clientId);
     }
+
+    public ClientDetailsResponse findById(UUID tenantId, UUID clientId) {
+        return mapper.toResponse(
+                clientService.findById(tenantId, clientId)
+        );
+    }
 } 

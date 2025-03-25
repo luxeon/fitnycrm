@@ -61,6 +61,20 @@ public class ClientRestController {
         return clientFacade.update(tenantId, clientId, request);
     }
 
+    @Operation(summary = "Get client by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Client found",
+                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Client not found")
+    })
+    @GetMapping("/clients/{clientId}")
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public ClientDetailsResponse findById(@PathVariable UUID tenantId,
+                                        @PathVariable UUID clientId) {
+        return clientFacade.findById(tenantId, clientId);
+    }
+
     @Operation(summary = "Delete a client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Client deleted successfully"),

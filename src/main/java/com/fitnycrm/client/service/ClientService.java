@@ -57,4 +57,16 @@ public class ClientService {
 
         repository.delete(client);
     }
+
+    @Transactional(readOnly = true)
+    public Client findById(UUID tenantId, UUID clientId) {
+        Client client = repository.findById(clientId)
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
+
+        if (!client.getTenantId().equals(tenantId)) {
+            throw new ClientNotFoundException(clientId);
+        }
+
+        return client;
+    }
 }
