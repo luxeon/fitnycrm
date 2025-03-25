@@ -1,0 +1,11 @@
+{
+  "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+  "address": "123 Test St",
+  "city": "New York City",
+  "state": "New York",
+  "postalCode": "12345",
+  "country": "USA",
+  "timezone": "America/New_York",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+} 

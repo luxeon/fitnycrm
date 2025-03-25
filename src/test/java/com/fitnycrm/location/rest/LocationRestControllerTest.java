@@ -265,4 +265,54 @@ class LocationRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @Sql("/db/location/insert.sql")
+    void findById_whenLocationExists_thenReturnLocation() throws Exception {
+        var expectedResponse = readFile("fixture/location/findById/response/success.json");
+
+        mockMvc.perform(get(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenLocationNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/location/findById/response/not-found.json");
+
+        mockMvc.perform(get(BASE_URL + "/{locationId}", NON_EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findById_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/location/findById/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}", DIFFERENT_TENANT_ID, EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
 } 
