@@ -84,7 +84,7 @@ public class TrainingRestController {
     @GetMapping
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
     public Page<TrainingPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
-                                                        Pageable pageable) {
+                                                         Pageable pageable) {
         return trainingFacade.findByTenantId(tenantId, pageable);
     }
 
@@ -98,7 +98,7 @@ public class TrainingRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
-                      @PathVariable UUID id) {
+                       @PathVariable UUID id) {
         trainingFacade.delete(tenantId, id);
     }
 } 

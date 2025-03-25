@@ -16,15 +16,7 @@ public class TrainingService {
     private final TrainingRepository trainingRepository;
 
     @Transactional
-    public Training create(UUID tenantId, String name, String description, Integer durationMinutes, Integer clientCapacity) {
-
-        Training training = new Training();
-        training.setTenantId(tenantId);
-        training.setName(name);
-        training.setDescription(description);
-        training.setDurationMinutes(durationMinutes);
-        training.setClientCapacity(clientCapacity);
-
+    public Training create(Training training) {
         return trainingRepository.save(training);
     }
 
@@ -40,13 +32,13 @@ public class TrainingService {
     }
 
     @Transactional
-    public Training update(UUID tenantId, UUID id, String name, String description, Integer durationMinutes, Integer clientCapacity) {
-        Training training = findById(tenantId, id);
-        training.setName(name);
-        training.setDescription(description);
-        training.setDurationMinutes(durationMinutes);
-        training.setClientCapacity(clientCapacity);
-        return trainingRepository.save(training);
+    public Training update(UUID tenantId, UUID id, Training training) {
+        Training existingTraining = findById(tenantId, id);
+        existingTraining.setName(training.getName());
+        existingTraining.setDescription(training.getDescription());
+        existingTraining.setDurationMinutes(training.getDurationMinutes());
+        existingTraining.setClientCapacity(training.getClientCapacity());
+        return trainingRepository.save(existingTraining);
     }
 
     @Transactional
