@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -197,6 +198,48 @@ class ClientRestControllerTest {
         mockMvc.perform(put(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/client/insert.sql")
+    void deleteClient_whenClientExists_thenDeleteClient() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteClient_whenClientNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/client/update/response/not-found.json");
+
+        mockMvc.perform(delete(BASE_URL + "/{clientId}", NON_EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void deleteClient_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteClient_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
+
+        mockMvc.perform(delete("/api/tenants/{tenantId}/clients/{clientId}", DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void deleteClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }
