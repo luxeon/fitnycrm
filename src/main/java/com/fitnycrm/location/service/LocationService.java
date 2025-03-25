@@ -4,6 +4,8 @@ import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.location.repository.LocationRepository;
 import com.fitnycrm.location.service.exception.LocationNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
@@ -13,6 +15,11 @@ import java.util.UUID;
 public class LocationService {
 
     private final LocationRepository locationRepository;
+
+    @Transactional(readOnly = true)
+    public Page<Location> findAll(UUID tenantId, Pageable pageable) {
+        return locationRepository.findByTenantId(tenantId, pageable);
+    }
 
     @Transactional
     public Location create(Location location) {

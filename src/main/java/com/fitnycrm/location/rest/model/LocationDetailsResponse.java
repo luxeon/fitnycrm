@@ -3,7 +3,7 @@ package com.fitnycrm.location.rest.model;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public record LocationResponse(
+public record LocationDetailsResponse(
         UUID id,
         String address,
         String city,

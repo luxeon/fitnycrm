@@ -1,7 +1,8 @@
 package com.fitnycrm.location.rest;
 
+import com.fitnycrm.location.rest.model.LocationDetailsResponse;
+import com.fitnycrm.location.rest.model.LocationPageItemResponse;
 import com.fitnycrm.location.rest.model.LocationRequest;
-import com.fitnycrm.location.rest.model.LocationResponse;
 import com.fitnycrm.location.facade.LocationFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +28,24 @@ public class LocationRestController {
 
     private final LocationFacade locationFacade;
 
+    @Operation(summary = "Get a page of locations")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Locations retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Tenant not found")
+    })
+    @GetMapping("/locations")
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public Page<LocationPageItemResponse> getAll(@PathVariable UUID tenantId,
+                                                 Pageable pageable) {
+        return locationFacade.findAll(tenantId, pageable);
+    }
+
     @Operation(summary = "Create a new location")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Location created",
-                    content = @Content(schema = @Schema(implementation = LocationResponse.class))),
+                    content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Tenant not found")
@@ -36,24 +53,24 @@ public class LocationRestController {
     @PostMapping("/locations")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public LocationResponse create(@PathVariable UUID tenantId,
-                                 @RequestBody @Valid LocationRequest request) {
+    public LocationDetailsResponse create(@PathVariable UUID tenantId,
+                                          @RequestBody @Valid LocationRequest request) {
         return locationFacade.create(tenantId, request);
     }
 
     @Operation(summary = "Update an existing location")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Location updated",
-                    content = @Content(schema = @Schema(implementation = LocationResponse.class))),
+                    content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     @PutMapping("/locations/{id}")
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public LocationResponse update(@PathVariable UUID tenantId,
-                                 @PathVariable UUID id,
-                                 @RequestBody @Valid LocationRequest request) {
+    public LocationDetailsResponse update(@PathVariable UUID tenantId,
+                                          @PathVariable UUID id,
+                                          @RequestBody @Valid LocationRequest request) {
         return locationFacade.update(tenantId, id, request);
     }
 
