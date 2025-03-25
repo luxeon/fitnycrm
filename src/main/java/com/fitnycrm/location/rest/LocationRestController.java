@@ -31,7 +31,7 @@ public class LocationRestController {
     @Operation(summary = "Get a page of locations")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Locations retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
+                    content = @Content(schema = @Schema(implementation = LocationPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/locations")
@@ -70,6 +70,20 @@ public class LocationRestController {
                                           @PathVariable UUID id,
                                           @RequestBody @Valid LocationRequest request) {
         return locationFacade.update(tenantId, id, request);
+    }
+
+    @Operation(summary = "Get a location by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Location not found")
+    })
+    @GetMapping("/locations/{id}")
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public LocationDetailsResponse findById(@PathVariable UUID tenantId,
+                                          @PathVariable UUID id) {
+        return locationFacade.findById(tenantId, id);
     }
 
     @Operation(summary = "Delete a location")

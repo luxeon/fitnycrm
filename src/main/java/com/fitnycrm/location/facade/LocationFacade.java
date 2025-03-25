@@ -39,4 +39,9 @@ public class LocationFacade {
     public void delete(UUID tenantId, UUID id) {
         locationService.delete(tenantId, id);
     }
+
+    public LocationDetailsResponse findById(UUID tenantId, UUID id) {
+        Location location = locationService.findById(tenantId, id);
+        return locationMapper.toDetailsResponse(location);
+    }
 } 
