@@ -17,6 +17,7 @@ import java.util.UUID;
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -240,6 +241,51 @@ class ClientRestControllerTest {
     @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
     void deleteClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/client/insert.sql")
+    void findById_whenClientExists_thenReturnClient() throws Exception {
+        var expectedResponse = readFile("fixture/client/findById/response/success.json");
+
+        mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenClientNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/client/findById/response/not-found.json");
+
+        mockMvc.perform(get(BASE_URL + "/{clientId}", NON_EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findById_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/client/findById/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/clients/{clientId}", DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }
