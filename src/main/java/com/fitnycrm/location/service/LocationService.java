@@ -35,6 +35,6 @@ public class LocationService {
         existingLocation.setCountry(location.getCountry());
         existingLocation.setTimezone(location.getTimezone());
 
-        return locationRepository.save(location);
+        return locationRepository.save(existingLocation);
     }
 } 

@@ -17,14 +17,17 @@ import java.util.UUID;
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql"})
-class LocationRestControllerIntegrationTest {
+class LocationRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations";
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("99999999-9999-9999-9999-999999999999");
+    private static final UUID EXISTING_LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
+    private static final UUID NON_EXISTING_LOCATION_ID = UUID.fromString("ad475c18-777c-4baf-a0d4-14865a0c476a");
 
     @Autowired
     private MockMvc mockMvc;
@@ -98,6 +101,81 @@ class LocationRestControllerIntegrationTest {
         var request = readFile("fixture/location/create/request/valid-request.json");
 
         mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/location/insert.sql")
+    void updateLocation_whenValidRequest_thenUpdateLocation() throws Exception {
+        var request = readFile("fixture/location/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/location/update/response/success.json");
+
+        mockMvc.perform(put(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateLocation_whenInvalidRequest_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/location/update/request/invalid-request.json");
+        var expectedResponse = readFile("fixture/location/update/response/invalid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateLocation_whenLocationNotFound_thenReturn404() throws Exception {
+        var request = readFile("fixture/location/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/location/update/response/not-found.json");
+
+        mockMvc.perform(put(BASE_URL + "/{locationId}", NON_EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateLocation_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/location/update/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateLocation_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/location/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/location/update/response/access-denied.json");
+
+        mockMvc.perform(put("/api/tenants/{tenantId}/locations/{locationId}", DIFFERENT_TENANT_ID, EXISTING_LOCATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void updateLocation_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/location/update/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
