@@ -40,4 +40,20 @@ public class LocationRestController {
                                  @RequestBody @Valid LocationRequest request) {
         return locationFacade.create(tenantId, request);
     }
+
+    @Operation(summary = "Update an existing location")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location updated",
+                    content = @Content(schema = @Schema(implementation = LocationResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Location not found")
+    })
+    @PutMapping("/locations/{id}")
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public LocationResponse update(@PathVariable UUID tenantId,
+                                 @PathVariable UUID id,
+                                 @RequestBody @Valid LocationRequest request) {
+        return locationFacade.update(tenantId, id, request);
+    }
 } 

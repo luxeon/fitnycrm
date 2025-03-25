@@ -21,4 +21,10 @@ public class LocationFacade {
         Location savedLocation = locationService.create(location);
         return locationMapper.toResponse(savedLocation);
     }
+
+    public LocationResponse update(UUID tenantId, UUID id, LocationRequest request) {
+        Location location = locationMapper.toEntity(tenantId, request);
+        Location updatedLocation = locationService.update(id, location);
+        return locationMapper.toResponse(updatedLocation);
+    }
 } 
