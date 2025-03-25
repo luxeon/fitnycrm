@@ -1,6 +1,6 @@
 package com.fitnycrm.location.service;
 
-import com.fitnycrm.location.entity.Location;
+import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.location.repository.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

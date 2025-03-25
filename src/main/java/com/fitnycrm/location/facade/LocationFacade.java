@@ -1,9 +1,9 @@
 package com.fitnycrm.location.facade;
 
-import com.fitnycrm.location.dto.LocationRequest;
-import com.fitnycrm.location.dto.LocationResponse;
-import com.fitnycrm.location.entity.Location;
-import com.fitnycrm.location.mapper.LocationMapper;
+import com.fitnycrm.location.rest.model.LocationRequest;
+import com.fitnycrm.location.rest.model.LocationResponse;
+import com.fitnycrm.location.repository.entity.Location;
+import com.fitnycrm.location.facade.mapper.LocationMapper;
 import com.fitnycrm.location.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,0 +1,10 @@
+{
+  "address": "123 Test St",
+  "city": "New York City",
+  "state": "New York",
+  "country": "USA",
+  "postalCode": "12345",
+  "timezone": "America/New_York",
+  "phone": "123-456-7890",
+  "email": "test@location.com"
+} 

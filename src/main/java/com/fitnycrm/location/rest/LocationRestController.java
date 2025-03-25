@@ -1,7 +1,7 @@
 package com.fitnycrm.location.rest;
 
-import com.fitnycrm.location.dto.LocationRequest;
-import com.fitnycrm.location.dto.LocationResponse;
+import com.fitnycrm.location.rest.model.LocationRequest;
+import com.fitnycrm.location.rest.model.LocationResponse;
 import com.fitnycrm.location.facade.LocationFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

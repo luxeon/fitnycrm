@@ -1,12 +1,9 @@
-package com.fitnycrm.location.dto;
+package com.fitnycrm.location.rest.model;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record LocationRequest(
-        @NotBlank
-        @Size(max = 255)
-        String name,
         @NotBlank
         @Size(max = 255)
         String address,

@@ -1,0 +1,11 @@
+{
+  "id": "${json-unit.regex}^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+  "address": "123 Test St",
+  "city": "New York City",
+  "state": "New York",
+  "postalCode": "12345",
+  "country": "USA",
+  "timezone": "America/New_York",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+} 

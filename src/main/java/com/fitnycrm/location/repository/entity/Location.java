@@ -1,10 +1,13 @@
-package com.fitnycrm.location.entity;
+package com.fitnycrm.location.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -19,9 +22,6 @@ public class Location {
 
     @Column(name = "tenant_id", nullable = false)
     private UUID tenantId;
-
-    @Column(nullable = false)
-    private String name;
 
     @Column(nullable = false)
     private String address;
@@ -40,4 +40,13 @@ public class Location {
 
     @Column(nullable = false)
     private String timezone;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false,
+            updatable = false)
+    private OffsetDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
 } 

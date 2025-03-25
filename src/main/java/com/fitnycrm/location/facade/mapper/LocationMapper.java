@@ -1,8 +1,8 @@
-package com.fitnycrm.location.mapper;
+package com.fitnycrm.location.facade.mapper;
 
-import com.fitnycrm.location.dto.LocationRequest;
-import com.fitnycrm.location.dto.LocationResponse;
-import com.fitnycrm.location.entity.Location;
+import com.fitnycrm.location.rest.model.LocationRequest;
+import com.fitnycrm.location.rest.model.LocationResponse;
+import com.fitnycrm.location.repository.entity.Location;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
