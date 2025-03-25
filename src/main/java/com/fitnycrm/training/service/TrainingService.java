@@ -1,7 +1,8 @@
 package com.fitnycrm.training.service;
 
-import com.fitnycrm.training.entity.Training;
+import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.repository.TrainingRepository;
+import com.fitnycrm.training.service.exception.TrainingNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class TrainingService {
     @Transactional(readOnly = true)
     public Training findById(UUID tenantId, UUID id) {
         return trainingRepository.findByIdAndTenantId(id, tenantId)
-                .orElseThrow(() -> new IllegalArgumentException("Training not found"));
+                .orElseThrow(() -> new TrainingNotFoundException(id));
     }
 
     @Transactional(readOnly = true)

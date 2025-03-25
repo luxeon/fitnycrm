@@ -1,6 +1,5 @@
 package com.fitnycrm.training.facade;
 
-import com.fitnycrm.training.entity.Training;
 import com.fitnycrm.training.facade.mapper.TrainingMapper;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.TrainingDetailsResponse;

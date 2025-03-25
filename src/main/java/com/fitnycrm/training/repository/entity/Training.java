@@ -1,4 +1,4 @@
-package com.fitnycrm.training.entity;
+package com.fitnycrm.training.repository.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
