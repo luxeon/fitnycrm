@@ -1,8 +1,9 @@
 package com.fitnycrm.training.facade;
 
 import com.fitnycrm.training.entity.Training;
-import com.fitnycrm.training.rest.model.TrainingRequest;
-import com.fitnycrm.training.rest.model.TrainingResponse;
+import com.fitnycrm.training.rest.model.CreateTrainingRequest;
+import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
+import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import com.fitnycrm.training.service.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class TrainingFacade {
     private final TrainingService trainingService;
 
-    public TrainingResponse create(UUID tenantId, TrainingRequest request) {
+    public TrainingDetailsResponse create(UUID tenantId, CreateTrainingRequest request) {
         Training training = trainingService.create(
                 tenantId,
                 request.name(),
@@ -27,16 +28,16 @@ public class TrainingFacade {
         return toResponse(training);
     }
 
-    public TrainingResponse findById(UUID tenantId, UUID id) {
+    public TrainingDetailsResponse findById(UUID tenantId, UUID id) {
         return toResponse(trainingService.findById(tenantId, id));
     }
 
-    public Page<TrainingResponse> findByTenantId(UUID tenantId, Pageable pageable) {
+    public Page<TrainingDetailsResponse> findByTenantId(UUID tenantId, Pageable pageable) {
         return trainingService.findByTenantId(tenantId, pageable)
                 .map(this::toResponse);
     }
 
-    public TrainingResponse update(UUID tenantId, UUID id, TrainingRequest request) {
+    public TrainingDetailsResponse update(UUID tenantId, UUID id, UpdateTrainingRequest request) {
         Training training = trainingService.update(
                 tenantId,
                 id,
@@ -52,8 +53,8 @@ public class TrainingFacade {
         trainingService.delete(tenantId, id);
     }
 
-    private TrainingResponse toResponse(Training training) {
-        return new TrainingResponse(
+    private TrainingDetailsResponse toResponse(Training training) {
+        return new TrainingDetailsResponse(
                 training.getId(),
                 training.getName(),
                 training.getDescription(),

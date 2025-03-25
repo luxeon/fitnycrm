@@ -1,8 +1,9 @@
 package com.fitnycrm.training.rest;
 
 import com.fitnycrm.training.facade.TrainingFacade;
-import com.fitnycrm.training.rest.model.TrainingRequest;
-import com.fitnycrm.training.rest.model.TrainingResponse;
+import com.fitnycrm.training.rest.model.CreateTrainingRequest;
+import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
+import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,7 +31,7 @@ public class TrainingRestController {
     @Operation(summary = "Create a new training")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Training created",
-                    content = @Content(schema = @Schema(implementation = TrainingResponse.class))),
+                    content = @Content(schema = @Schema(implementation = TrainingDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Tenant not found")
@@ -38,51 +39,51 @@ public class TrainingRestController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public TrainingResponse create(@PathVariable UUID tenantId,
-                                 @RequestBody @Valid TrainingRequest request) {
+    public TrainingDetailsResponse create(@PathVariable UUID tenantId,
+                                          @RequestBody @Valid CreateTrainingRequest request) {
         return trainingFacade.create(tenantId, request);
     }
 
     @Operation(summary = "Update an existing training")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Training updated successfully",
-                    content = @Content(schema = @Schema(implementation = TrainingResponse.class))),
+                    content = @Content(schema = @Schema(implementation = TrainingDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @PutMapping("/{id}")
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public TrainingResponse update(@PathVariable UUID tenantId,
-                                 @PathVariable UUID id,
-                                 @RequestBody @Valid TrainingRequest request) {
+    public TrainingDetailsResponse update(@PathVariable UUID tenantId,
+                                          @PathVariable UUID id,
+                                          @RequestBody @Valid UpdateTrainingRequest request) {
         return trainingFacade.update(tenantId, id, request);
     }
 
     @Operation(summary = "Get training by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Training found",
-                    content = @Content(schema = @Schema(implementation = TrainingResponse.class))),
+                    content = @Content(schema = @Schema(implementation = TrainingDetailsResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @GetMapping("/{id}")
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public TrainingResponse findById(@PathVariable UUID tenantId,
-                                   @PathVariable UUID id) {
+    public TrainingDetailsResponse findById(@PathVariable UUID tenantId,
+                                            @PathVariable UUID id) {
         return trainingFacade.findById(tenantId, id);
     }
 
     @Operation(summary = "Get paginated list of trainings for a tenant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of trainings retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = TrainingResponse.class))),
+                    content = @Content(schema = @Schema(implementation = TrainingDetailsResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public Page<TrainingResponse> findByTenantId(@PathVariable UUID tenantId,
-                                                Pageable pageable) {
+    public Page<TrainingDetailsResponse> findByTenantId(@PathVariable UUID tenantId,
+                                                        Pageable pageable) {
         return trainingFacade.findByTenantId(tenantId, pageable);
     }
 

@@ -2,7 +2,7 @@ package com.fitnycrm.training.rest.model;
 
 import java.util.UUID;
 
-public record TrainingResponse(
+public record TrainingDetailsResponse(
     UUID id,
     String name,
     String description,
