@@ -3,6 +3,7 @@ package com.fitnycrm.training.facade;
 import com.fitnycrm.training.entity.Training;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
+import com.fitnycrm.training.rest.model.TrainingPageItemResponse;
 import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import com.fitnycrm.training.service.TrainingService;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +33,9 @@ public class TrainingFacade {
         return toResponse(trainingService.findById(tenantId, id));
     }
 
-    public Page<TrainingDetailsResponse> findByTenantId(UUID tenantId, Pageable pageable) {
+    public Page<TrainingPageItemResponse> findByTenantId(UUID tenantId, Pageable pageable) {
         return trainingService.findByTenantId(tenantId, pageable)
-                .map(this::toResponse);
+                .map(this::toPageItemResponse);
     }
 
     public TrainingDetailsResponse update(UUID tenantId, UUID id, UpdateTrainingRequest request) {
@@ -59,7 +60,21 @@ public class TrainingFacade {
                 training.getName(),
                 training.getDescription(),
                 training.getDurationMinutes(),
-                training.getClientCapacity()
+                training.getClientCapacity(),
+                training.getCreatedAt(),
+                training.getUpdatedAt()
+        );
+    }
+
+    private TrainingPageItemResponse toPageItemResponse(Training training) {
+        return new TrainingPageItemResponse(
+                training.getId(),
+                training.getName(),
+                training.getDescription(),
+                training.getDurationMinutes(),
+                training.getClientCapacity(),
+                training.getCreatedAt(),
+                training.getUpdatedAt()
         );
     }
 } 

@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Schema(description = "Training details")
-public record TrainingDetailsResponse(
+@Schema(description = "Training item response for paginated results")
+public record TrainingPageItemResponse(
         @Schema(description = "Unique identifier of the training")
         UUID id,
 

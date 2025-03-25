@@ -3,6 +3,7 @@ package com.fitnycrm.training.rest;
 import com.fitnycrm.training.facade.TrainingFacade;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
+import com.fitnycrm.training.rest.model.TrainingPageItemResponse;
 import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -77,12 +78,12 @@ public class TrainingRestController {
     @Operation(summary = "Get paginated list of trainings for a tenant")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of trainings retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = TrainingDetailsResponse.class))),
+                    content = @Content(schema = @Schema(implementation = TrainingPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public Page<TrainingDetailsResponse> findByTenantId(@PathVariable UUID tenantId,
+    public Page<TrainingPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                         Pageable pageable) {
         return trainingFacade.findByTenantId(tenantId, pageable);
     }
