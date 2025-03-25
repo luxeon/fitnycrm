@@ -60,4 +60,18 @@ public class ClientRestController {
                                       @RequestBody @Valid ClientUpdateRequest request) {
         return clientFacade.updateClient(tenantId, clientId, request);
     }
+
+    @Operation(summary = "Delete a client")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Client deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Client not found")
+    })
+    @DeleteMapping("/clients/{clientId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public void delete(@PathVariable UUID tenantId,
+                      @PathVariable UUID clientId) {
+        clientFacade.deleteClient(tenantId, clientId);
+    }
 } 

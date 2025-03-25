@@ -34,4 +34,8 @@ public class ClientFacade {
                 )
         );
     }
+
+    public void deleteClient(UUID tenantId, UUID clientId) {
+        clientService.deleteClient(tenantId, clientId);
+    }
 } 
