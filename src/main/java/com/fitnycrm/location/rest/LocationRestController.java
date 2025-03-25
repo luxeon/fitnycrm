@@ -32,8 +32,7 @@ public class LocationRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Locations retrieved successfully",
                     content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "404", description = "Tenant not found")
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/locations")
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
@@ -47,8 +46,7 @@ public class LocationRestController {
             @ApiResponse(responseCode = "201", description = "Location created",
                     content = @Content(schema = @Schema(implementation = LocationDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "404", description = "Tenant not found")
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @PostMapping("/locations")
     @ResponseStatus(HttpStatus.CREATED)

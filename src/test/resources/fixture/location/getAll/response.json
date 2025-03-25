@@ -1,0 +1,40 @@
+{
+  "content": [
+    {
+      "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+      "address": "123 Test St",
+      "city": "New York City",
+      "state": "New York",
+      "postalCode": "12345",
+      "country": "USA",
+      "timezone": "America/New_York",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "empty": true,
+      "sorted": false,
+      "unsorted": true
+    },
+    "pageNumber": 0,
+    "pageSize": 20,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalElements": 1,
+  "totalPages": 1,
+  "last": true,
+  "size": 20,
+  "number": 0,
+  "sort": {
+    "empty": true,
+    "sorted": false,
+    "unsorted": true
+  },
+  "numberOfElements": 1,
+  "first": true,
+  "empty": false
+} 
