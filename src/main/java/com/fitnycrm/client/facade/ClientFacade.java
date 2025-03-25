@@ -17,17 +17,17 @@ public class ClientFacade {
     private final ClientService clientService;
     private final ClientMapper mapper;
 
-    public ClientDetailsResponse createClient(UUID tenantId, ClientSignupRequest request) {
+    public ClientDetailsResponse create(UUID tenantId, ClientSignupRequest request) {
         return mapper.toResponse(
-                clientService.createClient(
+                clientService.create(
                         mapper.toEntity(tenantId, request)
                 )
         );
     }
 
-    public ClientDetailsResponse updateClient(UUID tenantId, UUID clientId, ClientUpdateRequest request) {
+    public ClientDetailsResponse update(UUID tenantId, UUID clientId, ClientUpdateRequest request) {
         return mapper.toResponse(
-                clientService.updateClient(
+                clientService.update(
                         tenantId,
                         clientId,
                         mapper.toEntity(tenantId, request)
@@ -35,7 +35,7 @@ public class ClientFacade {
         );
     }
 
-    public void deleteClient(UUID tenantId, UUID clientId) {
-        clientService.deleteClient(tenantId, clientId);
+    public void delete(UUID tenantId, UUID clientId) {
+        clientService.delete(tenantId, clientId);
     }
 } 

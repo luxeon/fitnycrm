@@ -17,7 +17,7 @@ public class ClientService {
     private final ClientRepository repository;
 
     @Transactional
-    public Client createClient(Client client) {
+    public Client create(Client client) {
         if (repository.existsByTenantIdAndEmail(client.getTenantId(), client.getEmail())) {
             throw new ClientEmailAlreadyExistsException(client.getEmail());
         }
@@ -25,7 +25,7 @@ public class ClientService {
     }
 
     @Transactional
-    public Client updateClient(UUID tenantId, UUID clientId, Client client) {
+    public Client update(UUID tenantId, UUID clientId, Client client) {
         Client existingClient = repository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
 
@@ -47,7 +47,7 @@ public class ClientService {
     }
 
     @Transactional
-    public void deleteClient(UUID tenantId, UUID clientId) {
+    public void delete(UUID tenantId, UUID clientId) {
         Client client = repository.findById(clientId)
                 .orElseThrow(() -> new ClientNotFoundException(clientId));
 

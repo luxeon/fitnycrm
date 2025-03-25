@@ -41,7 +41,7 @@ public class ClientRestController {
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
     public ClientDetailsResponse create(@PathVariable UUID tenantId,
                                               @RequestBody @Valid ClientSignupRequest request) {
-        return clientFacade.createClient(tenantId, request);
+        return clientFacade.create(tenantId, request);
     }
 
     @Operation(summary = "Update an existing client")
@@ -58,7 +58,7 @@ public class ClientRestController {
     public ClientDetailsResponse update(@PathVariable UUID tenantId,
                                       @PathVariable UUID clientId,
                                       @RequestBody @Valid ClientUpdateRequest request) {
-        return clientFacade.updateClient(tenantId, clientId, request);
+        return clientFacade.update(tenantId, clientId, request);
     }
 
     @Operation(summary = "Delete a client")
@@ -72,6 +72,6 @@ public class ClientRestController {
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                       @PathVariable UUID clientId) {
-        clientFacade.deleteClient(tenantId, clientId);
+        clientFacade.delete(tenantId, clientId);
     }
 } 

@@ -11,11 +11,12 @@ CREATE TABLE IF NOT EXISTS locations
     id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id   uuid         NOT NULL,
     name        VARCHAR(255) NOT NULL,
-    address     VARCHAR(255),
-    city        VARCHAR(100),
-    state       VARCHAR(100),
-    postal_code VARCHAR(20),
-    country     VARCHAR(50),
+    address     VARCHAR(255) NOT NULL,
+    city        VARCHAR(100) NOT NULL,
+    state       VARCHAR(100) NOT NULL,
+    postal_code VARCHAR(20)  NOT NULL,
+    country     VARCHAR(50)  NOT NULL,
+    timezone    VARCHAR(255) NOT NULL,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
