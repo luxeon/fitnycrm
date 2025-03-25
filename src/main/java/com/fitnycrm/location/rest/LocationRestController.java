@@ -56,4 +56,18 @@ public class LocationRestController {
                                  @RequestBody @Valid LocationRequest request) {
         return locationFacade.update(tenantId, id, request);
     }
+
+    @Operation(summary = "Delete a location")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Location deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Location not found")
+    })
+    @DeleteMapping("/locations/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    public void delete(@PathVariable UUID tenantId,
+                      @PathVariable UUID id) {
+        locationFacade.delete(tenantId, id);
+    }
 } 

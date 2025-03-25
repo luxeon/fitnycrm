@@ -37,4 +37,16 @@ public class LocationService {
 
         return locationRepository.save(existingLocation);
     }
+
+    @Transactional
+    public void delete(UUID tenantId, UUID id) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new LocationNotFoundException(id));
+        
+        if (!location.getTenantId().equals(tenantId)) {
+            throw new LocationNotFoundException(id);
+        }
+
+        locationRepository.delete(location);
+    }
 } 

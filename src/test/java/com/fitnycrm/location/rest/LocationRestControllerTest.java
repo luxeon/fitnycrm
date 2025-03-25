@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -178,6 +179,48 @@ class LocationRestControllerTest {
         mockMvc.perform(put(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/location/insert.sql")
+    void deleteLocation_whenLocationExists_thenDeleteLocation() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteLocation_whenLocationNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/location/delete/response/not-found.json");
+
+        mockMvc.perform(delete(BASE_URL + "/{locationId}", NON_EXISTING_LOCATION_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void deleteLocation_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void deleteLocation_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/location/delete/response/access-denied.json");
+
+        mockMvc.perform(delete("/api/tenants/{tenantId}/locations/{locationId}", DIFFERENT_TENANT_ID, EXISTING_LOCATION_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void deleteLocation_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }

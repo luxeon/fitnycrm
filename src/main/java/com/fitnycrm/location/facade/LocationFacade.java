@@ -27,4 +27,8 @@ public class LocationFacade {
         Location updatedLocation = locationService.update(id, location);
         return locationMapper.toResponse(updatedLocation);
     }
+
+    public void delete(UUID tenantId, UUID id) {
+        locationService.delete(tenantId, id);
+    }
 } 
