@@ -3,20 +3,33 @@ description:
 globs: 
 alwaysApply: true
 ---
-# Your rule content
+# Full-Stack Development Rules
 
-General Development Principles:
-You are an experienced Senior Java Developer who strictly follows:
-1. SOLID, DRY, KISS, and YAGNI principles.
-2. OWASP best practices for security.
-3. Step-by-step problem-solving by breaking tasks into the smallest logical units.
+## General Development Principles
+1. SOLID, DRY, KISS, and YAGNI principles
+2. OWASP best practices for security
+3. Step-by-step problem-solving by breaking tasks into the smallest logical units
 4. Write comments only if it's really necessary, don't comment simple code
 
-Technology Stack:
+## Technology Stack
+### Backend
 1. Language & Framework: Java 21, Spring Boot 3
 2. Build Tool: Maven
 3. Dependencies: Spring Web, Spring Data JPA, Lombok, MapStruct, PostgreSQL Driver
 
+### Frontend
+1. Framework: Angular 17+
+2. Language: TypeScript
+3. Build Tool: Angular CLI
+4. Dependencies:
+   - Angular Material
+   - NgRx (Store, Effects, Entity)
+   - Angular Flex Layout
+   - NgRx DevTools
+   - Angular PWA (if needed)
+
+## Architecture
+### Backend
 Application Logic Design:
 1. Repositories:
  - All database operations must be done in @Repository classes
@@ -80,12 +93,134 @@ Data Transfer Objects (DTOs):
 3. Don't combine @NotBlank, @Size, @Email and @Pattern annotations
 4. Don't add message to validation annotations
 
-Naming conventions:
+### Frontend
+1. Project Structure:
+   ```
+   src/
+   ├── app/
+   │   ├── core/           # Singleton services, guards, interceptors
+   │   ├── shared/         # Shared components, pipes, directives
+   │   ├── features/       # Feature modules
+   │   └── layout/         # Layout components
+   ├── assets/
+   └── environments/
+   ```
+
+2. Core Module:
+- Must contain singleton services
+- Must contain guards
+- Must contain interceptors
+- Must contain models
+- Must be imported only once in AppModule
+
+3. Shared Module:
+- Must contain reusable components
+- Must contain pipes
+- Must contain directives
+- Must be imported by feature modules
+- Must export all shared components
+
+4. Feature Modules:
+- Must be lazy loaded
+- Must have its own routing
+- Must have its own components
+- Must have its own services
+- Must have its own models
+
+5. Services:
+- Must be provided in appropriate module
+- Must use TypeScript interfaces
+- Must handle errors properly
+- Must use RxJS operators appropriately
+- Must be injectable
+
+6. Components:
+- Must be presentational or container
+- Must use OnPush change detection
+- Must unsubscribe from observables
+- Must use async pipe when possible
+- Must use typed forms
+
+7. State Management:
+- Must use NgRx for global state
+- Must use services for local state
+- Must use NgRx Entity for collections
+- Must use NgRx Effects for side effects
+- Must use selectors for state selection
+
+8. Forms:
+- Must use typed forms
+- Must use form validation
+- Must use custom validators when needed
+- Must handle form errors
+- Must use form arrays when needed
+
+9. Routing:
+- Must use lazy loading
+- Must use guards for protection
+- Must use resolvers for data
+- Must handle route errors
+- Must use route parameters
+
+10. HTTP:
+- Must use interceptors
+- Must handle errors
+- Must use typed responses
+- Must use environment variables
+- Must use proper HTTP methods
+
+11. Testing:
+- Must write unit tests for services
+- Must write unit tests for components
+- Must write e2e tests for critical paths
+- Must use TestBed
+- Must use MockStore for NgRx
+
+12. Performance:
+- Must use OnPush change detection
+- Must use trackBy in ngFor
+- Must lazy load modules
+- Must optimize images
+- Must use proper caching
+
+13. Security:
+- Must use HTTP interceptors for auth
+- Must use guards for routes
+- Must sanitize user input
+- Must use CSRF tokens
+- Must handle XSS
+
+14. Accessibility:
+- Must use ARIA attributes
+- Must use semantic HTML
+- Must support keyboard navigation
+- Must have proper contrast
+- Must support screen readers
+
+
+## Naming Conventions
+### Backend
 1. Request DTOs → Suffix with Request
 2. Response DTOs → Suffix with Response
 3. View DTOs (for multi-join queries) → Suffix with View
 
-Package Structure:
+###
+### Frontend
+1. Components: PascalCase (e.g., UserProfileComponent)
+2. Services: PascalCase + Service (e.g., UserService)
+3. Models/Interfaces: PascalCase (e.g., User)
+4. Enums: PascalCase (e.g., UserRole)
+5. Constants: UPPER_SNAKE_CASE
+6. Variables: camelCase
+7. Methods: camelCase
+8. Private members: _camelCase
+9. Selectors: camelCase
+10. Actions: [Feature] Action Name
+11. Reducers: camelCase
+12. Effects: camelCase$
+
+## Package Structure
+### Backend
 1. Each domain module (e.g., users, tenants) must have the following sub-packages:
 - service/ (business logic)
 - facade/ (DTO mapping & aggregations)
@@ -93,10 +228,38 @@ Package Structure:
 - repository/ (data access)
 - Additional sub-packages (e.g., utils/) may be created if necessary.
 
+### Frontend
+```
+src/
+├── app/
+│   ├── core/
+│   │   ├── guards/
+│   │   ├── interceptors/
+│   │   ├── services/
+│   │   └── models/
+│   ├── shared/
+│   │   ├── components/
+│   │   ├── directives/
+│   │   └── pipes/
+│   ├── features/
+│   │   └── [feature-name]/
+│   │       ├── components/
+│   │       ├── services/
+│   │       ├── models/
+│   │       └── [feature-name].module.ts
+│   └── layout/
+│       ├── header/
+│       ├── footer/
+│       └── sidebar/
+├── assets/
+└── environments/
+```
+
 Maven dependencies:
 - Dependency version must be declared properties
 
-Integration Testing:
+## Integration Testing
+### Backend
 1. Every @RestController method must have integration tests.
 2. Tech stack:
 - Spring MockMvc
@@ -112,6 +275,25 @@ Integration Testing:
 11. Validate error response
 12. Keep the same code style in tests
 
-Other requirements:
+### Frontend
+1. Must use Cypress for e2e testing
+2. Must test critical user paths
+3. Must test error scenarios
+4. Must test responsive design
+5. Must test accessibility
+
+## Other Requirements
+### Backend
 - Use @Data, @Validated annotation together with @ConfigurationProperties and add validation
 - Use @ConfigurationProperties classes instead of @Value
+### Frontend
+- Must use environment variables
+- Must use proper error handling
+- Must use proper logging
+- Must use proper documentation
+- Must use proper versioning
+- Must use proper CI/CD
+- Must use proper monitoring
+- Must use proper analytics
+- Must use proper caching
+- Must use proper security
