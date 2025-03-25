@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+      "email": "john.doe@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "phoneNumber": "+12345678901",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    },
+    {
+      "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd02",
+      "email": "jane.smith@example.com",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "phoneNumber": "+12345678902",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    },
+    "pageNumber": 0,
+    "pageSize": 10,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "totalElements": 2,
+  "totalPages": 1,
+  "last": true,
+  "size": 10,
+  "number": 0,
+  "sort": {
+    "empty": false,
+    "sorted": true,
+    "unsorted": false
+  },
+  "numberOfElements": 2,
+  "first": true,
+  "empty": false
+} 

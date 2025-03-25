@@ -289,4 +289,46 @@ class ClientRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @Sql("/db/client/insert.sql")
+    void findByTenantId_whenClientsExist_thenReturnPaginatedClients() throws Exception {
+        var expectedResponse = readFile("fixture/client/findByTenantId/response/success.json");
+
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "email,desc")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findByTenantId_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findByTenantId_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/client/findByTenantId/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/clients", DIFFERENT_TENANT_ID)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    void findByTenantId_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
 } 
