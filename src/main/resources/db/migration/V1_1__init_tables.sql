@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS locations
     postal_code VARCHAR(20)  NOT NULL,
     country     VARCHAR(50)  NOT NULL,
     timezone    VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITHOUT TIME ZONE,
-    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    created_at  TIMESTAMP WITHOUT TIME ZONE,
+    updated_at  TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
@@ -67,27 +67,29 @@ CREATE TABLE IF NOT EXISTS clients
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
-CREATE TABLE IF NOT EXISTS services
+CREATE TABLE IF NOT EXISTS trainings
 (
     id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id        uuid         NOT NULL,
     name             VARCHAR(255) NOT NULL,
     description      TEXT,
     duration_minutes INTEGER,
-    capacity         INTEGER,
+    client_capacity  INTEGER,
+    created_at       TIMESTAMP WITHOUT TIME ZONE,
+    updated_at       TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE TABLE IF NOT EXISTS schedule
 (
     id                    uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    service_id            uuid        NOT NULL,
+    training_id           uuid        NOT NULL,
     location_id           uuid        NOT NULL,
     day_of_week           VARCHAR(10) NOT NULL,
     start_time            TIME        NOT NULL,
     end_time              TIME        NOT NULL,
     default_instructor_id uuid,
-    FOREIGN KEY (service_id) REFERENCES services (id),
+    FOREIGN KEY (training_id) REFERENCES trainings (id),
     FOREIGN KEY (location_id) REFERENCES locations (id),
     FOREIGN KEY (default_instructor_id) REFERENCES users (id)
 );
@@ -118,12 +120,12 @@ CREATE TABLE IF NOT EXISTS client_payments
     id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     client_id        uuid                        NOT NULL,
     payment_type     VARCHAR(20)                 NOT NULL, -- "per_visit", "subscription"
-    service_id       uuid                        NOT NULL,
+    training_id      uuid                        NOT NULL,
     amount           NUMERIC                     NOT NULL,
     valid_from       DATE,
     valid_until      DATE,
     visits_remaining INTEGER,
     payment_date     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     FOREIGN KEY (client_id) REFERENCES users (id),
-    FOREIGN KEY (service_id) REFERENCES services (id)
+    FOREIGN KEY (training_id) REFERENCES trainings (id)
 );
