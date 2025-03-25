@@ -1,0 +1,6 @@
+{
+  "name": "New Training",
+  "description": "A new training session",
+  "durationMinutes": 75,
+  "clientCapacity": 10
+} 

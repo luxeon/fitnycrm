@@ -1,0 +1,47 @@
+{
+  "content": [
+    {
+      "id": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+      "name": "Basic Training",
+      "description": "Basic training session",
+      "durationMinutes": 60,
+      "clientCapacity": 10,
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    },
+    {
+      "id": "7a30002e-836c-40a4-b9be-f5f1a5cbb16e",
+      "name": "Advanced Training",
+      "description": "Advanced training session",
+      "durationMinutes": 90,
+      "clientCapacity": 20,
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "sort": {
+      "sorted": true,
+      "empty": false,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 2,
+  "size": 10,
+  "number": 0,
+  "sort": {
+    "sorted": true,
+    "empty": false,
+    "unsorted": false
+  },
+  "first": true,
+  "numberOfElements": 2,
+  "empty": false
+}
