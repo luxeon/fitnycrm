@@ -38,7 +38,7 @@ public class ClientRestController {
     @PostMapping("/clients")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
-    public ClientDetailsResponse createClient(@PathVariable UUID tenantId,
+    public ClientDetailsResponse create(@PathVariable UUID tenantId,
                                               @RequestBody @Valid ClientSignupRequest request) {
         return clientFacade.createClient(tenantId, request);
     }
