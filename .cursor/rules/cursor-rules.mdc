@@ -96,14 +96,15 @@ Data Transfer Objects (DTOs):
 ### Frontend
 1. Project Structure:
    ```
-   src/
-   ├── app/
-   │   ├── core/           # Singleton services, guards, interceptors
-   │   ├── shared/         # Shared components, pipes, directives
-   │   ├── features/       # Feature modules
-   │   └── layout/         # Layout components
-   ├── assets/
-   └── environments/
+   ui
+   └── src/
+        ├── app/
+        │   ├── core/           # Singleton services, guards, interceptors
+        │   ├── shared/         # Shared components, pipes, directives
+        │   ├── features/       # Feature modules
+        │   └── layout/         # Layout components
+        ├── assets/
+        └── environments/
    ```
 
 2. Core Module:
@@ -112,6 +113,7 @@ Data Transfer Objects (DTOs):
 - Must contain interceptors
 - Must contain models
 - Must be imported only once in AppModule
+- Must not use deprecated components or modules
 
 3. Shared Module:
 - Must contain reusable components
@@ -255,8 +257,11 @@ src/
 └── environments/
 ```
 
-Maven dependencies:
+## Dependencies
+### Maven
 - Dependency version must be declared properties
+### NPM
+- avoid dependencies with vulnerabilities as much as you can
 
 ## Integration Testing
 ### Backend
