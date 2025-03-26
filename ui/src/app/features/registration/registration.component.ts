@@ -13,7 +13,6 @@ import { HttpErrorResponse } from '@angular/common/http';
     ReactiveFormsModule,
     RouterLink
   ],
-  providers: [AuthService],
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.scss']
 })
