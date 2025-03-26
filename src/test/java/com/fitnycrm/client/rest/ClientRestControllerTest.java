@@ -102,7 +102,7 @@ class ClientRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void createClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/client/create/request/valid-request.json");
 
@@ -192,7 +192,7 @@ class ClientRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void updateClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/client/update/request/valid-request.json");
 
@@ -238,7 +238,7 @@ class ClientRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void deleteClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
@@ -283,7 +283,7 @@ class ClientRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
@@ -323,7 +323,7 @@ class ClientRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void findByTenantId_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(get(BASE_URL)
                         .param("page", "0")

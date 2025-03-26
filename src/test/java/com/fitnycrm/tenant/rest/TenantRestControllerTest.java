@@ -76,7 +76,7 @@ class TenantRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void getOne_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(get(BASE_URL + "/{id}", TENANT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role))
@@ -200,7 +200,7 @@ class TenantRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void create_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/tenant/create/request/valid-tenant.json");
 
@@ -212,7 +212,7 @@ class TenantRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void update_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/tenant/update/request/valid-tenant.json");
 

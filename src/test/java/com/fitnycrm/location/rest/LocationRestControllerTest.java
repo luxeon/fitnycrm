@@ -99,7 +99,7 @@ class LocationRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void createLocation_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/location/create/request/valid-request.json");
 
@@ -174,7 +174,7 @@ class LocationRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void updateLocation_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         var request = readFile("fixture/location/update/request/valid-request.json");
 
@@ -220,7 +220,7 @@ class LocationRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void deleteLocation_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(delete(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
@@ -258,7 +258,7 @@ class LocationRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void getAll_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(get(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -308,7 +308,7 @@ class LocationRestControllerTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "COACH"})
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(get(BASE_URL + "/{locationId}", EXISTING_LOCATION_ID)
                         .contentType(MediaType.APPLICATION_JSON)
