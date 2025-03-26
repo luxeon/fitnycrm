@@ -2,7 +2,7 @@ package com.fitnycrm.user.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnycrm.common.annotation.IntegrationTest;
-import com.fitnycrm.user.rest.model.UserDetailsResponse;
+import com.fitnycrm.user.rest.model.AdminDetailsResponse;
 import com.fitnycrm.user.repository.UserRepository;
 import com.fitnycrm.user.repository.entity.User;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -92,7 +92,7 @@ class AuthRestControllerTest {
                 .andReturn()
                 .getResponse().getContentAsString();
 
-        UserDetailsResponse adminDetails = objectMapper.readValue(response, UserDetailsResponse.class);
+        AdminDetailsResponse adminDetails = objectMapper.readValue(response, AdminDetailsResponse.class);
         User user = userRepository.findById(adminDetails.id()).orElseThrow();
         assertThat(user.getConfirmationToken()).isNotNull();
         assertThat(user.getConfirmationTokenExpiresAt()).isNotNull();

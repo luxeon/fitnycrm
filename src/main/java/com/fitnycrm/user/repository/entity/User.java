@@ -1,5 +1,6 @@
 package com.fitnycrm.user.repository.entity;
 
+import com.fitnycrm.tenant.repository.entity.Tenant;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,9 +23,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID id;
-
-    @Column(nullable = false)
-    private UUID tenantId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -58,12 +57,15 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
-    @ManyToMany(cascade = { CascadeType.ALL })
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "User_Roles",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "role_id") }
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Tenant> tenants = new HashSet<>();
 
 }

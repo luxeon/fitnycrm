@@ -2,6 +2,7 @@ package com.fitnycrm.tenant.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnycrm.common.annotation.IntegrationTest;
+import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.user.util.JwtTokenCreator;
 import com.fitnycrm.tenant.rest.model.TenantDetailsResponse;
 import com.fitnycrm.user.repository.UserRepository;
@@ -15,8 +16,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
@@ -48,6 +52,9 @@ class TenantRestControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
     @Test
     void getOne_whenTenantExists_thenReturnTenant() throws Exception {
@@ -99,8 +106,12 @@ class TenantRestControllerTest {
 
         TenantDetailsResponse tenantDetails = objectMapper.readValue(response, TenantDetailsResponse.class);
 
-        User user = userRepository.findById(USER_WITHOUT_TENANT_ID).orElseThrow();
-        assertThat(user.getTenantId()).isEqualTo(tenantDetails.id());
+        transactionTemplate.execute(status -> {
+            User user = userRepository.findById(USER_WITHOUT_TENANT_ID).orElseThrow();
+            Set<UUID> tenantIds = user.getTenants().stream().map(Tenant::getId).collect(Collectors.toSet());
+            assertThat(tenantIds).contains(tenantDetails.id());
+            return user;
+        });
     }
 
     @Test

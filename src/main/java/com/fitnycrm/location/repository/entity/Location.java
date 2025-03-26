@@ -42,8 +42,7 @@ public class Location {
     private String timezone;
 
     @CreationTimestamp
-    @Column(name = "created_at", nullable = false,
-            updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
     @UpdateTimestamp

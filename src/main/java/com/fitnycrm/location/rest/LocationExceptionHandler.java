@@ -1,6 +1,5 @@
 package com.fitnycrm.location.rest;
 
-import com.fitnycrm.client.service.exception.ClientNotFoundException;
 import com.fitnycrm.common.rest.model.ErrorResponse;
 import com.fitnycrm.location.service.exception.LocationNotFoundException;
 import org.springframework.core.Ordered;

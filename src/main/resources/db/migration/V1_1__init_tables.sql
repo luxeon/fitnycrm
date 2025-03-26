@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS locations
 CREATE TABLE IF NOT EXISTS users
 (
     id                            uuid                         DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id                     uuid,
     first_name                    VARCHAR(255)        NOT NULL,
     last_name                     VARCHAR(255)        NOT NULL,
     email                         VARCHAR(255) UNIQUE NOT NULL,
@@ -34,8 +33,15 @@ CREATE TABLE IF NOT EXISTS users
     updated_at                    TIMESTAMP WITHOUT TIME ZONE,
     email_confirmed               BOOLEAN             NOT NULL DEFAULT FALSE,
     confirmation_token            VARCHAR(255) UNIQUE,
-    confirmation_token_expires_at TIMESTAMP WITHOUT TIME ZONE,
-    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+    confirmation_token_expires_at TIMESTAMP WITHOUT TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS tenant_users (
+    tenant_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    UNIQUE (tenant_id, user_id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS roles
@@ -51,20 +57,6 @@ CREATE TABLE IF NOT EXISTS user_roles
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (role_id) REFERENCES roles (id),
     UNIQUE (user_id, role_id)
-);
-
-CREATE TABLE IF NOT EXISTS clients
-(
-    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    tenant_id    uuid         NOT NULL,
-    first_name   VARCHAR(255) NOT NULL,
-    last_name    VARCHAR(255) NOT NULL,
-    email        VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20),
-    created_at   TIMESTAMP WITHOUT TIME ZONE,
-    updated_at   TIMESTAMP WITHOUT TIME ZONE,
-    UNIQUE (tenant_id, email),
-    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE TABLE IF NOT EXISTS trainings

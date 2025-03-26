@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import com.fitnycrm.user.service.model.AuthenticatedUserDetails;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
