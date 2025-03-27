@@ -1,0 +1,9 @@
+{
+  "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
+  "email": "james.bond.updated@example.com",
+  "firstName": "James",
+  "lastName": "Bond",
+  "phoneNumber": "+1234567890",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+}

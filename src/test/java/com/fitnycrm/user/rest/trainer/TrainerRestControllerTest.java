@@ -17,6 +17,7 @@ import java.util.UUID;
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -25,6 +26,8 @@ class TrainerRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/trainers";
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
+    private static final UUID EXISTING_TRAINER_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
+    private static final UUID NON_EXISTING_TRAINER_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd99");
 
     @Autowired
     private MockMvc mockMvc;
@@ -101,6 +104,95 @@ class TrainerRestControllerTest {
         var request = readFile("fixture/trainer/create/request/valid-request.json");
 
         mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/trainer/insert.sql")
+    void updateTrainer_whenValidRequest_thenUpdateTrainer() throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/trainer/update/response/success.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateTrainer_whenInvalidEmail_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/trainer/update/request/invalid-email.json");
+        var expectedResponse = readFile("fixture/trainer/update/response/invalid-email.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateTrainer_whenTrainerNotFound_thenReturn404() throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/trainer/update/response/not-found.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", NON_EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/trainer/insert.sql")
+    void updateTrainer_whenEmailAlreadyExists_thenReturnConflict() throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/trainer/update/response/email-exists.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request.replace("james.bond.updated@example.com", "jane.smith@gmail.com"))
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isConflict())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updateTrainer_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateTrainer_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+        var expectedResponse = readFile("fixture/trainer/create/response/access-denied.json");
+
+        mockMvc.perform(put("/api/tenants/{tenantId}/trainers/{trainerId}", DIFFERENT_TENANT_ID, EXISTING_TRAINER_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
+    void updateTrainer_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/trainer/update/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
