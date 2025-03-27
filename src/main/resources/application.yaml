@@ -24,3 +24,8 @@ jwt:
 mail:
     from: ${MAIL_FROM:noreply@fittrackcrm.com}
     confirmationUrl: ${MAIL_CONFIRMATION_URL:http://localhost:8080/api/auth/confirm-email}
+
+cors:
+    allowed-origins:
+        - http://localhost:4200
+        - http://127.0.0.1:4200
