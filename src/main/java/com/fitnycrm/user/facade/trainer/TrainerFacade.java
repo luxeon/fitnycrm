@@ -31,4 +31,10 @@ public class TrainerFacade {
     public void delete(UUID tenantId, UUID trainerId) {
         trainerService.delete(tenantId, trainerId);
     }
+
+    public TrainerDetailsResponse findById(UUID tenantId, UUID trainerId) {
+        return responseMapper.toDetailsResponse(
+                trainerService.findById(tenantId, trainerId)
+        );
+    }
 } 

@@ -17,6 +17,7 @@ import java.util.UUID;
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -240,5 +241,42 @@ class TrainerRestControllerTest {
         mockMvc.perform(delete(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/trainer/insert.sql")
+    void findById_whenTrainerExists_thenReturnTrainer() throws Exception {
+        var expectedResponse = readFile("fixture/trainer/get/response/success.json");
+
+        mockMvc.perform(get(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenTrainerNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/trainer/get/response/not-found.json");
+
+        mockMvc.perform(get(BASE_URL + "/{trainerId}", NON_EXISTING_TRAINER_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{trainerId}", EXISTING_TRAINER_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findById_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/trainer/get/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/trainers/{trainerId}", DIFFERENT_TENANT_ID, EXISTING_TRAINER_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

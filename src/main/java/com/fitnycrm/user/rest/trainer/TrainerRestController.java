@@ -72,4 +72,18 @@ public class TrainerRestController {
                       @PathVariable UUID trainerId) {
         trainerFacade.delete(tenantId, trainerId);
     }
+
+    @Operation(summary = "Get trainer by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainer found",
+                    content = @Content(schema = @Schema(implementation = TrainerDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
+    @GetMapping("/trainers/{trainerId}")
+    @PreAuthorize("((hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #trainerId))")
+    public TrainerDetailsResponse findById(@PathVariable UUID tenantId,
+                                         @PathVariable UUID trainerId) {
+        return trainerFacade.findById(tenantId, trainerId);
+    }
 } 
