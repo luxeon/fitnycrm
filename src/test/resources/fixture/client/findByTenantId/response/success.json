@@ -10,15 +10,6 @@
       "updatedAt": null
     },
     {
-      "id": "835ac7f5-3e4f-462a-a76d-524bd3a5fd00",
-      "firstName": "Max",
-      "lastName": "Power",
-      "email": "max.power@gmail.com",
-      "phoneNumber": "+123456789",
-      "createdAt": null,
-      "updatedAt": null
-    },
-    {
       "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
       "firstName": "James",
       "lastName": "Bond",
@@ -50,8 +41,8 @@
     "unpaged": false
   },
   "last": true,
+  "totalElements": 3,
   "totalPages": 1,
-  "totalElements": 4,
   "first": true,
   "size": 10,
   "number": 0,
@@ -60,6 +51,6 @@
     "empty": false,
     "unsorted": false
   },
-  "numberOfElements": 4,
+  "numberOfElements": 3,
   "empty": false
 }

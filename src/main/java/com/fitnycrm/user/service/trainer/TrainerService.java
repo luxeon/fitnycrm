@@ -14,6 +14,8 @@ import com.fitnycrm.user.service.exception.UserEmailAlreadyExistsException;
 import com.fitnycrm.user.service.exception.UserNotFoundException;
 import com.fitnycrm.user.service.trainer.mapper.TrainerRequestMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,8 +61,13 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public User findById(UUID tenantId, UUID trainerId) {
-        return userRepository.findByIdAndTenant(tenantId, trainerId)
+        return userRepository.findByIdAndTenantAndRole(tenantId, Name.TRAINER, trainerId)
                 .orElseThrow(() -> new UserNotFoundException(trainerId));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<User> findByTenantId(UUID tenantId, Pageable pageable) {
+        return userRepository.findByTenantIdAndRole(tenantId, Name.TRAINER, pageable);
     }
 
     @Transactional

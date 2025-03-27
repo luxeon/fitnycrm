@@ -3,6 +3,7 @@ package com.fitnycrm.user.rest.trainer;
 import com.fitnycrm.user.facade.trainer.TrainerFacade;
 import com.fitnycrm.user.rest.trainer.model.CreateTrainerRequest;
 import com.fitnycrm.user.rest.trainer.model.TrainerDetailsResponse;
+import com.fitnycrm.user.rest.trainer.model.TrainerPageItemResponse;
 import com.fitnycrm.user.rest.trainer.model.UpdateTrainerRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -85,5 +88,18 @@ public class TrainerRestController {
     public TrainerDetailsResponse findById(@PathVariable UUID tenantId,
                                          @PathVariable UUID trainerId) {
         return trainerFacade.findById(tenantId, trainerId);
+    }
+
+    @Operation(summary = "Get paginated list of trainers for a tenant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of trainers retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = TrainerPageItemResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @GetMapping("/trainers")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public Page<TrainerPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
+                                                       Pageable pageable) {
+        return trainerFacade.findByTenantId(tenantId, pageable);
     }
 } 

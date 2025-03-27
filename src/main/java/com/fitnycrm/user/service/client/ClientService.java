@@ -71,12 +71,12 @@ public class ClientService {
 
     @Transactional(readOnly = true)
     public User findById(UUID tenantId, UUID clientId) {
-        return repository.findByIdAndTenant(tenantId, clientId)
+        return repository.findByIdAndTenantAndRole(tenantId, UserRole.Name.CLIENT, clientId)
                 .orElseThrow(() -> new UserNotFoundException(clientId));
     }
 
     @Transactional(readOnly = true)
     public Page<User> findByTenantId(UUID tenantId, Pageable pageable) {
-        return repository.findByTenantId(tenantId, pageable);
+        return repository.findByTenantIdAndRole(tenantId, UserRole.Name.CLIENT, pageable);
     }
 }

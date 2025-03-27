@@ -3,9 +3,12 @@ package com.fitnycrm.user.facade.trainer;
 import com.fitnycrm.user.facade.trainer.mapper.TrainerResponseMapper;
 import com.fitnycrm.user.rest.trainer.model.CreateTrainerRequest;
 import com.fitnycrm.user.rest.trainer.model.TrainerDetailsResponse;
+import com.fitnycrm.user.rest.trainer.model.TrainerPageItemResponse;
 import com.fitnycrm.user.rest.trainer.model.UpdateTrainerRequest;
 import com.fitnycrm.user.service.trainer.TrainerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -36,5 +39,10 @@ public class TrainerFacade {
         return responseMapper.toDetailsResponse(
                 trainerService.findById(tenantId, trainerId)
         );
+    }
+
+    public Page<TrainerPageItemResponse> findByTenantId(UUID tenantId, Pageable pageable) {
+        return trainerService.findByTenantId(tenantId, pageable)
+                .map(responseMapper::toPageItemResponse);
     }
 } 
