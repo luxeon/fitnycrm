@@ -1,4 +1,4 @@
-package com.fitnycrm.tenant.exception;
+package com.fitnycrm.tenant.service.exception;
 
 import java.util.UUID;
 

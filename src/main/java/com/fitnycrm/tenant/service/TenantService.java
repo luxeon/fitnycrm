@@ -1,8 +1,7 @@
 package com.fitnycrm.tenant.service;
 
-import com.fitnycrm.tenant.exception.TenantAlreadyCreatedException;
-import com.fitnycrm.tenant.exception.TenantNotFoundException;
-import com.fitnycrm.tenant.facade.mapper.TenantResponseMapper;
+import com.fitnycrm.tenant.service.exception.TenantAlreadyCreatedException;
+import com.fitnycrm.tenant.service.exception.TenantNotFoundException;
 import com.fitnycrm.tenant.repository.TenantRepository;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
@@ -22,7 +21,6 @@ public class TenantService {
 
     private final TenantRepository tenantRepository;
     private final AdminUserService adminUserService;
-    private final TenantResponseMapper tenantResponseMapper;
     private final TenantRequestMapper requestMapper;
 
     @Transactional(readOnly = true)

@@ -1,8 +1,8 @@
 package com.fitnycrm.tenant.rest;
 
 import com.fitnycrm.common.rest.model.ErrorResponse;
-import com.fitnycrm.tenant.exception.TenantAlreadyCreatedException;
-import com.fitnycrm.tenant.exception.TenantNotFoundException;
+import com.fitnycrm.tenant.service.exception.TenantAlreadyCreatedException;
+import com.fitnycrm.tenant.service.exception.TenantNotFoundException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

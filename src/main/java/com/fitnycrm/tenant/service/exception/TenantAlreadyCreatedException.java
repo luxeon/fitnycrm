@@ -1,4 +1,4 @@
-package com.fitnycrm.tenant.exception;
+package com.fitnycrm.tenant.service.exception;
 
 public class TenantAlreadyCreatedException extends RuntimeException{
 
