@@ -1,8 +1,13 @@
 package com.fitnycrm.training.service;
 
+import com.fitnycrm.tenant.repository.entity.Tenant;
+import com.fitnycrm.tenant.service.TenantService;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.repository.TrainingRepository;
+import com.fitnycrm.training.rest.model.CreateTrainingRequest;
+import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import com.fitnycrm.training.service.exception.TrainingNotFoundException;
+import com.fitnycrm.training.service.mapper.TrainingRequestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,11 +19,30 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TrainingService {
+
     private final TrainingRepository trainingRepository;
+    private final TrainingRequestMapper requestMapper;
+    private final TenantService tenantService;
 
     @Transactional
-    public Training create(Training training) {
+    public Training create(UUID tenantId, CreateTrainingRequest request) {
+        Tenant tenant = tenantService.findById(tenantId);
+        Training training = requestMapper.toTraining(request);
+        training.setTenant(tenant);
         return trainingRepository.save(training);
+    }
+
+    @Transactional
+    public Training update(UUID tenantId, UUID id, UpdateTrainingRequest request) {
+        Training training = findById(tenantId, id);
+        requestMapper.update(training, request);
+        return trainingRepository.save(training);
+    }
+
+    @Transactional
+    public void delete(UUID tenantId, UUID id) {
+        Training training = findById(tenantId, id);
+        trainingRepository.delete(training);
     }
 
     @Transactional(readOnly = true)
@@ -30,21 +54,5 @@ public class TrainingService {
     @Transactional(readOnly = true)
     public Page<Training> findByTenantId(UUID tenantId, Pageable pageable) {
         return trainingRepository.findByTenantId(tenantId, pageable);
-    }
-
-    @Transactional
-    public Training update(UUID tenantId, UUID id, Training training) {
-        Training existingTraining = findById(tenantId, id);
-        existingTraining.setName(training.getName());
-        existingTraining.setDescription(training.getDescription());
-        existingTraining.setDurationMinutes(training.getDurationMinutes());
-        existingTraining.setClientCapacity(training.getClientCapacity());
-        return trainingRepository.save(existingTraining);
-    }
-
-    @Transactional
-    public void delete(UUID tenantId, UUID id) {
-        Training training = findById(tenantId, id);
-        trainingRepository.delete(training);
     }
 } 

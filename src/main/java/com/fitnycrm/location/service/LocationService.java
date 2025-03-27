@@ -32,7 +32,8 @@ public class LocationService {
     @Transactional
     public Location create(UUID tenantId, CreateLocationRequest request) {
         Tenant tenant = tenantService.findById(tenantId);
-        Location location = requestMapper.toLocation(tenant, request);
+        Location location = requestMapper.toLocation(request);
+        location.setTenant(tenant);
         return locationRepository.save(location);
     }
 

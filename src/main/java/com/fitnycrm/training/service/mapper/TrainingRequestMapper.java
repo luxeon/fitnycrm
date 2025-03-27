@@ -1,5 +1,6 @@
-package com.fitnycrm.training.facade.mapper;
+package com.fitnycrm.training.service.mapper;
 
+import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
@@ -7,23 +8,17 @@ import com.fitnycrm.training.rest.model.TrainingPageItemResponse;
 import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
-public interface TrainingMapper {
-    
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    Training toEntity(UUID tenantId, CreateTrainingRequest request);
+public interface TrainingRequestMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Training toEntity(UUID tenantId, UpdateTrainingRequest request);
+    Training toTraining(CreateTrainingRequest request);
 
-    TrainingDetailsResponse toDetailsResponse(Training training);
-
-    TrainingPageItemResponse toPageItemResponse(Training training);
+    Training update(@MappingTarget Training training, UpdateTrainingRequest request);
 } 

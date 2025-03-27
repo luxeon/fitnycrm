@@ -16,7 +16,7 @@ public interface LocationRequestMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Location toLocation(Tenant tenant, CreateLocationRequest request);
+    Location toLocation(CreateLocationRequest request);
 
     void update(@MappingTarget Location location, UpdateLocationRequest request);
 }

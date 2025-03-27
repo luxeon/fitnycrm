@@ -1,5 +1,6 @@
 package com.fitnycrm.training.repository.entity;
 
+import com.fitnycrm.tenant.repository.entity.Tenant;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,8 +21,9 @@ public class Training {
     private UUID id;
 
     @NotNull
-    @Column(name = "tenant_id", nullable = false)
-    private UUID tenantId;
+    @ManyToOne
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
 
     @NotBlank
     @Column(nullable = false)

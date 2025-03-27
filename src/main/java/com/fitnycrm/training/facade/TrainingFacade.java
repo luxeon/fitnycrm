@@ -1,6 +1,6 @@
 package com.fitnycrm.training.facade;
 
-import com.fitnycrm.training.facade.mapper.TrainingMapper;
+import com.fitnycrm.training.facade.mapper.TrainingResponseMapper;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
 import com.fitnycrm.training.rest.model.TrainingPageItemResponse;
@@ -17,38 +17,32 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TrainingFacade {
     private final TrainingService trainingService;
-    private final TrainingMapper mapper;
+    private final TrainingResponseMapper responseMapper;
 
     public TrainingDetailsResponse create(UUID tenantId, CreateTrainingRequest request) {
-        return mapper.toDetailsResponse(
-                trainingService.create(
-                        mapper.toEntity(tenantId, request)
-                )
+        return responseMapper.toDetailsResponse(
+                trainingService.create(tenantId, request)
         );
     }
 
+    public TrainingDetailsResponse update(UUID tenantId, UUID id, UpdateTrainingRequest request) {
+        return responseMapper.toDetailsResponse(
+                trainingService.update(tenantId, id, request)
+        );
+    }
+
+    public void delete(UUID tenantId, UUID id) {
+        trainingService.delete(tenantId, id);
+    }
+
     public TrainingDetailsResponse findById(UUID tenantId, UUID id) {
-        return mapper.toDetailsResponse(
+        return responseMapper.toDetailsResponse(
                 trainingService.findById(tenantId, id)
         );
     }
 
     public Page<TrainingPageItemResponse> findByTenantId(UUID tenantId, Pageable pageable) {
         return trainingService.findByTenantId(tenantId, pageable)
-                .map(mapper::toPageItemResponse);
-    }
-
-    public TrainingDetailsResponse update(UUID tenantId, UUID id, UpdateTrainingRequest request) {
-        return mapper.toDetailsResponse(
-                trainingService.update(
-                        tenantId,
-                        id,
-                        mapper.toEntity(tenantId, request)
-                )
-        );
-    }
-
-    public void delete(UUID tenantId, UUID id) {
-        trainingService.delete(tenantId, id);
+                .map(responseMapper::toPageItemResponse);
     }
 } 
