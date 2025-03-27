@@ -53,10 +53,11 @@ Service Layer (@Service):
 3. Methods should return Entity objects or DTOs (for multi-join queries).
 4. Use orElseThrow for existence checks instead of null handling.
 5. Annotate methods with @Transactional (readOnly = true for read operations).
+6. Service must convert create and update request objects into Entity using mapstruct
 
 Facade Layer (@Component):
 1. Must be annotated with @Component.
-2. Uses MapStruct for converting entities to DTOs.
+2. Uses MapStruct for converting entities to Response DTOs.
 3. Can aggregate data from multiple services into a Response DTO.
 4. Must use constructor injection with @RequiredArgsConstructor and final fields, unless otherwise specified.
 
@@ -73,6 +74,7 @@ REST Controller Layer (@RestController):
 6. Errors must be handled via a global exception handler (GlobalExceptionHandler), returning a ErrorResponse DTO.
 7. Controller must not return ResponseEntity if possible, return DTOs directly
 8. Always add swagger annotations to methods and request / response DTOs
+10. Create and Update endpoint must have separate RequestBody classes
 
 Data Transfer Objects (DTOs):
 1. DTOs must be records, unless otherwise specified.
