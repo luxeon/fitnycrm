@@ -3,6 +3,7 @@ package com.fitnycrm.user.rest.trainer;
 import com.fitnycrm.user.facade.trainer.TrainerFacade;
 import com.fitnycrm.user.rest.trainer.model.CreateTrainerRequest;
 import com.fitnycrm.user.rest.trainer.model.TrainerDetailsResponse;
+import com.fitnycrm.user.rest.trainer.model.UpdateTrainerRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -39,5 +40,22 @@ public class TrainerRestController {
     public TrainerDetailsResponse create(@PathVariable UUID tenantId,
                                        @RequestBody @Valid CreateTrainerRequest request) {
         return trainerFacade.create(tenantId, request);
+    }
+
+    @Operation(summary = "Update an existing trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Trainer updated successfully",
+                    content = @Content(schema = @Schema(implementation = TrainerDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found"),
+            @ApiResponse(responseCode = "409", description = "User with this email already exists")
+    })
+    @PutMapping("/trainers/{trainerId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public TrainerDetailsResponse update(@PathVariable UUID tenantId,
+                                       @PathVariable UUID trainerId,
+                                       @RequestBody @Valid UpdateTrainerRequest request) {
+        return trainerFacade.update(tenantId, trainerId, request);
     }
 } 
