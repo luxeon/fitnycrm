@@ -3,6 +3,7 @@ package com.fitnycrm.tenant.repository.entity;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.user.repository.entity.User;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -15,8 +16,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "tenants")
-@ToString(exclude = {"users"})
-@EqualsAndHashCode(exclude = {"users"})
+@ToString(exclude = {"users", "locations"})
+@EqualsAndHashCode(exclude = {"users", "locations"})
 public class Tenant {
 
     @Id
@@ -33,6 +34,9 @@ public class Tenant {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "tenant")
+    private Set<Location> locations = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

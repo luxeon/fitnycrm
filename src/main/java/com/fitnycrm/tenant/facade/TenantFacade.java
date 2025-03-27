@@ -1,6 +1,5 @@
 package com.fitnycrm.tenant.facade;
 
-import com.fitnycrm.tenant.exception.TenantAlreadyCreatedException;
 import com.fitnycrm.tenant.facade.mapper.TenantResponseMapper;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
@@ -21,7 +20,7 @@ public class TenantFacade {
     private final TenantResponseMapper tenantResponseMapper;
 
     public TenantDetailsResponse getById(UUID id) {
-        return tenantResponseMapper.toDetailsResponse(tenantService.getById(id));
+        return tenantResponseMapper.toDetailsResponse(tenantService.findById(id));
     }
 
     public TenantDetailsResponse create(AuthenticatedUserDetails user, CreateTenantRequest request) {

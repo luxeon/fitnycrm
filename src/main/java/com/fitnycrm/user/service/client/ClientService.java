@@ -37,7 +37,7 @@ public class ClientService {
             throw new UserEmailAlreadyExistsException(user.getEmail());
         }
 
-        Tenant tenant = tenantService.getById(tenantId);
+        Tenant tenant = tenantService.findById(tenantId);
         UserRole role = roleRepository.findByName(UserRole.Name.CLIENT).orElseThrow(() ->
                 new RoleNotFoundException(UserRole.Name.CLIENT));
 

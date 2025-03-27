@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request model for creating or updating a location")
-public record LocationRequest(
+public record CreateLocationRequest(
         @Schema(description = "Street address of the location", example = "123 Main St")
         @NotBlank
         @Size(max = 255)

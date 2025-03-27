@@ -2,9 +2,10 @@ package com.fitnycrm.location.facade;
 
 import com.fitnycrm.location.rest.model.LocationDetailsResponse;
 import com.fitnycrm.location.rest.model.LocationPageItemResponse;
-import com.fitnycrm.location.rest.model.LocationRequest;
+import com.fitnycrm.location.rest.model.CreateLocationRequest;
 import com.fitnycrm.location.repository.entity.Location;
-import com.fitnycrm.location.facade.mapper.LocationMapper;
+import com.fitnycrm.location.facade.mapper.LocationResponseMapper;
+import com.fitnycrm.location.rest.model.UpdateLocationRequest;
 import com.fitnycrm.location.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,23 +18,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LocationFacade {
     private final LocationService locationService;
-    private final LocationMapper locationMapper;
+    private final LocationResponseMapper responseMapper;
 
     public Page<LocationPageItemResponse> findAll(UUID tenantId, Pageable pageable) {
         return locationService.findAll(tenantId, pageable)
-                .map(locationMapper::toPageItemResponse);
+                .map(responseMapper::toPageItemResponse);
     }
 
-    public LocationDetailsResponse create(UUID tenantId, LocationRequest request) {
-        Location location = locationMapper.toEntity(tenantId, request);
-        Location savedLocation = locationService.create(location);
-        return locationMapper.toDetailsResponse(savedLocation);
+    public LocationDetailsResponse create(UUID tenantId, CreateLocationRequest request) {
+        Location savedLocation = locationService.create(tenantId, request);
+        return responseMapper.toDetailsResponse(savedLocation);
     }
 
-    public LocationDetailsResponse update(UUID tenantId, UUID id, LocationRequest request) {
-        Location location = locationMapper.toEntity(tenantId, request);
-        Location updatedLocation = locationService.update(id, location);
-        return locationMapper.toDetailsResponse(updatedLocation);
+    public LocationDetailsResponse update(UUID tenantId, UUID id, UpdateLocationRequest request) {
+        Location updatedLocation = locationService.update(tenantId, id, request);
+        return responseMapper.toDetailsResponse(updatedLocation);
     }
 
     public void delete(UUID tenantId, UUID id) {
@@ -42,6 +41,6 @@ public class LocationFacade {
 
     public LocationDetailsResponse findById(UUID tenantId, UUID id) {
         Location location = locationService.findById(tenantId, id);
-        return locationMapper.toDetailsResponse(location);
+        return responseMapper.toDetailsResponse(location);
     }
 } 

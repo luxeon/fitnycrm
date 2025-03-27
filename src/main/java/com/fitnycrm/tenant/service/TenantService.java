@@ -26,7 +26,7 @@ public class TenantService {
     private final TenantRequestMapper requestMapper;
 
     @Transactional(readOnly = true)
-    public Tenant getById(UUID id) {
+    public Tenant findById(UUID id) {
         return tenantRepository.findById(id)
                 .orElseThrow(() -> new TenantNotFoundException(id));
     }
@@ -44,7 +44,7 @@ public class TenantService {
 
     @Transactional
     public Tenant update(UUID id, UpdateTenantRequest request) {
-        Tenant tenant = getById(id);
+        Tenant tenant = findById(id);
         requestMapper.update(tenant, request);
         return tenantRepository.save(tenant);
     }
