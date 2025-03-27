@@ -9,6 +9,7 @@ import com.fitnycrm.user.repository.entity.UserRole;
 import com.fitnycrm.user.repository.entity.UserRole.Name;
 import com.fitnycrm.user.rest.trainer.model.CreateTrainerRequest;
 import com.fitnycrm.user.service.exception.RoleNotFoundException;
+import com.fitnycrm.user.service.exception.UserEmailAlreadyExistsException;
 import com.fitnycrm.user.service.trainer.mapper.TrainerRequestMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,15 +22,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TrainerService {
     private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
+    private final UserRoleRepository roleRepository;
     private final TrainerRequestMapper requestMapper;
     private final TenantService tenantService;
 
     @Transactional
     public User create(UUID tenantId, CreateTrainerRequest request) {
+        if (userRepository.existsByEmail(request.email())) {
+            throw new UserEmailAlreadyExistsException(request.email());
+        }
         Tenant tenant = tenantService.findById(tenantId);
         User trainer = requestMapper.toUser(request);
-        UserRole trainerRole = userRoleRepository.findByName(UserRole.Name.TRAINER)
+        UserRole trainerRole = roleRepository.findByName(UserRole.Name.TRAINER)
                 .orElseThrow(() -> new RoleNotFoundException(Name.TRAINER));
         
         trainer.setRoles(Set.of(trainerRole));

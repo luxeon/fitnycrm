@@ -1,0 +1,9 @@
+{
+  "id": "${json-unit.any-string}",
+  "email": "john.trainer@example.com",
+  "firstName": "John",
+  "lastName": "Trainer",
+  "phoneNumber": "+1234567890",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+} 

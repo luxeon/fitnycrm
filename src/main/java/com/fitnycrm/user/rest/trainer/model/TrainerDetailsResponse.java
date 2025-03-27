@@ -21,7 +21,7 @@ public record TrainerDetailsResponse(
         String email,
 
         @Schema(description = "Phone number")
-        String phone,
+        String phoneNumber,
 
         @Schema(description = "Timestamp when the trainer was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
