@@ -1,11 +1,12 @@
 package com.fitnycrm.tenant.repository.entity;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import com.fitnycrm.user.repository.entity.User;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +15,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "tenants")
+@ToString(exclude = {"users"})
+@EqualsAndHashCode(exclude = {"users"})
 public class Tenant {
 
     @Id
@@ -26,10 +29,10 @@ public class Tenant {
     @ManyToMany
     @JoinTable(
             name = "Tenant_Users",
-            joinColumns = { @JoinColumn(name = "tenantId") },
-            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+            joinColumns = {@JoinColumn(name = "tenantId")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private List<User> users;
+    private Set<User> users = new HashSet<>();
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

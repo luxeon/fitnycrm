@@ -22,9 +22,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByConfirmationToken(String token);
 
     @Query("""
-            FROM User user JOIN user.tenants tenant WHERE user.id = :id AND tenant.id = :tenantId
+            FROM User user JOIN user.tenants tenant WHERE user.id = :clientId AND tenant.id = :tenantId
             """)
-    Optional<User> findByIdAndTenant(UUID id, UUID tenantId);
+    Optional<User> findByIdAndTenant(UUID tenantId, UUID clientId);
 
     @Query("""
             FROM User user JOIN user.tenants tenant WHERE tenant.id = :tenantId

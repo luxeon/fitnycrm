@@ -39,7 +39,7 @@ public class TrainingRestController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public TrainingDetailsResponse create(@PathVariable UUID tenantId,
                                           @RequestBody @Valid CreateTrainingRequest request) {
         return trainingFacade.create(tenantId, request);
@@ -54,7 +54,7 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public TrainingDetailsResponse update(@PathVariable UUID tenantId,
                                           @PathVariable UUID id,
                                           @RequestBody @Valid UpdateTrainingRequest request) {
@@ -69,7 +69,7 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public TrainingDetailsResponse findById(@PathVariable UUID tenantId,
                                             @PathVariable UUID id) {
         return trainingFacade.findById(tenantId, id);
@@ -82,7 +82,7 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public Page<TrainingPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                          Pageable pageable) {
         return trainingFacade.findByTenantId(tenantId, pageable);
@@ -96,7 +96,7 @@ public class TrainingRestController {
     })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                        @PathVariable UUID id) {
         trainingFacade.delete(tenantId, id);

@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS users
     first_name                    VARCHAR(255)        NOT NULL,
     last_name                     VARCHAR(255)        NOT NULL,
     email                         VARCHAR(255) UNIQUE NOT NULL,
-    password                      VARCHAR(255)        NOT NULL,
+    password                      VARCHAR(255),
     phone_number                  VARCHAR(20),
     created_at                    TIMESTAMP WITHOUT TIME ZONE,
     updated_at                    TIMESTAMP WITHOUT TIME ZONE,
@@ -36,12 +36,13 @@ CREATE TABLE IF NOT EXISTS users
     confirmation_token_expires_at TIMESTAMP WITHOUT TIME ZONE
 );
 
-CREATE TABLE IF NOT EXISTS tenant_users (
+CREATE TABLE IF NOT EXISTS tenant_users
+(
     tenant_id uuid NOT NULL,
-    user_id uuid NOT NULL,
+    user_id   uuid NOT NULL,
     UNIQUE (tenant_id, user_id),
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS roles

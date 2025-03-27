@@ -25,9 +25,6 @@ public class TenantFacade {
     }
 
     public TenantDetailsResponse create(AuthenticatedUserDetails user, CreateTenantRequest request) {
-        if (user.getTenantId() != null) {
-            throw new TenantAlreadyCreatedException();
-        }
         Tenant tenant = tenantService.create(user.getId(), request);
         return tenantResponseMapper.toDetailsResponse(tenant);
     }

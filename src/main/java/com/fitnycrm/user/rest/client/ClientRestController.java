@@ -41,7 +41,7 @@ public class ClientRestController {
     })
     @PostMapping("/clients")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse create(@PathVariable UUID tenantId,
                                               @RequestBody @Valid CreateClientRequest request) {
         return clientFacade.create(tenantId, request);
@@ -57,7 +57,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
     @PutMapping("/clients/{clientId}")
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse update(@PathVariable UUID tenantId,
                                       @PathVariable UUID clientId,
                                       @RequestBody @Valid UpdateClientRequest request) {
@@ -72,7 +72,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "404", description = "Client not found")
     })
     @GetMapping("/clients/{clientId}")
-    @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') or @tenantAccessValidator.check(#tenantId, #clientId))")
+    @PreAuthorize("((hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId))")
     public ClientDetailsResponse findById(@PathVariable UUID tenantId,
                                         @PathVariable UUID clientId) {
         return clientFacade.findById(tenantId, clientId);
@@ -85,7 +85,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/clients")
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public Page<ClientPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                       Pageable pageable) {
         return clientFacade.findByTenantId(tenantId, pageable);
@@ -99,7 +99,7 @@ public class ClientRestController {
     })
     @DeleteMapping("/clients/{clientId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                       @PathVariable UUID clientId) {
         clientFacade.delete(tenantId, clientId);

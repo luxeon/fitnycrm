@@ -7,13 +7,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
 public class AuthenticatedUserDetails implements UserDetails {
 
     private UUID id;
-    private UUID tenantId;
+    private Set<UUID> tenantIds;
     private String email;
     private String firstName;
     private String lastName;

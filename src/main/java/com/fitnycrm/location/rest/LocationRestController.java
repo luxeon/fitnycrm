@@ -35,7 +35,7 @@ public class LocationRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/locations")
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public Page<LocationPageItemResponse> getAll(@PathVariable UUID tenantId,
                                                  Pageable pageable) {
         return locationFacade.findAll(tenantId, pageable);
@@ -50,7 +50,7 @@ public class LocationRestController {
     })
     @PostMapping("/locations")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse create(@PathVariable UUID tenantId,
                                           @RequestBody @Valid LocationRequest request) {
         return locationFacade.create(tenantId, request);
@@ -65,7 +65,7 @@ public class LocationRestController {
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     @PutMapping("/locations/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse update(@PathVariable UUID tenantId,
                                           @PathVariable UUID id,
                                           @RequestBody @Valid LocationRequest request) {
@@ -80,7 +80,7 @@ public class LocationRestController {
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     @GetMapping("/locations/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse findById(@PathVariable UUID tenantId,
                                           @PathVariable UUID id) {
         return locationFacade.findById(tenantId, id);
@@ -94,7 +94,7 @@ public class LocationRestController {
     })
     @DeleteMapping("/locations/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@tenantAccessValidator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                       @PathVariable UUID id) {
         locationFacade.delete(tenantId, id);

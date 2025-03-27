@@ -1,5 +1,6 @@
 package com.fitnycrm.tenant.service;
 
+import com.fitnycrm.tenant.exception.TenantAlreadyCreatedException;
 import com.fitnycrm.tenant.exception.TenantNotFoundException;
 import com.fitnycrm.tenant.facade.mapper.TenantResponseMapper;
 import com.fitnycrm.tenant.repository.TenantRepository;
@@ -33,6 +34,9 @@ public class TenantService {
     @Transactional
     public Tenant create(UUID userId, CreateTenantRequest request) {
         User user = adminUserService.findById(userId);
+        if (!user.getTenants().isEmpty()) {
+            throw new TenantAlreadyCreatedException();
+        }
         Tenant tenant = requestMapper.toEntity(request);
         tenant.getUsers().add(user);
         return tenantRepository.save(tenant);

@@ -24,5 +24,5 @@ import org.springframework.test.context.jdbc.SqlMergeMode;
 @Import(TestContainersConfig.class)
 @Sql(executionPhase =
         Sql.ExecutionPhase.AFTER_TEST_METHOD,
-        value = "classpath:db/clean-up.sql")
+        value = "/db/clean-up.sql")
 public @interface IntegrationTest {} 

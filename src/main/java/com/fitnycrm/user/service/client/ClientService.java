@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -49,8 +50,8 @@ public class ClientService {
     @Transactional
     public User update(UUID tenantId, UUID clientId, UpdateClientRequest request) {
         User user = findById(tenantId, clientId);
-        if (!user.getEmail().equals(request.email()) && repository.existsByEmail(user.getEmail())) {
-            throw new UserEmailAlreadyExistsException(user.getEmail());
+        if (!user.getEmail().equals(request.email()) && repository.existsByEmail(request.email())) {
+            throw new UserEmailAlreadyExistsException(request.email());
         }
         requestMapper.update(user, request);
         return repository.save(user);
@@ -59,6 +60,12 @@ public class ClientService {
     @Transactional
     public void delete(UUID tenantId, UUID clientId) {
         User client = findById(tenantId, clientId);
+        Set<UserRole> roles = client.getRoles();
+        roles.forEach(role -> role.getUsers().remove(client));
+
+        Set<Tenant> tenants = client.getTenants();
+        tenants.forEach(tenant -> tenant.getUsers().remove(client));
+
         repository.delete(client);
     }
 

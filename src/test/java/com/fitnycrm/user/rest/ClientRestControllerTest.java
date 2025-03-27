@@ -1,4 +1,4 @@
-package com.fitnycrm.client.rest;
+package com.fitnycrm.user.rest;
 
 import com.fitnycrm.common.annotation.IntegrationTest;
 import com.fitnycrm.user.util.JwtTokenCreator;
@@ -162,7 +162,7 @@ class ClientRestControllerTest {
         // Update client with email that already exists
         mockMvc.perform(put(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(request.replace("john.doe.updated@example.com", "jane.smith@example.com"))
+                        .content(request.replace("james.bond.updated@example.com", "jane.smith@gmail.com"))
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isConflict())
                 .andExpect(json().isEqualTo(expectedResponse));

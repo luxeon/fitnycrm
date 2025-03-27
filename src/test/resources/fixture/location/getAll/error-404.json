@@ -1,7 +1,0 @@
-{
-  "timestamp": "2024-03-25T12:00:00.000+00:00",
-  "status": 404,
-  "error": "Not Found",
-  "message": "Tenant not found",
-  "path": "/api/tenants/00000000-0000-0000-0000-000000000000/locations"
-} 

@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -41,7 +42,7 @@ public class JwtTokenCreator {
     public String generateTestJwtToken(UserRole.Name role) {
         AuthenticatedUserDetails user = new AuthenticatedUserDetails();
         user.setId(TEST_USER_ID);
-        user.setTenantId(TENANT_ID);
+        user.setTenantIds(Set.of(TENANT_ID));
         user.setFirstName(TEST_USER_FIRST_NAME);
         user.setLastName(TEST_USER_LAST_NAME);
         user.setEmail(TEST_USER_EMAIL);
@@ -53,7 +54,7 @@ public class JwtTokenCreator {
     public String generateAdminTestJwtToken() {
         AuthenticatedUserDetails user = new AuthenticatedUserDetails();
         user.setId(ADMIN_USER_ID);
-        user.setTenantId(TENANT_ID);
+        user.setTenantIds(Set.of(TENANT_ID));
         user.setFirstName(ADMIN_FIRST_NAME);
         user.setLastName(ADMIN_LAST_NAME);
         user.setEmail(ADMIN_EMAIL);
@@ -65,7 +66,6 @@ public class JwtTokenCreator {
     public String generateAdminWithoutTenantTestJwtToken() {
         AuthenticatedUserDetails user = new AuthenticatedUserDetails();
         user.setId(USER_WITHOUT_TENANT_ID);
-        user.setTenantId(null);
         user.setFirstName(USER_WITHOUT_TENANT_FIRST_NAME);
         user.setLastName(USER_WITHOUT_TENANT_LAST_NAME);
         user.setEmail(USER_WITHOUT_TENANT_EMAIL);

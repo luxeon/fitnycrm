@@ -50,7 +50,7 @@ public class TenantRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#id)")
+    @PreAuthorize("@permissionEvaluator.check(#id)")
     public TenantDetailsResponse update(@Parameter(description = "ID of the tenant to update", required = true)
                                         @PathVariable UUID id,
                                         @RequestBody @Valid UpdateTenantRequest request) {
@@ -64,7 +64,7 @@ public class TenantRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("@tenantAccessValidator.check(#id)")
+    @PreAuthorize("@permissionEvaluator.check(#id)")
     public TenantDetailsResponse getOne(@Parameter(description = "ID of the tenant to retrieve", required = true)
                                         @PathVariable UUID id) {
         return tenantFacade.getById(id);

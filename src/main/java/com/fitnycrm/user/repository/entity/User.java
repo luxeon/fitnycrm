@@ -16,8 +16,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "users")
-@ToString(exclude = "roles")
-@EqualsAndHashCode(exclude = "roles")
+@ToString(exclude = {"roles", "tenants"})
+@EqualsAndHashCode(exclude = {"roles", "tenants"})
 public class User {
 
     @Id
@@ -33,7 +33,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Column(name = "phone_number")
@@ -57,7 +57,7 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "User_Roles",
             joinColumns = {@JoinColumn(name = "user_id")},

@@ -4,11 +4,14 @@ import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.UUID;
 
+import static org.springframework.util.CollectionUtils.*;
+
 @Component
-public class TenantAccessValidator {
+public class permissionEvaluator {
 
     public boolean check(UUID tenantId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -17,7 +20,7 @@ public class TenantAccessValidator {
         }
 
         AuthenticatedUserDetails user = (AuthenticatedUserDetails) authentication.getPrincipal();
-        return tenantId.equals(user.getTenantId());
+        return !isEmpty(user.getTenantIds()) && user.getTenantIds().contains(tenantId);
     }
 
     public boolean check(UUID tenantId, UUID clientId) {
@@ -27,6 +30,6 @@ public class TenantAccessValidator {
         }
 
         AuthenticatedUserDetails user = (AuthenticatedUserDetails) authentication.getPrincipal();
-        return tenantId.equals(user.getTenantId()) && clientId.equals(user.getId());
+        return !isEmpty(user.getTenantIds()) && user.getTenantIds().contains(tenantId) && clientId.equals(user.getId());
     }
 } 
