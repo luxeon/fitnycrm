@@ -1,0 +1,101 @@
+<div class="registration-container">
+  <div class="registration-card">
+    <h2>Create Account</h2>
+    <p class="subtitle">Join us to start your fitness journey</p>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input 
+            id="firstName"
+            type="text"
+            formControlName="firstName"
+            [class.error]="registrationForm.get('firstName')?.invalid && registrationForm.get('firstName')?.touched"
+            placeholder="Enter your first name">
+          <div class="error-message" *ngIf="registrationForm.get('firstName')?.invalid && registrationForm.get('firstName')?.touched">
+            {{ getErrorMessage('firstName') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input 
+            id="lastName"
+            type="text"
+            formControlName="lastName"
+            [class.error]="registrationForm.get('lastName')?.invalid && registrationForm.get('lastName')?.touched"
+            placeholder="Enter your last name">
+          <div class="error-message" *ngIf="registrationForm.get('lastName')?.invalid && registrationForm.get('lastName')?.touched">
+            {{ getErrorMessage('lastName') }}
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          id="email"
+          type="email"
+          formControlName="email"
+          [class.error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+          placeholder="Enter your email">
+        <div class="error-message" *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+          {{ getErrorMessage('email') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number (Optional)</label>
+        <input 
+          id="phoneNumber"
+          type="tel"
+          formControlName="phoneNumber"
+          [class.error]="registrationForm.get('phoneNumber')?.invalid && registrationForm.get('phoneNumber')?.touched"
+          placeholder="Enter your phone number (e.g., +1234567890)">
+        <div class="error-message" *ngIf="registrationForm.get('phoneNumber')?.invalid && registrationForm.get('phoneNumber')?.touched">
+          {{ getErrorMessage('phoneNumber') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          id="password"
+          type="password"
+          formControlName="password"
+          [class.error]="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched"
+          placeholder="Enter your password">
+        <div class="error-message" *ngIf="registrationForm.get('password')?.invalid && registrationForm.get('password')?.touched">
+          {{ getErrorMessage('password') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          [class.error]="registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched"
+          placeholder="Confirm your password">
+        <div class="error-message" *ngIf="registrationForm.get('confirmPassword')?.invalid && registrationForm.get('confirmPassword')?.touched">
+          {{ getErrorMessage('confirmPassword') }}
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="registrationForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Create Account</span>
+        <span *ngIf="isLoading">Creating Account...</span>
+      </button>
+
+      <p class="login-link">
+        Already have an account? <a routerLink="/login">Log in</a>
+      </p>
+    </form>
+  </div>
+</div>
