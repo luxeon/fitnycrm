@@ -22,7 +22,7 @@ export class RegistrationComponent {
   isLoading = false;
 
   private readonly passwordPattern = '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$';
-  private readonly phonePattern = '^\\+?[1-9]\\d{1,14}$';
+  private readonly phonePattern = '^\\+[1-9]\\d{7,14}$';
 
   constructor(
     private fb: FormBuilder,
@@ -68,6 +68,7 @@ export class RegistrationComponent {
 
       this.authService.signup(request).subscribe({
         next: () => {
+          this.isLoading = false;
           this.router.navigate(['/login'], { 
             queryParams: { 
               message: 'Registration successful! Please check your email to confirm your account.' 
@@ -101,7 +102,7 @@ export class RegistrationComponent {
         return 'Password must contain at least one digit, one lowercase, one uppercase, one special character and no whitespace';
       }
       if (controlName === 'phoneNumber') {
-        return 'Phone number must be in E.164 format (e.g., +1234567890)';
+        return 'Phone number must be in E.164 format (e.g., +12125551234) with 8-15 digits including country code';
       }
     }
     if (control.errors['passwordMismatch']) return 'Passwords do not match';
