@@ -1,0 +1,26 @@
+.dashboard-container {
+  min-height: 100vh;
+  padding: 40px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.dashboard-content {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 0 auto;
+
+  h1 {
+    color: #2c3e50;
+    margin: 0 0 16px;
+    font-size: 32px;
+  }
+
+  p {
+    color: #7f8c8d;
+    font-size: 18px;
+    margin: 0;
+  }
+} 

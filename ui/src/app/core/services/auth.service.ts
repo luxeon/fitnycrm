@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
+import { JwtPayload, decodeJwtToken } from '../utils/jwt.utils';
 
 export interface UserSignupRequest {
   firstName: string;
@@ -43,6 +44,38 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('accessToken');
+    const token = this.getAccessToken();
+    if (!token) return false;
+
+    const payload = this.getDecodedToken();
+    if (!payload) return false;
+
+    // Check if token is expired
+    const now = Date.now() / 1000;
+    return payload.exp > now;
+  }
+
+  getCurrentUser(): UserDetailsResponse | null {
+    const payload = this.getDecodedToken();
+    if (!payload) return null;
+
+    return {
+      id: payload.sub,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      createdAt: new Date(payload.iat * 1000).toISOString(),
+      updatedAt: new Date(payload.iat * 1000).toISOString()
+    };
+  }
+
+  private getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
+  }
+
+  private getDecodedToken(): JwtPayload | null {
+    const token = this.getAccessToken();
+    if (!token) return null;
+    return decodeJwtToken(token);
   }
 } 
