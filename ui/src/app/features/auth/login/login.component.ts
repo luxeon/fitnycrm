@@ -3,10 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-login',
@@ -14,91 +10,57 @@ import { MatCardModule } from '@angular/material/card';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
     RouterLink
   ],
   template: `
     <div class="login-container">
-      <mat-card>
-        <mat-card-header>
-          <mat-card-title>Login</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" placeholder="Enter your email">
-              <mat-error *ngIf="loginForm.get('email')?.errors?.['required']">Email is required</mat-error>
-              <mat-error *ngIf="loginForm.get('email')?.errors?.['email']">Please enter a valid email</mat-error>
-            </mat-form-field>
+      <div class="login-card">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to continue your fitness journey</p>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password" placeholder="Enter your password">
-              <mat-error *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</mat-error>
-            </mat-form-field>
+        <div *ngIf="errorMessage" class="error-banner">
+          {{ errorMessage }}
+        </div>
 
-            <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-              Login
-            </button>
-
-            <div class="signup-link">
-              Don't have an account? <a routerLink="/register">Sign up</a>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              id="email"
+              type="email"
+              formControlName="email"
+              [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+              placeholder="Enter your email">
+            <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              {{ getErrorMessage('email') }}
             </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input 
+              id="password"
+              type="password"
+              formControlName="password"
+              [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+              placeholder="Enter your password">
+            <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+              {{ getErrorMessage('password') }}
+            </div>
+          </div>
+
+          <button type="submit" [disabled]="loginForm.invalid || isLoading">
+            {{ isLoading ? 'Logging in...' : 'Login' }}
+          </button>
+
+          <div class="signup-link">
+            Don't have an account? <a routerLink="/register">Sign up</a>
+          </div>
+        </form>
+      </div>
     </div>
   `,
-  styles: [`
-    .login-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f5f5f5;
-
-      mat-card {
-        width: 100%;
-        max-width: 400px;
-        padding: 2rem;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      mat-form-field {
-        width: 100%;
-      }
-
-      button {
-        width: 100%;
-        margin-top: 1rem;
-      }
-
-      .signup-link {
-        text-align: center;
-        margin-top: 1rem;
-        color: rgba(0, 0, 0, 0.87);
-
-        a {
-          color: #1976d2;
-          text-decoration: none;
-          font-weight: 500;
-
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  `]
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   private readonly authService = inject(AuthService);
@@ -110,8 +72,14 @@ export class LoginComponent {
     password: ['', [Validators.required]]
   });
 
+  errorMessage: string | null = null;
+  isLoading = false;
+
   async onSubmit(): Promise<void> {
     if (this.loginForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = null;
+
       try {
         const response = await this.authService.login(this.loginForm.value).toPromise();
         if (response) {
@@ -120,8 +88,21 @@ export class LoginComponent {
           await this.router.navigate(['/dashboard']);
         }
       } catch (error) {
+        this.errorMessage = 'Invalid email or password';
         console.error('Login failed:', error);
+      } finally {
+        this.isLoading = false;
       }
     }
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.loginForm.get(controlName);
+    if (!control?.errors || !control.touched) return '';
+
+    if (control.errors['required']) return `${controlName} is required`;
+    if (control.errors['email']) return 'Please enter a valid email';
+
+    return 'Invalid input';
   }
 } 
