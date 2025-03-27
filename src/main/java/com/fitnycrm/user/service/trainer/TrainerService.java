@@ -62,4 +62,16 @@ public class TrainerService {
         return userRepository.findByIdAndTenant(tenantId, trainerId)
                 .orElseThrow(() -> new UserNotFoundException(trainerId));
     }
+
+    @Transactional
+    public void delete(UUID tenantId, UUID trainerId) {
+        User client = findById(tenantId, trainerId);
+        Set<UserRole> roles = client.getRoles();
+        roles.forEach(role -> role.getUsers().remove(client));
+
+        Set<Tenant> tenants = client.getTenants();
+        tenants.forEach(tenant -> tenant.getUsers().remove(client));
+
+        userRepository.delete(client);
+    }
 }

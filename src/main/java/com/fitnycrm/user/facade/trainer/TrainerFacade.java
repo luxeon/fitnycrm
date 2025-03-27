@@ -27,4 +27,8 @@ public class TrainerFacade {
                 trainerService.update(tenantId, trainerId, request)
         );
     }
+
+    public void delete(UUID tenantId, UUID trainerId) {
+        trainerService.delete(tenantId, trainerId);
+    }
 } 

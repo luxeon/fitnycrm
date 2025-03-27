@@ -58,4 +58,18 @@ public class TrainerRestController {
                                        @RequestBody @Valid UpdateTrainerRequest request) {
         return trainerFacade.update(tenantId, trainerId, request);
     }
+
+    @Operation(summary = "Delete a trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Trainer deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Trainer not found")
+    })
+    @DeleteMapping("/trainers/{trainerId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public void delete(@PathVariable UUID tenantId,
+                      @PathVariable UUID trainerId) {
+        trainerFacade.delete(tenantId, trainerId);
+    }
 } 
