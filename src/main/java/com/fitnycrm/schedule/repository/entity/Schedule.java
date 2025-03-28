@@ -13,7 +13,7 @@ import org.hibernate.type.SqlTypes;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Data
@@ -37,7 +37,7 @@ public class Schedule {
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "days_of_week", columnDefinition = "day_of_week[]")
-    private List<DayOfWeek> daysOfWeek;
+    private Set<DayOfWeek> daysOfWeek;
 
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
