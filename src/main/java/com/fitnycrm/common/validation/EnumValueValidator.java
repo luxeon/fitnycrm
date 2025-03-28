@@ -22,6 +22,13 @@ public class EnumValueValidator implements ConstraintValidator<EnumValue, String
         if (value == null) {
             return true;
         }
-        return acceptedValues.contains(value);
+        boolean isValid = acceptedValues.contains(value);
+        if (!isValid) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(
+                            "Invalid values provided. Allowed values are: " + String.join(", ", acceptedValues))
+                    .addConstraintViolation();
+        }
+        return isValid;
     }
 } 

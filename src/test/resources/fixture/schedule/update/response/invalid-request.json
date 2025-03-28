@@ -2,7 +2,7 @@
   "errors": [
     {
       "field": "daysOfWeek",
-      "message": "all values must be any of enum class java.time.DayOfWeek"
+      "message": "Invalid values provided. Allowed values are: WEDNESDAY, MONDAY, THURSDAY, SUNDAY, TUESDAY, FRIDAY, SATURDAY"
     }
   ],
   "message": "Validation failed"
