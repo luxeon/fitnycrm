@@ -16,9 +16,6 @@ public record ScheduleDetailsResponse(
     @Schema(description = "ID of the training this schedule is for")
     UUID trainingId,
 
-    @Schema(description = "ID of the location where the training will be held")
-    UUID locationId,
-
     @Schema(description = "Days of the week when the training occurs")
     Set<String> daysOfWeek,
 
@@ -38,4 +35,4 @@ public record ScheduleDetailsResponse(
     @Schema(description = "Timestamp when the schedule was last updated")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     OffsetDateTime updatedAt
-) {} 
+) {}

@@ -10,12 +10,10 @@ import org.mapstruct.Mapping;
 public interface ScheduleResponseMapper {
 
     @Mapping(source = "training.id", target = "trainingId")
-    @Mapping(source = "location.id", target = "locationId")
     @Mapping(source = "defaultTrainer.id", target = "defaultTrainerId")
     ScheduleDetailsResponse toDetailsResponse(Schedule schedule);
 
     @Mapping(source = "training.id", target = "trainingId")
-    @Mapping(source = "location.id", target = "locationId")
     @Mapping(source = "defaultTrainer.id", target = "defaultTrainerId")
     ScheduleListItemResponse toListResponse(Schedule schedule);
 } 
