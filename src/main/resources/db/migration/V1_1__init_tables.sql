@@ -73,12 +73,22 @@ CREATE TABLE IF NOT EXISTS trainings
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
-CREATE TABLE IF NOT EXISTS schedule
+CREATE TYPE day_of_week AS ENUM (
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'SUNDAY'
+    );
+
+CREATE TABLE IF NOT EXISTS schedules
 (
     id                    uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     training_id           uuid          NOT NULL,
     location_id           uuid          NOT NULL,
-    days_of_week          VARCHAR(10)[] NOT NULL,
+    days_of_week          day_of_week[] NOT NULL,
     start_time            TIME          NOT NULL,
     end_time              TIME          NOT NULL,
     default_instructor_id uuid          NOT NULL,
@@ -97,7 +107,7 @@ CREATE TABLE IF NOT EXISTS sessions
     instructor_id uuid,
     start_time    TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     end_time      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    FOREIGN KEY (schedule_id) REFERENCES schedule (id),
+    FOREIGN KEY (schedule_id) REFERENCES schedules (id),
     FOREIGN KEY (instructor_id) REFERENCES users (id)
 );
 

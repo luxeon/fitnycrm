@@ -7,15 +7,18 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "schedule")
+@Table(name = "schedules")
 @ToString(exclude = {"training", "location", "defaultInstructor"})
 @EqualsAndHashCode(exclude = {"training", "location", "defaultInstructor"})
 public class Schedule {
@@ -32,9 +35,9 @@ public class Schedule {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @Column(name = "days_of_week", nullable = false)
-    @ElementCollection
-    private Set<String> daysOfWeek;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "days_of_week", columnDefinition = "day_of_week[]")
+    private List<DayOfWeek> daysOfWeek;
 
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
