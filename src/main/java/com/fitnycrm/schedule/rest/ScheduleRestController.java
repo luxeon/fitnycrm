@@ -3,6 +3,7 @@ package com.fitnycrm.schedule.rest;
 import com.fitnycrm.schedule.facade.ScheduleFacade;
 import com.fitnycrm.schedule.rest.model.CreateScheduleRequest;
 import com.fitnycrm.schedule.rest.model.ScheduleDetailsResponse;
+import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,5 +41,22 @@ public class ScheduleRestController {
                                           @PathVariable UUID trainingId,
                                           @RequestBody @Valid CreateScheduleRequest request) {
         return scheduleFacade.create(tenantId, trainingId, request);
+    }
+
+    @Operation(summary = "Update an existing schedule")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Schedule updated successfully",
+                    content = @Content(schema = @Schema(implementation = ScheduleDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Schedule or training or location or instructor not found")
+    })
+    @PutMapping("/{scheduleId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public ScheduleDetailsResponse update(@PathVariable UUID tenantId,
+                                        @PathVariable UUID trainingId,
+                                        @PathVariable UUID scheduleId,
+                                        @RequestBody @Valid UpdateScheduleRequest request) {
+        return scheduleFacade.update(tenantId, trainingId, scheduleId, request);
     }
 } 

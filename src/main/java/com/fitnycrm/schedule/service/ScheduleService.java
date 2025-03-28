@@ -4,6 +4,10 @@ import com.fitnycrm.location.service.LocationService;
 import com.fitnycrm.schedule.repository.ScheduleRepository;
 import com.fitnycrm.schedule.repository.entity.Schedule;
 import com.fitnycrm.schedule.rest.model.CreateScheduleRequest;
+import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
+import com.fitnycrm.schedule.service.exception.ScheduleNotFoundException;
+import com.fitnycrm.schedule.service.exception.ScheduleTenantMismatchException;
+import com.fitnycrm.schedule.service.exception.ScheduleTrainingMismatchException;
 import com.fitnycrm.schedule.service.mapper.ScheduleRequestMapper;
 import com.fitnycrm.training.service.TrainingService;
 import com.fitnycrm.user.service.trainer.TrainerService;
@@ -34,6 +38,29 @@ public class ScheduleService {
         schedule.setLocation(location);
         schedule.setDefaultTrainer(instructor);
 
+        return scheduleRepository.save(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public Schedule findById(UUID tenantId, UUID trainingId, UUID scheduleId) {
+        var schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ScheduleNotFoundException("Schedule not found"));
+
+        if (!schedule.getTraining().getId().equals(trainingId)) {
+            throw new ScheduleTrainingMismatchException("Schedule does not belong to the specified training");
+        }
+
+        if (!schedule.getTraining().getTenant().getId().equals(tenantId)) {
+            throw new ScheduleTenantMismatchException("Schedule does not belong to the specified tenant");
+        }
+
+        return schedule;
+    }
+
+    @Transactional
+    public Schedule update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
+        var schedule = findById(tenantId, trainingId, scheduleId);
+        requestMapper.update(schedule, request);
         return scheduleRepository.save(schedule);
     }
 } 

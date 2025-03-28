@@ -3,6 +3,7 @@ package com.fitnycrm.schedule.facade;
 import com.fitnycrm.schedule.facade.mapper.ScheduleResponseMapper;
 import com.fitnycrm.schedule.rest.model.CreateScheduleRequest;
 import com.fitnycrm.schedule.rest.model.ScheduleDetailsResponse;
+import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
 import com.fitnycrm.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,5 +19,9 @@ public class ScheduleFacade {
 
     public ScheduleDetailsResponse create(UUID tenantId, UUID trainingId, CreateScheduleRequest request) {
         return responseMapper.toResponse(scheduleService.create(tenantId, trainingId, request));
+    }
+
+    public ScheduleDetailsResponse update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
+        return responseMapper.toResponse(scheduleService.update(tenantId, trainingId, scheduleId, request));
     }
 } 
