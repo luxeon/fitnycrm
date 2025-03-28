@@ -12,24 +12,25 @@ import java.util.UUID;
 @Schema(description = "Request object for creating a new schedule")
 public record CreateScheduleRequest(
 
-    @Schema(description = "ID of the location where the training will be held")
-    @NotNull
-    UUID locationId,
+        @Schema(description = "ID of the location where the training will be held")
+        @NotNull
+        UUID locationId,
 
-    @Schema(description = "Days of the week when the training occurs")
-    @NotNull
-    @EnumSetValue(enumClass = DayOfWeek.class)
-    Set<String> daysOfWeek,
+        @Schema(description = "Days of the week when the training occurs")
+        @NotNull
+        @EnumSetValue(enumClass = DayOfWeek.class)
+        Set<String> daysOfWeek,
 
-    @Schema(description = "Start time of the training")
-    @NotNull
-    LocalTime startTime,
+        @Schema(description = "Start time of the training")
+        @NotNull
+        LocalTime startTime,
 
-    @Schema(description = "End time of the training")
-    @NotNull
-    LocalTime endTime,
+        @Schema(description = "End time of the training")
+        @NotNull
+        LocalTime endTime,
 
-    @Schema(description = "ID of the default instructor for this training")
-    @NotNull
-    UUID defaultInstructorId
-) {} 
+        @Schema(description = "ID of the default trainer for this training")
+        @NotNull
+        UUID defaultTrainerId
+) {
+}

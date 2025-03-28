@@ -28,8 +28,8 @@ public record ScheduleDetailsResponse(
     @Schema(description = "End time of the training")
     LocalTime endTime,
 
-    @Schema(description = "ID of the default instructor for this training")
-    UUID defaultInstructorId,
+    @Schema(description = "ID of the default trainer for this training")
+    UUID defaultTrainerId,
 
     @Schema(description = "Timestamp when the schedule was created")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

@@ -7,13 +7,16 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.UUID;
 
 @Data
@@ -36,8 +39,9 @@ public class Schedule {
     private Location location;
 
     @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
     @Column(name = "days_of_week", columnDefinition = "day_of_week[]")
-    private Set<DayOfWeek> daysOfWeek;
+    private SortedSet<DayOfWeek> daysOfWeek;
 
     @Column(name = "start_time", nullable = false)
     private LocalTime startTime;
@@ -46,12 +50,14 @@ public class Schedule {
     private LocalTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "default_instructor_id", nullable = false)
-    private User defaultInstructor;
+    @JoinColumn(name = "default_trainer_id", nullable = false)
+    private User defaultTrainer;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
+    @UpdateTimestamp
     @Column(name = "updated_at")
     private OffsetDateTime updatedAt;
 } 

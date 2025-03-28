@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -28,12 +27,12 @@ public class ScheduleService {
     public Schedule create(UUID tenantId, UUID trainingId, CreateScheduleRequest request) {
         var training = trainingService.findById(tenantId, trainingId);
         var location = locationService.findById(tenantId, request.locationId());
-        var instructor = trainerService.findById(tenantId, request.defaultInstructorId());
+        var instructor = trainerService.findById(tenantId, request.defaultTrainerId());
 
         var schedule = requestMapper.toSchedule(request);
         schedule.setTraining(training);
         schedule.setLocation(location);
-        schedule.setDefaultInstructor(instructor);
+        schedule.setDefaultTrainer(instructor);
 
         return scheduleRepository.save(schedule);
     }

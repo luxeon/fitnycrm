@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "field": "daysOfWeek",
+      "message": "all values must be any of enum class java.time.DayOfWeek"
+    }
+  ],
+  "message": "Validation failed"
+}

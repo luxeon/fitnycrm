@@ -10,6 +10,6 @@ public interface ScheduleResponseMapper {
 
     @Mapping(source = "training.id", target = "trainingId")
     @Mapping(source = "location.id", target = "locationId")
-    @Mapping(source = "defaultInstructor.id", target = "defaultInstructorId")
+    @Mapping(source = "defaultTrainer.id", target = "defaultTrainerId")
     ScheduleDetailsResponse toResponse(Schedule schedule);
 } 
