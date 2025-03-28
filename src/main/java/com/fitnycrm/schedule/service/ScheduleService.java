@@ -13,6 +13,8 @@ import com.fitnycrm.training.service.TrainingService;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.service.trainer.TrainerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +79,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Schedule> findByLocation(UUID tenantId, UUID locationId) {
-        return scheduleRepository.findByTenantAndLocationId(tenantId, locationId);
+    public Page<Schedule> findByLocation(UUID tenantId, UUID locationId, Pageable pageable) {
+        return scheduleRepository.findByTenantAndLocationId(tenantId, locationId, pageable);
     }
 } 
