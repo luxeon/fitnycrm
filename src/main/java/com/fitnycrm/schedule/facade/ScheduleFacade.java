@@ -24,4 +24,8 @@ public class ScheduleFacade {
     public ScheduleDetailsResponse update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
         return responseMapper.toResponse(scheduleService.update(tenantId, trainingId, scheduleId, request));
     }
+
+    public ScheduleDetailsResponse findById(UUID tenantId, UUID trainingId, UUID scheduleId) {
+        return responseMapper.toResponse(scheduleService.findById(tenantId, trainingId, scheduleId));
+    }
 } 

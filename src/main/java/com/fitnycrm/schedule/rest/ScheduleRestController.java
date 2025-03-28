@@ -59,4 +59,19 @@ public class ScheduleRestController {
                                         @RequestBody @Valid UpdateScheduleRequest request) {
         return scheduleFacade.update(tenantId, trainingId, scheduleId, request);
     }
+
+    @Operation(summary = "Find schedule by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Schedule found",
+                    content = @Content(schema = @Schema(implementation = ScheduleDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Schedule not found")
+    })
+    @GetMapping("/{scheduleId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public ScheduleDetailsResponse findById(@PathVariable UUID tenantId,
+                                          @PathVariable UUID trainingId,
+                                          @PathVariable UUID scheduleId) {
+        return scheduleFacade.findById(tenantId, trainingId, scheduleId);
+    }
 } 

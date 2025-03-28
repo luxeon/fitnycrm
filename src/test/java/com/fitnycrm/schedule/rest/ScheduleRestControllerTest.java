@@ -18,6 +18,7 @@ import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -172,5 +173,43 @@ class ScheduleRestControllerTest {
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/schedule/insert.sql")
+    void findById_whenScheduleExists_thenReturnSchedule() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/find-by-id/response/success.json");
+
+        mockMvc.perform(get(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenScheduleNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/find-by-id/response/not-found.json");
+
+        mockMvc.perform(get(BASE_URL + "/{scheduleId}", NON_EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findById_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findById_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/find-by-id/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/trainings/{trainingId}/schedules/{scheduleId}",
+                        DIFFERENT_TENANT_ID, EXISTING_TRAINING_ID, EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 
