@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -73,5 +74,10 @@ public class ScheduleService {
     public void delete(UUID tenantId, UUID locationId, UUID scheduleId) {
         var schedule = findById(tenantId, locationId, scheduleId);
         scheduleRepository.delete(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Schedule> findByLocation(UUID tenantId, UUID locationId) {
+        return scheduleRepository.findByTenantAndLocationId(tenantId, locationId);
     }
 } 

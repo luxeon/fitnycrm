@@ -3,11 +3,13 @@ package com.fitnycrm.schedule.facade;
 import com.fitnycrm.schedule.facade.mapper.ScheduleResponseMapper;
 import com.fitnycrm.schedule.rest.model.CreateScheduleRequest;
 import com.fitnycrm.schedule.rest.model.ScheduleDetailsResponse;
+import com.fitnycrm.schedule.rest.model.ScheduleListItemResponse;
 import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
 import com.fitnycrm.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -18,15 +20,21 @@ public class ScheduleFacade {
     private final ScheduleResponseMapper responseMapper;
 
     public ScheduleDetailsResponse create(UUID tenantId, UUID locationId, CreateScheduleRequest request) {
-        return responseMapper.toResponse(scheduleService.create(tenantId, locationId, request));
+        return responseMapper.toDetailsResponse(scheduleService.create(tenantId, locationId, request));
     }
 
     public ScheduleDetailsResponse update(UUID tenantId, UUID locationId, UUID scheduleId, UpdateScheduleRequest request) {
-        return responseMapper.toResponse(scheduleService.update(tenantId, locationId, scheduleId, request));
+        return responseMapper.toDetailsResponse(scheduleService.update(tenantId, locationId, scheduleId, request));
     }
 
     public ScheduleDetailsResponse findById(UUID tenantId, UUID locationId, UUID scheduleId) {
-        return responseMapper.toResponse(scheduleService.findById(tenantId, locationId, scheduleId));
+        return responseMapper.toDetailsResponse(scheduleService.findById(tenantId, locationId, scheduleId));
+    }
+
+    public List<ScheduleListItemResponse> findAll(UUID tenantId, UUID locationId) {
+        return scheduleService.findByLocation(tenantId, locationId).stream()
+                .map(responseMapper::toListResponse)
+                .toList();
     }
 
     public void delete(UUID tenantId, UUID locationId, UUID scheduleId) {
