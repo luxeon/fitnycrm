@@ -29,9 +29,9 @@ public class ScheduleService {
     private final ScheduleRequestMapper requestMapper;
 
     @Transactional
-    public Schedule create(UUID tenantId, UUID trainingId, CreateScheduleRequest request) {
-        var training = trainingService.findById(tenantId, trainingId);
-        var location = locationService.findById(tenantId, request.locationId());
+    public Schedule create(UUID tenantId, UUID locationId, CreateScheduleRequest request) {
+        var location = locationService.findById(tenantId, locationId);
+        var training = trainingService.findById(tenantId, request.trainingId());
         var instructor = trainerService.findById(tenantId, request.defaultTrainerId());
 
         var schedule = requestMapper.toSchedule(request);
@@ -43,11 +43,11 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public Schedule findById(UUID tenantId, UUID trainingId, UUID scheduleId) {
+    public Schedule findById(UUID tenantId, UUID locationId, UUID scheduleId) {
         var schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ScheduleNotFoundException("Schedule not found"));
 
-        if (!schedule.getTraining().getId().equals(trainingId)) {
+        if (!schedule.getLocation().getId().equals(locationId)) {
             throw new ScheduleTrainingMismatchException("Schedule does not belong to the specified training");
         }
 
@@ -59,10 +59,10 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
-        var schedule = findById(tenantId, trainingId, scheduleId);
+    public Schedule update(UUID tenantId, UUID locationId, UUID scheduleId, UpdateScheduleRequest request) {
+        var schedule = findById(tenantId, locationId, scheduleId);
         requestMapper.update(schedule, request);
-        if (!schedule.getTraining().getId().equals(request.defaultTrainerId())) {
+        if (!schedule.getDefaultTrainer().getId().equals(request.defaultTrainerId())) {
             User trainer = trainerService.findById(tenantId, request.defaultTrainerId());
             schedule.setDefaultTrainer(trainer);
         }
@@ -70,8 +70,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void delete(UUID tenantId, UUID trainingId, UUID scheduleId) {
-        var schedule = findById(tenantId, trainingId, scheduleId);
+    public void delete(UUID tenantId, UUID locationId, UUID scheduleId) {
+        var schedule = findById(tenantId, locationId, scheduleId);
         scheduleRepository.delete(schedule);
     }
 } 

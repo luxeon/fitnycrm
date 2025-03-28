@@ -17,19 +17,19 @@ public class ScheduleFacade {
     private final ScheduleService scheduleService;
     private final ScheduleResponseMapper responseMapper;
 
-    public ScheduleDetailsResponse create(UUID tenantId, UUID trainingId, CreateScheduleRequest request) {
-        return responseMapper.toResponse(scheduleService.create(tenantId, trainingId, request));
+    public ScheduleDetailsResponse create(UUID tenantId, UUID locationId, CreateScheduleRequest request) {
+        return responseMapper.toResponse(scheduleService.create(tenantId, locationId, request));
     }
 
-    public ScheduleDetailsResponse update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
-        return responseMapper.toResponse(scheduleService.update(tenantId, trainingId, scheduleId, request));
+    public ScheduleDetailsResponse update(UUID tenantId, UUID locationId, UUID scheduleId, UpdateScheduleRequest request) {
+        return responseMapper.toResponse(scheduleService.update(tenantId, locationId, scheduleId, request));
     }
 
-    public ScheduleDetailsResponse findById(UUID tenantId, UUID trainingId, UUID scheduleId) {
-        return responseMapper.toResponse(scheduleService.findById(tenantId, trainingId, scheduleId));
+    public ScheduleDetailsResponse findById(UUID tenantId, UUID locationId, UUID scheduleId) {
+        return responseMapper.toResponse(scheduleService.findById(tenantId, locationId, scheduleId));
     }
 
-    public void delete(UUID tenantId, UUID trainingId, UUID scheduleId) {
-        scheduleService.delete(tenantId, trainingId, scheduleId);
+    public void delete(UUID tenantId, UUID locationId, UUID scheduleId) {
+        scheduleService.delete(tenantId, locationId, scheduleId);
     }
 } 

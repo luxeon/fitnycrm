@@ -26,10 +26,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql", "/db/training/insert.sql", "/db/location/insert.sql", "/db/trainer/insert.sql"})
 class ScheduleRestControllerTest {
 
-    private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/trainings/ae4d661a-ed70-4e36-9caf-048ee8060290/schedules";
+    private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules";
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
     private static final UUID TRAINING_ID = UUID.fromString("8a7632b1-e932-48fd-9296-001036b4ec19");
-    private static final UUID EXISTING_TRAINING_ID = UUID.fromString("8a7632b1-e932-48fd-9296-001036b4ec19");
+    private static final UUID EXISTING_LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID EXISTING_SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec19");
     private static final UUID NON_EXISTING_SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec99");
 
@@ -80,7 +80,7 @@ class ScheduleRestControllerTest {
         var request = readFile("fixture/schedule/create/request/valid-request.json");
         var expectedResponse = readFile("fixture/schedule/create/response/access-denied.json");
 
-        mockMvc.perform(post("/api/tenants/{tenantId}/trainings/{trainingId}/schedules", DIFFERENT_TENANT_ID, TRAINING_ID)
+        mockMvc.perform(post("/api/tenants/{tenantId}/locations/{locationId}/schedules", DIFFERENT_TENANT_ID, TRAINING_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
@@ -155,8 +155,8 @@ class ScheduleRestControllerTest {
         var request = readFile("fixture/schedule/update/request/valid-request.json");
         var expectedResponse = readFile("fixture/schedule/update/response/access-denied.json");
 
-        mockMvc.perform(put("/api/tenants/{tenantId}/trainings/{trainingId}/schedules/{scheduleId}",
-                        DIFFERENT_TENANT_ID, EXISTING_TRAINING_ID, EXISTING_SCHEDULE_ID)
+        mockMvc.perform(put("/api/tenants/{tenantId}/locations/{locationId}/schedules/{scheduleId}",
+                        DIFFERENT_TENANT_ID, EXISTING_LOCATION_ID, EXISTING_SCHEDULE_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
@@ -207,8 +207,8 @@ class ScheduleRestControllerTest {
     void findById_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         var expectedResponse = readFile("fixture/schedule/find-by-id/response/access-denied.json");
 
-        mockMvc.perform(get("/api/tenants/{tenantId}/trainings/{trainingId}/schedules/{scheduleId}",
-                        DIFFERENT_TENANT_ID, EXISTING_TRAINING_ID, EXISTING_SCHEDULE_ID)
+        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}/schedules/{scheduleId}",
+                        DIFFERENT_TENANT_ID, EXISTING_LOCATION_ID, EXISTING_SCHEDULE_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
                 .andExpect(json().isEqualTo(expectedResponse));

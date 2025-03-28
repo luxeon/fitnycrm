@@ -12,9 +12,9 @@ import java.util.UUID;
 @Schema(description = "Request object for creating a new schedule")
 public record CreateScheduleRequest(
 
-        @Schema(description = "ID of the location where the training will be held")
+        @Schema(description = "ID of the training")
         @NotNull
-        UUID locationId,
+        UUID trainingId,
 
         @Schema(description = "Days of the week when the training occurs")
         @NotNull

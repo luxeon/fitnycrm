@@ -20,27 +20,27 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tenants/{tenantId}/trainings/{trainingId}/schedules")
+@RequestMapping("/api/tenants/{tenantId}/locations/{locationId}/schedules")
 @Tag(name = "schedule", description = "Schedule management endpoints")
 public class ScheduleRestController {
 
     private final ScheduleFacade scheduleFacade;
 
-    @Operation(summary = "Create a new schedule for a training")
+    @Operation(summary = "Create a new schedule for a location")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Schedule created",
                     content = @Content(schema = @Schema(implementation = ScheduleDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "404", description = "Training or location or instructor not found")
+            @ApiResponse(responseCode = "404", description = "Location or instructor not found")
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ScheduleDetailsResponse create(@PathVariable UUID tenantId,
-                                          @PathVariable UUID trainingId,
+                                          @PathVariable UUID locationId,
                                           @RequestBody @Valid CreateScheduleRequest request) {
-        return scheduleFacade.create(tenantId, trainingId, request);
+        return scheduleFacade.create(tenantId, locationId, request);
     }
 
     @Operation(summary = "Update an existing schedule")
@@ -49,15 +49,15 @@ public class ScheduleRestController {
                     content = @Content(schema = @Schema(implementation = ScheduleDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "404", description = "Schedule or training or location or instructor not found")
+            @ApiResponse(responseCode = "404", description = "Schedule or location or instructor not found")
     })
     @PutMapping("/{scheduleId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ScheduleDetailsResponse update(@PathVariable UUID tenantId,
-                                        @PathVariable UUID trainingId,
+                                        @PathVariable UUID locationId,
                                         @PathVariable UUID scheduleId,
                                         @RequestBody @Valid UpdateScheduleRequest request) {
-        return scheduleFacade.update(tenantId, trainingId, scheduleId, request);
+        return scheduleFacade.update(tenantId, locationId, scheduleId, request);
     }
 
     @Operation(summary = "Find schedule by ID")
@@ -70,9 +70,9 @@ public class ScheduleRestController {
     @GetMapping("/{scheduleId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ScheduleDetailsResponse findById(@PathVariable UUID tenantId,
-                                          @PathVariable UUID trainingId,
+                                          @PathVariable UUID locationId,
                                           @PathVariable UUID scheduleId) {
-        return scheduleFacade.findById(tenantId, trainingId, scheduleId);
+        return scheduleFacade.findById(tenantId, locationId, scheduleId);
     }
 
     @Operation(summary = "Delete a schedule")
@@ -85,8 +85,8 @@ public class ScheduleRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
-                      @PathVariable UUID trainingId,
+                      @PathVariable UUID locationId,
                       @PathVariable UUID scheduleId) {
-        scheduleFacade.delete(tenantId, trainingId, scheduleId);
+        scheduleFacade.delete(tenantId, locationId, scheduleId);
     }
 } 
