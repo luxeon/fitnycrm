@@ -1,8 +1,10 @@
 package com.fitnycrm.schedule.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,5 +29,13 @@ public record ScheduleDetailsResponse(
     LocalTime endTime,
 
     @Schema(description = "ID of the default instructor for this training")
-    UUID defaultInstructorId
+    UUID defaultInstructorId,
+
+    @Schema(description = "Timestamp when the schedule was created")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    OffsetDateTime createdAt,
+
+    @Schema(description = "Timestamp when the schedule was last updated")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    OffsetDateTime updatedAt
 ) {} 

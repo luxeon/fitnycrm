@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -44,4 +45,10 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_instructor_id", nullable = false)
     private User defaultInstructor;
+
+    @Column(name = "created_at")
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private OffsetDateTime updatedAt;
 } 
