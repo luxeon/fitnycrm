@@ -2,13 +2,13 @@
   "id": "${json-unit.any-string}",
   "locationId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
   "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
-  "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
-  "startTime": "09:00:00",
-  "endTime": "10:00:00",
+  "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd02",
+  "startTime": "10:15:00",
+  "endTime": "11:45:00",
   "daysOfWeek": [
     "MONDAY",
     "WEDNESDAY",
-    "FRIDAY"
+    "SUNDAY"
   ],
   "createdAt": "${json-unit.any-string}",
   "updatedAt": "${json-unit.any-string}"

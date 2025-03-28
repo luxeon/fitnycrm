@@ -2,6 +2,6 @@
   "locationId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
   "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
   "startTime": "09:00:00",
-  "endTime": "09:00:00",
+  "endTime": "10:00:00",
   "daysOfWeek": ["MONDAY", "WEDNESDAY", "FRIDAY"]
 } 

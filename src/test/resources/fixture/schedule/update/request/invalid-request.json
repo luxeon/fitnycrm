@@ -1,0 +1,10 @@
+{
+  "startTime": "10:15:00",
+  "endTime": "11:45:00",
+  "daysOfWeek": [
+    "INVALID_MONDAY",
+    "WEDNESDAY",
+    "SUNDAY"
+  ],
+  "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd02"
+} 

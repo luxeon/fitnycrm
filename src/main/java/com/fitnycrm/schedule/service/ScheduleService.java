@@ -10,6 +10,7 @@ import com.fitnycrm.schedule.service.exception.ScheduleTenantMismatchException;
 import com.fitnycrm.schedule.service.exception.ScheduleTrainingMismatchException;
 import com.fitnycrm.schedule.service.mapper.ScheduleRequestMapper;
 import com.fitnycrm.training.service.TrainingService;
+import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.service.trainer.TrainerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,10 @@ public class ScheduleService {
     public Schedule update(UUID tenantId, UUID trainingId, UUID scheduleId, UpdateScheduleRequest request) {
         var schedule = findById(tenantId, trainingId, scheduleId);
         requestMapper.update(schedule, request);
+        if (!schedule.getTraining().getId().equals(request.defaultTrainerId())) {
+            User trainer = trainerService.findById(tenantId, request.defaultTrainerId());
+            schedule.setDefaultTrainer(trainer);
+        }
         return scheduleRepository.save(schedule);
     }
 } 
