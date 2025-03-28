@@ -19,6 +19,7 @@ import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -211,5 +212,37 @@ class ScheduleRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
                 .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/schedule/insert.sql")
+    void deleteSchedule_whenScheduleExists_thenDeleteSchedule() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteSchedule_whenScheduleNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/find-by-id/response/not-found.json");
+
+        mockMvc.perform(delete(BASE_URL + "/{scheduleId}", NON_EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void deleteSchedule_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
+    void deleteSchedule_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(delete(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
     }
 } 

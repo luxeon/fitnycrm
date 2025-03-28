@@ -68,4 +68,10 @@ public class ScheduleService {
         }
         return scheduleRepository.save(schedule);
     }
+
+    @Transactional
+    public void delete(UUID tenantId, UUID trainingId, UUID scheduleId) {
+        var schedule = findById(tenantId, trainingId, scheduleId);
+        scheduleRepository.delete(schedule);
+    }
 } 

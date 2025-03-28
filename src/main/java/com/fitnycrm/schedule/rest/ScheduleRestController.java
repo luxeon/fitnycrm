@@ -74,4 +74,19 @@ public class ScheduleRestController {
                                           @PathVariable UUID scheduleId) {
         return scheduleFacade.findById(tenantId, trainingId, scheduleId);
     }
+
+    @Operation(summary = "Delete a schedule")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Schedule deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Schedule not found")
+    })
+    @DeleteMapping("/{scheduleId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public void delete(@PathVariable UUID tenantId,
+                      @PathVariable UUID trainingId,
+                      @PathVariable UUID scheduleId) {
+        scheduleFacade.delete(tenantId, trainingId, scheduleId);
+    }
 } 

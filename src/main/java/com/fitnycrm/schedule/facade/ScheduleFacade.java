@@ -28,4 +28,8 @@ public class ScheduleFacade {
     public ScheduleDetailsResponse findById(UUID tenantId, UUID trainingId, UUID scheduleId) {
         return responseMapper.toResponse(scheduleService.findById(tenantId, trainingId, scheduleId));
     }
+
+    public void delete(UUID tenantId, UUID trainingId, UUID scheduleId) {
+        scheduleService.delete(tenantId, trainingId, scheduleId);
+    }
 } 
