@@ -76,12 +76,14 @@ CREATE TABLE IF NOT EXISTS trainings
 CREATE TABLE IF NOT EXISTS schedule
 (
     id                    uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    training_id           uuid        NOT NULL,
-    location_id           uuid        NOT NULL,
-    day_of_week           VARCHAR(10) NOT NULL,
-    start_time            TIME        NOT NULL,
-    end_time              TIME        NOT NULL,
-    default_instructor_id uuid,
+    training_id           uuid          NOT NULL,
+    location_id           uuid          NOT NULL,
+    days_of_week          VARCHAR(10)[] NOT NULL,
+    start_time            TIME          NOT NULL,
+    end_time              TIME          NOT NULL,
+    default_instructor_id uuid          NOT NULL,
+    created_at            TIMESTAMP WITHOUT TIME ZONE,
+    updated_at            TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (training_id) REFERENCES trainings (id),
     FOREIGN KEY (location_id) REFERENCES locations (id),
     FOREIGN KEY (default_instructor_id) REFERENCES users (id)
