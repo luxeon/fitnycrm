@@ -9,7 +9,17 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-  - package-ecosystem: "yarn"
+
+  - package-ecosystem: "npm"
     directory: "/ui"
     schedule:
       interval: "weekly"
+    groups:
+      angular:
+        patterns:
+          - "@angular*"
+      dev-dependencies:
+        patterns:
+          - "@types/*"
+          - "karma*"
+          - "jasmine*"
