@@ -7,8 +7,14 @@ permissions:
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'ui/**'
+      - '.cursor/**'
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'ui/**'
+      - '.cursor/**'
 
 jobs:
   build:
