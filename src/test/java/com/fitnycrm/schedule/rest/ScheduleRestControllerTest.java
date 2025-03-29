@@ -28,10 +28,12 @@ class ScheduleRestControllerTest {
 
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules";
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
+    private static final UUID LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID TRAINING_ID = UUID.fromString("8a7632b1-e932-48fd-9296-001036b4ec19");
     private static final UUID EXISTING_LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID EXISTING_SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec19");
     private static final UUID NON_EXISTING_SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec99");
+    private static final UUID NON_EXISTING_LOCATION_ID = UUID.fromString("461022b3-68e8-446b-824a-42338abd9ac0");
 
     @Autowired
     private MockMvc mockMvc;
@@ -242,6 +244,64 @@ class ScheduleRestControllerTest {
     @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
     void deleteSchedule_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
         mockMvc.perform(delete(BASE_URL + "/{scheduleId}", EXISTING_SCHEDULE_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/schedule/insert.sql")
+    void findAll_whenSchedulesExist_thenReturnPaginatedSchedules() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/findAll/response/success.json");
+
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "startTime,desc")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findAll_whenLocationNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/findAll/response/location-not-found.json");
+
+        mockMvc.perform(get("/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/{locationId}/schedules", 
+                NON_EXISTING_LOCATION_ID)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void findAll_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void findAll_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/schedule/findAll/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}/schedules", 
+                DIFFERENT_TENANT_ID, LOCATION_ID)
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
+    void findAll_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .param("page", "0")
+                        .param("size", "10")
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }

@@ -1,5 +1,6 @@
 package com.fitnycrm.schedule.service;
 
+import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.location.service.LocationService;
 import com.fitnycrm.schedule.repository.ScheduleRepository;
 import com.fitnycrm.schedule.repository.entity.Schedule;
@@ -80,6 +81,7 @@ public class ScheduleService {
 
     @Transactional(readOnly = true)
     public Page<Schedule> findByLocation(UUID tenantId, UUID locationId, Pageable pageable) {
-        return scheduleRepository.findByTenantAndLocationId(tenantId, locationId, pageable);
+        Location location = locationService.findById(tenantId, locationId);
+        return scheduleRepository.findAllByLocation(location, pageable);
     }
 } 
