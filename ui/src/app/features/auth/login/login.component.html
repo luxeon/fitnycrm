@@ -1,7 +1,11 @@
 <div class="login-container">
   <div class="login-card">
-    <h2>Welcome Back</h2>
-    <p class="subtitle">Login to continue your fitness journey</p>
+<!--    Uncomment to add language switcher -->
+<!--    <div class="language-switcher-container">-->
+<!--      <app-language-switcher></app-language-switcher>-->
+<!--    </div>-->
+    <h2>{{ 'login.title' | translate }}</h2>
+    <p class="subtitle">{{ 'login.subtitle' | translate }}</p>
 
     <div *ngIf="errorMessage" class="error-banner">
       {{ errorMessage }}
@@ -9,38 +13,38 @@
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <div class="form-group">
-        <label for="email">Email</label>
-        <input 
+        <label for="email">{{ 'login.email.label' | translate }}</label>
+        <input
           id="email"
           type="email"
           formControlName="email"
           [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-          placeholder="Enter your email">
+          [placeholder]="'login.email.placeholder' | translate">
         <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          {{ getErrorMessage('email') }}
+          {{ getErrorMessage('email') | async }}
         </div>
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
-        <input 
+        <label for="password">{{ 'login.password.label' | translate }}</label>
+        <input
           id="password"
           type="password"
           formControlName="password"
           [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
-          placeholder="Enter your password">
+          [placeholder]="'login.password.placeholder' | translate">
         <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          {{ getErrorMessage('password') }}
+          {{ getErrorMessage('password') | async }}
         </div>
       </div>
 
       <button type="submit" [disabled]="loginForm.invalid || isLoading">
-        {{ isLoading ? 'Logging in...' : 'Login' }}
+        {{ isLoading ? ('login.button.loading' | translate) : ('login.button.login' | translate) }}
       </button>
 
       <div class="signup-link">
-        Don't have an account? <a routerLink="/register">Sign up</a>
+        {{ 'login.signup.text' | translate }} <a routerLink="/register">{{ 'login.signup.link' | translate }}</a>
       </div>
     </form>
   </div>
-</div> 
+</div>

@@ -5,11 +5,37 @@ import { By } from '@angular/platform-browser';
 import { AuthService } from '../../../core/services/auth.service';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { provideHttpClient } from '@angular/common/http';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authService: jasmine.SpyObj<AuthService>;
+  let translateService: TranslateService;
+
+  const translations = {
+    login: {
+      email: {
+        required: 'Email is required',
+        invalid: 'Please enter a valid email',
+        label: 'Email',
+        placeholder: 'Enter your email'
+      },
+      password: {
+        required: 'Password is required',
+        label: 'Password',
+        placeholder: 'Enter your password'
+      },
+      error: {
+        invalidCredentials: 'Invalid email or password'
+      },
+      button: {
+        login: 'Login',
+        loading: 'Logging in...'
+      }
+    }
+  };
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
@@ -22,19 +48,27 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         LoginComponent,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TranslateModule.forRoot()
       ],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         provideRouter([
           { path: 'dashboard', component: {} as any }
-        ])
+        ]),
+        provideHttpClient()
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    translateService = TestBed.inject(TranslateService);
+
+    // Set up translations
+    translateService.setTranslation('en', translations);
+    translateService.use('en');
+
     fixture.detectChanges();
   });
 
@@ -124,7 +158,7 @@ describe('LoginComponent', () => {
     component.onSubmit();
     tick();
 
-    expect(component.errorMessage).toBe('Invalid email or password');
+    expect(component.errorMessage).toBe(translations.login.error.invalidCredentials);
     expect(component.isLoading).toBeFalse();
 
     // Second attempt - successful login
@@ -144,30 +178,35 @@ describe('LoginComponent', () => {
     expect(component.isLoading).toBeFalse();
   }));
 
-  it('should display appropriate error messages', () => {
+  it('should display appropriate error messages', fakeAsync(async () => {
     const form = component.loginForm;
 
     // Test email error
     form.get('email')?.setValue('');
     form.get('email')?.markAsTouched();
-    expect(component.getErrorMessage('email')).toBe('email is required');
+    let errorMessage = await component.getErrorMessage('email');
+    expect(errorMessage).toBe(translations.login.email.required);
 
     form.get('email')?.setValue('invalid');
-    expect(component.getErrorMessage('email')).toBe('Please enter a valid email');
+    errorMessage = await component.getErrorMessage('email');
+    expect(errorMessage).toBe(translations.login.email.invalid);
 
     // Test password error
     form.get('password')?.setValue('');
     form.get('password')?.markAsTouched();
-    expect(component.getErrorMessage('password')).toBe('password is required');
+    errorMessage = await component.getErrorMessage('password');
+    expect(errorMessage).toBe(translations.login.password.required);
 
     // Test no error message when fields are valid
     form.patchValue({
       email: 'test@example.com',
       password: 'password123'
     });
-    expect(component.getErrorMessage('email')).toBe('');
-    expect(component.getErrorMessage('password')).toBe('');
-  });
+    errorMessage = await component.getErrorMessage('email');
+    expect(errorMessage).toBe('');
+    errorMessage = await component.getErrorMessage('password');
+    expect(errorMessage).toBe('');
+  }));
 
   it('should properly manage loading state during submission', fakeAsync(() => {
     component.loginForm.patchValue({
@@ -185,5 +224,13 @@ describe('LoginComponent', () => {
   it('should not submit if form is invalid', () => {
     component.onSubmit();
     expect(authService.login).not.toHaveBeenCalled();
+  });
+
+  it('should initialize with correct translations', () => {
+    const emailLabel = fixture.debugElement.query(By.css('label[for="email"]'));
+    const passwordLabel = fixture.debugElement.query(By.css('label[for="password"]'));
+    
+    expect(emailLabel.nativeElement.textContent).toBe(translations.login.email.label);
+    expect(passwordLabel.nativeElement.textContent).toBe(translations.login.password.label);
   });
 });

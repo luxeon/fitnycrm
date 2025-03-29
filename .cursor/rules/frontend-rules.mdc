@@ -24,6 +24,8 @@ alwaysApply: true
    Enforce kebab-case naming for files (e.g., `user-profile.component.ts`) and match Angular's conventions for file suffixes (e.g., `.component.ts`, `.service.ts`, etc.).
 
 **Angular and TypeScript Best Practices**
+- **Deprications**
+  Depricated modules and methods should be avoided whenever is possible
 - **Type Safety with Interfaces**
   Define data models using interfaces for explicit types and maintain strict typing to avoid `any`.
 

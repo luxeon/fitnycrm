@@ -1,0 +1,28 @@
+{
+  "login": {
+    "title": "Bienvenido de nuevo",
+    "subtitle": "Inicia sesión para continuar tu viaje fitness",
+    "email": {
+      "label": "Correo electrónico",
+      "placeholder": "Ingresa tu correo electrónico",
+      "required": "El correo electrónico es requerido",
+      "invalid": "Por favor ingresa un correo electrónico válido"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Ingresa tu contraseña",
+      "required": "La contraseña es requerida"
+    },
+    "button": {
+      "login": "Iniciar sesión",
+      "loading": "Iniciando sesión..."
+    },
+    "error": {
+      "invalidCredentials": "Correo electrónico o contraseña inválidos"
+    },
+    "signup": {
+      "text": "¿No tienes una cuenta?",
+      "link": "Regístrate"
+    }
+  }
+} 

@@ -1,0 +1,28 @@
+{
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Login to continue your fitness journey",
+    "email": {
+      "label": "Email",
+      "placeholder": "Enter your email",
+      "required": "Email is required",
+      "invalid": "Please enter a valid email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "required": "Password is required"
+    },
+    "button": {
+      "login": "Login",
+      "loading": "Logging in..."
+    },
+    "error": {
+      "invalidCredentials": "Invalid email or password"
+    },
+    "signup": {
+      "text": "Don't have an account?",
+      "link": "Sign up"
+    }
+  }
+} 
