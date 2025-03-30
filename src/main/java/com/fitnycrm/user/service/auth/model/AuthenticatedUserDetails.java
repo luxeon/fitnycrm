@@ -36,8 +36,4 @@ public class AuthenticatedUserDetails implements UserDetails {
     public String getUsername() {
         return email;
     }
-
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
 }

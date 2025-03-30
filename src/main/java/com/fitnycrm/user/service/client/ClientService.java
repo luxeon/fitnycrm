@@ -14,14 +14,11 @@ import com.fitnycrm.user.rest.client.model.CreateClientRequest;
 import com.fitnycrm.user.rest.client.model.SignupClientRequest;
 import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
 import com.fitnycrm.user.service.client.mapper.ClientRequestMapper;
-import com.fitnycrm.user.service.exception.InvitationExpiredException;
-import com.fitnycrm.user.service.exception.InvitationNotFoundException;
-import com.fitnycrm.user.service.exception.RoleNotFoundException;
-import com.fitnycrm.user.service.exception.UserEmailAlreadyExistsException;
-import com.fitnycrm.user.service.exception.UserNotFoundException;
+import com.fitnycrm.user.service.exception.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +37,7 @@ public class ClientService {
     private final ClientRequestMapper requestMapper;
     private final EmailService emailService;
     private final ClientInvitationRepository invitationRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public User create(UUID tenantId, CreateClientRequest request) {
@@ -92,42 +90,45 @@ public class ClientService {
     }
 
     @Transactional
-    public void invite(UUID tenantId, String email, String inviterName) {
+    public void invite(UUID tenantId, String email, UUID inviterId) {
         if (repository.existsByEmail(email)) {
             throw new UserEmailAlreadyExistsException(email);
         }
-
         Tenant tenant = tenantService.findById(tenantId);
+        User inviter = repository.findById(inviterId).orElseThrow(() -> new UserNotFoundException(inviterId));
+
         Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
         ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
 
-        String token = TokenUtils.generateToken();
         invitation.setTenant(tenant);
         invitation.setEmail(email);
-        invitation.setInviterName(inviterName);
-        invitation.setToken(token);
+        invitation.setInviter(inviter);
         invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
         invitation.setCreatedAt(OffsetDateTime.now());
         invitationRepository.save(invitation);
 
-        emailService.sendClientInvitation(tenant, email, token, inviterName);
+        emailService.sendClientInvitation(tenant, invitation, inviter);
     }
 
     @Transactional
-    public User signup(UUID tenantId, String token, SignupClientRequest request) {
+    public User signup(UUID tenantId, UUID clientInvitationId, SignupClientRequest request) {
         Tenant tenant = tenantService.findById(tenantId);
-        ClientInvitation invitation = invitationRepository.findByTenantAndToken(tenant, token)
-                .orElseThrow(() -> new InvitationNotFoundException(token));
+        ClientInvitation invitation = invitationRepository.findById(clientInvitationId)
+                .orElseThrow(() -> new InvitationNotFoundException(clientInvitationId));
+        if (!invitation.getTenant().equals(tenant)) {
+            throw new InvitationNotFoundException(clientInvitationId);
+        }
 
         if (TokenUtils.isTokenExpired(invitation.getExpiresAt())) {
-            throw new InvitationExpiredException(token);
+            throw new InvitationExpiredException(clientInvitationId);
         }
 
         User user = new User();
+        user.setEmail(invitation.getEmail());
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
-        user.setEmail(invitation.getEmail());
-        user.setPassword(request.password());
+        user.setPhoneNumber(request.phoneNumber());
+        user.setPassword(passwordEncoder.encode(request.password()));
 
         UserRole role = roleRepository.findByName(UserRole.Name.CLIENT).orElseThrow(() ->
                 new RoleNotFoundException(UserRole.Name.CLIENT));

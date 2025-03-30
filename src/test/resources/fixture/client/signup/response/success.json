@@ -1,0 +1,9 @@
+{
+    "id": "${json-unit.regex}^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "new.client@example.com",
+    "phoneNumber": "+12345678901",
+    "createdAt": "${json-unit.any-string}",
+    "updatedAt": "${json-unit.any-string}"
+} 

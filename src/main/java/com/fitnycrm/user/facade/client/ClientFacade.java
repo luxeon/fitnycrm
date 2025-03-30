@@ -20,8 +20,7 @@ public class ClientFacade {
     private final ClientResponseMapper responseMapper;
 
     public void invite(UUID tenantId, InviteClientRequest request, AuthenticatedUserDetails user) {
-        String inviterName = user.getFullName();
-        clientService.invite(tenantId, request.email(), inviterName);
+        clientService.invite(tenantId, request.email(), user.getId());
     }
 
     public ClientDetailsResponse create(UUID tenantId, CreateClientRequest request) {
@@ -54,8 +53,8 @@ public class ClientFacade {
                 .map(responseMapper::toPageItemResponse);
     }
 
-    public ClientDetailsResponse signup(UUID tenantId, String token, SignupClientRequest request) {
-        User client = clientService.signup(tenantId, token, request);
+    public ClientDetailsResponse signup(UUID tenantId, UUID clientInvitationId, SignupClientRequest request) {
+        User client = clientService.signup(tenantId, clientInvitationId, request);
         return responseMapper.toDetailsResponse(client);
     }
 } 

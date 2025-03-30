@@ -60,16 +60,16 @@ CREATE TABLE IF NOT EXISTS user_roles
     UNIQUE (user_id, role_id)
 );
 
-CREATE TABLE client_invitations
+CREATE TABLE IF NOT EXISTS client_invitations
 (
-    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    email        VARCHAR(255)             NOT NULL,
-    tenant_id    UUID                     NOT NULL,
-    inviter_name VARCHAR(255)             NOT NULL,
-    token        VARCHAR(255)             NOT NULL,
-    expires_at   TIMESTAMP WITH TIME ZONE NOT NULL,
-    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    email      VARCHAR(255)             NOT NULL,
+    tenant_id  UUID                     NOT NULL,
+    inviter_id uuid                     NOT NULL,
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+    FOREIGN KEY (inviter_id) REFERENCES users (id),
     UNIQUE (tenant_id, email)
 );
 

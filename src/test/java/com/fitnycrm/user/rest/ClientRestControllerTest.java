@@ -33,6 +33,9 @@ class ClientRestControllerTest {
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
     private static final UUID EXISTING_CLIENT_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID NON_EXISTING_CLIENT_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd99");
+    private static final String NON_EXISTING_INVITATION_ID = "1c5dd4c5-2036-4643-8874-6ceb8a9b761f";
+    private static final String EXISTING_INVITATION_ID = "d45ac7f5-3e4f-462a-a76d-524bd3a5fd01";
+    private static final String EXPIRED_INVITATION_ID = "54b2531a-7eda-49d9-abc4-c33164bb9ffe";
 
     @RegisterExtension
     static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
@@ -417,6 +420,56 @@ class ClientRestControllerTest {
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isConflict())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/client/insert-invitation.sql")
+    void signup_whenValidRequest_thenCreateClient() throws Exception {
+        var request = readFile("fixture/client/signup/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/signup/response/success.json");
+
+        mockMvc.perform(post(BASE_URL + "/signup/{clientInvitationId}", EXISTING_INVITATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void signup_whenInvalidRequest_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/client/signup/request/invalid-request.json");
+        var expectedResponse = readFile("fixture/client/signup/response/invalid-request.json");
+
+        mockMvc.perform(post(BASE_URL + "/signup/{clientInvitationId}", EXISTING_INVITATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void signup_whenTokenNotFound_thenReturn404() throws Exception {
+        var request = readFile("fixture/client/signup/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/signup/response/not-found.json");
+
+        mockMvc.perform(post(BASE_URL + "/signup/{clientInvitationId}", NON_EXISTING_INVITATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/client/insert-invitation.sql")
+    void signup_whenTokenExpired_thenReturn404() throws Exception {
+        var request = readFile("fixture/client/signup/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/signup/response/invitation-expired.json");
+
+        mockMvc.perform(post(BASE_URL + "/signup/{clientInvitationId}", EXPIRED_INVITATION_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

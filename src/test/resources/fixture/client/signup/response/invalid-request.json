@@ -1,0 +1,17 @@
+{
+  "errors": [
+    {
+      "field": "firstName",
+      "message": "size must be between 2 and 255"
+    },
+    {
+      "field": "lastName",
+      "message": "size must be between 2 and 255"
+    },
+    {
+      "field": "password",
+      "message": "size must be between 8 and 255"
+    }
+  ],
+  "message": "Validation failed"
+}

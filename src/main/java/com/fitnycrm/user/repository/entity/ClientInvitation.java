@@ -28,11 +28,9 @@ public class ClientInvitation {
     @ManyToOne(fetch = FetchType.LAZY)
     private Tenant tenant;
 
-    @Column(name = "inviter_name", nullable = false)
-    private String inviterName;
-
-    @Column(name = "token", nullable = false)
-    private String token;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User inviter;
 
     @Column(name = "expires_at", nullable = false)
     private OffsetDateTime expiresAt;

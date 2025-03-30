@@ -2,6 +2,8 @@ package com.fitnycrm.email.service;
 
 import com.fitnycrm.email.config.EmailProperties;
 import com.fitnycrm.tenant.repository.entity.Tenant;
+import com.fitnycrm.user.repository.entity.ClientInvitation;
+import com.fitnycrm.user.repository.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -46,21 +48,22 @@ public class EmailService {
     }
 
     @Async
-    public void sendClientInvitation(Tenant tenant, String to, String token, String inviterName) {
+    public void sendClientInvitation(Tenant tenant, ClientInvitation invitation, User inviter) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
 
             Context context = new Context();
             context.setVariable("registrationUrl", emailProperties.getClientRegistrationUrl()
-                    .formatted(tenant.getId(), token));
-            context.setVariable("inviterName", inviterName);
+                    .formatted(tenant.getId(), invitation.getId()));
+            String inviterFullName = inviter.getFirstName() + " " + inviter.getLastName();
+            context.setVariable("inviterName", inviterFullName);
 
             String content = templateEngine.process("email/client-invitation", context);
 
             helper.setFrom(emailProperties.getFrom());
-            helper.setTo(to);
-            helper.setSubject("You've been invited to FitTrack CRM by " + inviterName);
+            helper.setTo(invitation.getEmail());
+            helper.setSubject("You've been invited to FitTrack CRM by " + inviterFullName);
             helper.setText(content, true);
 
             mailSender.send(message);
