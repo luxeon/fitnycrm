@@ -1,14 +1,14 @@
 package com.fitnycrm.user.facade.client;
 
 import com.fitnycrm.user.facade.client.mapper.ClientResponseMapper;
-import com.fitnycrm.user.rest.client.model.ClientDetailsResponse;
-import com.fitnycrm.user.rest.client.model.ClientPageItemResponse;
-import com.fitnycrm.user.rest.client.model.CreateClientRequest;
-import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
+import com.fitnycrm.user.repository.entity.User;
+import com.fitnycrm.user.rest.client.model.*;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import com.fitnycrm.user.service.client.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -18,18 +18,20 @@ import java.util.UUID;
 public class ClientFacade {
 
     private final ClientService clientService;
-    private final ClientResponseMapper mapper;
+    private final ClientResponseMapper responseMapper;
+
+    public void invite(UUID tenantId, InviteClientRequest request, AuthenticatedUserDetails user) {
+        String inviterName = user.getFullName();
+        clientService.invite(tenantId, request.email(), inviterName);
+    }
 
     public ClientDetailsResponse create(UUID tenantId, CreateClientRequest request) {
-        return mapper.toDetailsResponse(
-                clientService.create(
-                        tenantId, request
-                )
-        );
+        User client = clientService.create(tenantId, request);
+        return responseMapper.toDetailsResponse(client);
     }
 
     public ClientDetailsResponse update(UUID tenantId, UUID clientId, UpdateClientRequest request) {
-        return mapper.toDetailsResponse(
+        return responseMapper.toDetailsResponse(
                 clientService.update(
                         tenantId,
                         clientId,
@@ -43,13 +45,13 @@ public class ClientFacade {
     }
 
     public ClientDetailsResponse findById(UUID tenantId, UUID clientId) {
-        return mapper.toDetailsResponse(
+        return responseMapper.toDetailsResponse(
                 clientService.findById(tenantId, clientId)
         );
     }
 
     public Page<ClientPageItemResponse> findByTenantId(UUID tenantId, Pageable pageable) {
         return clientService.findByTenantId(tenantId, pageable)
-                .map(mapper::toPageItemResponse);
+                .map(responseMapper::toPageItemResponse);
     }
 } 

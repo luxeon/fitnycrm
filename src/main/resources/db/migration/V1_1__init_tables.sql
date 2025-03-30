@@ -60,14 +60,27 @@ CREATE TABLE IF NOT EXISTS user_roles
     UNIQUE (user_id, role_id)
 );
 
+CREATE TABLE client_invitations
+(
+    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    email        VARCHAR(255)             NOT NULL,
+    tenant_id    UUID                     NOT NULL,
+    inviter_name VARCHAR(255)             NOT NULL,
+    token        VARCHAR(255)             NOT NULL,
+    expires_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at   TIMESTAMP WITH TIME ZONE NOT NULL,
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id),
+    UNIQUE (tenant_id, email)
+);
+
 CREATE TABLE IF NOT EXISTS trainings
 (
     id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id        uuid         NOT NULL,
     name             VARCHAR(255) NOT NULL,
     description      TEXT,
-    duration_minutes INTEGER NOT NULL,
-    client_capacity  INTEGER NOT NULL,
+    duration_minutes INTEGER      NOT NULL,
+    client_capacity  INTEGER      NOT NULL,
     created_at       TIMESTAMP WITHOUT TIME ZONE,
     updated_at       TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)

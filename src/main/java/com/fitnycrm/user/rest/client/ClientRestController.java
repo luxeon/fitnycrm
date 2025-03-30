@@ -4,10 +4,13 @@ import com.fitnycrm.user.rest.client.model.ClientDetailsResponse;
 import com.fitnycrm.user.rest.client.model.ClientPageItemResponse;
 import com.fitnycrm.user.rest.client.model.CreateClientRequest;
 import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
+import com.fitnycrm.user.rest.client.model.InviteClientRequest;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.fitnycrm.user.facade.client.ClientFacade;
@@ -43,7 +46,7 @@ public class ClientRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse create(@PathVariable UUID tenantId,
-                                              @RequestBody @Valid CreateClientRequest request) {
+                                        @RequestBody @Valid CreateClientRequest request) {
         return clientFacade.create(tenantId, request);
     }
 
@@ -59,8 +62,8 @@ public class ClientRestController {
     @PutMapping("/clients/{clientId}")
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse update(@PathVariable UUID tenantId,
-                                      @PathVariable UUID clientId,
-                                      @RequestBody @Valid UpdateClientRequest request) {
+                                        @PathVariable UUID clientId,
+                                        @RequestBody @Valid UpdateClientRequest request) {
         return clientFacade.update(tenantId, clientId, request);
     }
 
@@ -74,7 +77,7 @@ public class ClientRestController {
     @GetMapping("/clients/{clientId}")
     @PreAuthorize("((hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId))")
     public ClientDetailsResponse findById(@PathVariable UUID tenantId,
-                                        @PathVariable UUID clientId) {
+                                          @PathVariable UUID clientId) {
         return clientFacade.findById(tenantId, clientId);
     }
 
@@ -87,7 +90,7 @@ public class ClientRestController {
     @GetMapping("/clients")
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public Page<ClientPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
-                                                      Pageable pageable) {
+                                                       Pageable pageable) {
         return clientFacade.findByTenantId(tenantId, pageable);
     }
 
@@ -101,7 +104,23 @@ public class ClientRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
-                      @PathVariable UUID clientId) {
+                       @PathVariable UUID clientId) {
         clientFacade.delete(tenantId, clientId);
+    }
+
+    @Operation(summary = "Invite a new client by email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Invitation sent successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "409", description = "User with this email already exists")
+    })
+    @PostMapping("/clients/invite")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public void invite(@PathVariable UUID tenantId,
+                       @RequestBody @Valid InviteClientRequest request,
+                       @AuthenticationPrincipal AuthenticatedUserDetails user) {
+        clientFacade.invite(tenantId, request, user);
     }
 } 

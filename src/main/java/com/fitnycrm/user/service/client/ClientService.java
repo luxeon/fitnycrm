@@ -1,9 +1,13 @@
 package com.fitnycrm.user.service.client;
 
+import com.fitnycrm.email.service.EmailService;
+import com.fitnycrm.email.util.TokenUtils;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
+import com.fitnycrm.user.repository.ClientInvitationRepository;
 import com.fitnycrm.user.repository.UserRepository;
 import com.fitnycrm.user.repository.UserRoleRepository;
+import com.fitnycrm.user.repository.entity.ClientInvitation;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.repository.entity.UserRole;
 import com.fitnycrm.user.rest.client.model.CreateClientRequest;
@@ -18,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,6 +35,30 @@ public class ClientService {
     private final UserRoleRepository roleRepository;
     private final TenantService tenantService;
     private final ClientRequestMapper requestMapper;
+    private final EmailService emailService;
+    private final ClientInvitationRepository invitationRepository;
+
+    @Transactional
+    public void invite(UUID tenantId, String email, String inviterName) {
+        if (repository.existsByEmail(email)) {
+            throw new UserEmailAlreadyExistsException(email);
+        }
+
+        Tenant tenant = tenantService.findById(tenantId);
+        Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
+        ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
+
+        String token = TokenUtils.generateToken();
+        invitation.setTenant(tenant);
+        invitation.setEmail(email);
+        invitation.setInviterName(inviterName);
+        invitation.setToken(token);
+        invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
+        invitation.setCreatedAt(OffsetDateTime.now());
+        invitationRepository.save(invitation);
+
+        emailService.sendClientInvitation(tenant, email, token, inviterName);
+    }
 
     @Transactional
     public User create(UUID tenantId, CreateClientRequest request) {

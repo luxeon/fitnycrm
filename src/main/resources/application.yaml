@@ -1,31 +1,35 @@
 spring:
-    application:
-        name: core
-    jackson:
-        time-zone: UTC
-    jpa:
-        open-in-view: false
-    mail:
-        host: ${MAIL_HOST:smtp.gmail.com}
-        port: ${MAIL_PORT:587}
-        username: ${MAIL_USERNAME}
-        password: ${MAIL_PASSWORD}
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
+  application:
+    name: core
+  jackson:
+    time-zone: UTC
+  jpa:
+    open-in-view: false
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
-    secret: ${JWT_SECRET:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
-    expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+  secret: ${JWT_SECRET:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
+  expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+
+fitny:
+  base-url: http://localhost:8080
 
 mail:
-    from: ${MAIL_FROM:noreply@fittrackcrm.com}
-    confirmationUrl: ${MAIL_CONFIRMATION_URL:http://localhost:8080/api/auth/confirm-email}
+  from: noreply@fitnycrm.com
+  confirmationUrl: ${fitny.base-url}/api/auth/confirm-email
+  clientRegistrationUrl: ${fitny.base-url}/api/tenants/%s/clients/signup?token=%s
 
 cors:
-    allowed-origins:
-        - http://localhost:4200
-        - http://127.0.0.1:4200
+  allowed-origins:
+    - http://localhost:4200
+    - http://127.0.0.1:4200

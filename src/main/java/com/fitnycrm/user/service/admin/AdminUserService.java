@@ -41,9 +41,9 @@ public class AdminUserService {
 
         UserRole role = roleRepository.findByName(UserRole.Name.ADMIN).orElseThrow(() ->
                 new RoleNotFoundException(UserRole.Name.ADMIN));
+        user.setRoles(Set.of(role));
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Set.of(role));
         user.setEmailConfirmed(false);
         user.setConfirmationToken(TokenUtils.generateToken());
         user.setConfirmationTokenExpiresAt(TokenUtils.calculateExpirationTime());
