@@ -1,9 +1,9 @@
 package com.fitnycrm.user.service.auth.mapper;
 
 import com.fitnycrm.tenant.repository.entity.Tenant;
-import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -11,9 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 
 @Mapper(componentModel = "spring")
 public interface AuthenticatedUserDetailsMapper {

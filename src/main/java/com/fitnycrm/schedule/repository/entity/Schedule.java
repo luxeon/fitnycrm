@@ -15,7 +15,6 @@ import org.hibernate.type.SqlTypes;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.UUID;
 

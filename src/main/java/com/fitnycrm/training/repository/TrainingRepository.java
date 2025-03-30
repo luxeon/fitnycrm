@@ -12,5 +12,6 @@ import java.util.UUID;
 @Repository
 public interface TrainingRepository extends JpaRepository<Training, UUID> {
     Optional<Training> findByIdAndTenantId(UUID id, UUID tenantId);
+
     Page<Training> findByTenantId(UUID tenantId, Pageable pageable);
 } 

@@ -30,4 +30,5 @@ public record TrainerPageItemResponse(
         @Schema(description = "Timestamp when the trainer was last updated")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime updatedAt
-) {} 
+) {
+}

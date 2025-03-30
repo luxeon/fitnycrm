@@ -2,15 +2,15 @@ package com.fitnycrm.user.service.admin;
 
 import com.fitnycrm.email.service.EmailService;
 import com.fitnycrm.email.util.TokenUtils;
-import com.fitnycrm.user.rest.model.CreateAdminRequest;
-import com.fitnycrm.user.service.exception.InvalidEmailConfirmationTokenException;
 import com.fitnycrm.user.repository.UserRepository;
 import com.fitnycrm.user.repository.UserRoleRepository;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.fitnycrm.user.rest.model.CreateAdminRequest;
+import com.fitnycrm.user.service.admin.mapper.UserRequestMapper;
+import com.fitnycrm.user.service.exception.InvalidEmailConfirmationTokenException;
 import com.fitnycrm.user.service.exception.RoleNotFoundException;
 import com.fitnycrm.user.service.exception.UserEmailAlreadyExistsException;
-import com.fitnycrm.user.service.admin.mapper.UserRequestMapper;
 import com.fitnycrm.user.service.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

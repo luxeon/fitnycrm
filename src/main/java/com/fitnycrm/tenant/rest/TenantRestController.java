@@ -1,10 +1,10 @@
 package com.fitnycrm.tenant.rest;
 
-import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import com.fitnycrm.tenant.facade.TenantFacade;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
 import com.fitnycrm.tenant.rest.model.TenantDetailsResponse;
 import com.fitnycrm.tenant.rest.model.UpdateTenantRequest;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

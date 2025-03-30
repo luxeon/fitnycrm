@@ -14,8 +14,6 @@ import com.fitnycrm.training.service.TrainingService;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.service.trainer.TrainerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

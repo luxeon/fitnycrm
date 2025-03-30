@@ -4,11 +4,10 @@ import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.UUID;
 
-import static org.springframework.util.CollectionUtils.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Component
 public class permissionEvaluator {

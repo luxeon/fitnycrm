@@ -2,9 +2,9 @@ package com.fitnycrm.user.rest.auth;
 
 import com.fitnycrm.user.facade.auth.AuthFacade;
 import com.fitnycrm.user.rest.model.AdminDetailsResponse;
-import com.fitnycrm.user.rest.model.CreateAdminRequest;
 import com.fitnycrm.user.rest.model.AuthRequest;
 import com.fitnycrm.user.rest.model.AuthResponse;
+import com.fitnycrm.user.rest.model.CreateAdminRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

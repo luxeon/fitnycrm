@@ -1,9 +1,9 @@
 package com.fitnycrm.location.rest;
 
+import com.fitnycrm.location.facade.LocationFacade;
 import com.fitnycrm.location.rest.model.CreateLocationRequest;
 import com.fitnycrm.location.rest.model.LocationDetailsResponse;
 import com.fitnycrm.location.rest.model.LocationPageItemResponse;
-import com.fitnycrm.location.facade.LocationFacade;
 import com.fitnycrm.location.rest.model.UpdateLocationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -83,7 +83,7 @@ public class LocationRestController {
     @GetMapping("/locations/{id}")
     @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse findById(@PathVariable UUID tenantId,
-                                          @PathVariable UUID id) {
+                                            @PathVariable UUID id) {
         return locationFacade.findById(tenantId, id);
     }
 
@@ -97,7 +97,7 @@ public class LocationRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
-                      @PathVariable UUID id) {
+                       @PathVariable UUID id) {
         locationFacade.delete(tenantId, id);
     }
 } 

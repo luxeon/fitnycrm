@@ -30,4 +30,5 @@ public record UpdateLocationRequest(
         @NotBlank
         @Size(max = 255)
         String timezone
-) {} 
+) {
+}

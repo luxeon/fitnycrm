@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request to create a new tenant with admin user")
 public record CreateTenantRequest(
-    @Schema(description = "Tenant name", example = "Fitness Club")
-    @NotNull
-    @Size(min = 1, max = 255)
-    String name
+        @Schema(description = "Tenant name", example = "Fitness Club")
+        @NotNull
+        @Size(min = 1, max = 255)
+        String name
 ) {
 } 

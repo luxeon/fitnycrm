@@ -2,8 +2,8 @@ package com.fitnycrm.schedule.rest;
 
 import com.fitnycrm.common.rest.model.ErrorResponse;
 import com.fitnycrm.schedule.service.exception.ScheduleNotFoundException;
-import com.fitnycrm.schedule.service.exception.ScheduleTrainingMismatchException;
 import com.fitnycrm.schedule.service.exception.ScheduleTenantMismatchException;
+import com.fitnycrm.schedule.service.exception.ScheduleTrainingMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;

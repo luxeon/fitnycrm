@@ -4,11 +4,11 @@ import com.fitnycrm.user.facade.auth.mapper.AdminResponseMapper;
 import com.fitnycrm.user.facade.auth.mapper.AuthResponseMapper;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.rest.model.AdminDetailsResponse;
-import com.fitnycrm.user.rest.model.CreateAdminRequest;
 import com.fitnycrm.user.rest.model.AuthRequest;
 import com.fitnycrm.user.rest.model.AuthResponse;
-import com.fitnycrm.user.service.auth.AuthService;
+import com.fitnycrm.user.rest.model.CreateAdminRequest;
 import com.fitnycrm.user.service.admin.AdminUserService;
+import com.fitnycrm.user.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

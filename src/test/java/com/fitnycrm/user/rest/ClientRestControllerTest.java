@@ -1,8 +1,8 @@
 package com.fitnycrm.user.rest;
 
 import com.fitnycrm.common.annotation.IntegrationTest;
-import com.fitnycrm.user.util.JwtTokenCreator;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.fitnycrm.user.util.JwtTokenCreator;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -21,12 +21,9 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql"})

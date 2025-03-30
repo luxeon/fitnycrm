@@ -2,7 +2,6 @@ package com.fitnycrm.tenant.service.mapper;
 
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
-import com.fitnycrm.tenant.rest.model.TenantDetailsResponse;
 import com.fitnycrm.tenant.rest.model.UpdateTenantRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

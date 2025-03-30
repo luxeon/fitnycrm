@@ -1,18 +1,19 @@
 package com.fitnycrm.tenant.repository.entity;
 
-import java.time.OffsetDateTime;
-import java.util.*;
-
 import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.user.repository.entity.User;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import lombok.Data;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Data
 @Entity

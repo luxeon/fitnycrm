@@ -2,8 +2,8 @@ package com.fitnycrm.training.service;
 
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
-import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.repository.TrainingRepository;
+import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
 import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import com.fitnycrm.training.service.exception.TrainingNotFoundException;

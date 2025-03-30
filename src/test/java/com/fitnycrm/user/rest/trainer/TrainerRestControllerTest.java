@@ -1,8 +1,8 @@
 package com.fitnycrm.user.rest.trainer;
 
 import com.fitnycrm.common.annotation.IntegrationTest;
-import com.fitnycrm.user.util.JwtTokenCreator;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.fitnycrm.user.util.JwtTokenCreator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -16,10 +16,7 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest

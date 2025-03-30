@@ -1,7 +1,7 @@
 package com.fitnycrm.user.util;
 
-import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;

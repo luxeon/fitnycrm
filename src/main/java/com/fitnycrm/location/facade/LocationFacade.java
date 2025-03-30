@@ -1,10 +1,10 @@
 package com.fitnycrm.location.facade;
 
+import com.fitnycrm.location.facade.mapper.LocationResponseMapper;
+import com.fitnycrm.location.repository.entity.Location;
+import com.fitnycrm.location.rest.model.CreateLocationRequest;
 import com.fitnycrm.location.rest.model.LocationDetailsResponse;
 import com.fitnycrm.location.rest.model.LocationPageItemResponse;
-import com.fitnycrm.location.rest.model.CreateLocationRequest;
-import com.fitnycrm.location.repository.entity.Location;
-import com.fitnycrm.location.facade.mapper.LocationResponseMapper;
 import com.fitnycrm.location.rest.model.UpdateLocationRequest;
 import com.fitnycrm.location.service.LocationService;
 import lombok.RequiredArgsConstructor;

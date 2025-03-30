@@ -6,8 +6,9 @@ import jakarta.validation.constraints.Size;
 
 @Schema(description = "Request to update tenant name")
 public record UpdateTenantRequest(
-    @Schema(description = "New tenant name", example = "Fitness Club")
-    @NotNull
-    @Size(min = 1, max = 255)
-    String name
-) {} 
+        @Schema(description = "New tenant name", example = "Fitness Club")
+        @NotNull
+        @Size(min = 1, max = 255)
+        String name
+) {
+}

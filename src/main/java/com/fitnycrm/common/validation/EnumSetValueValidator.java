@@ -22,12 +22,12 @@ public class EnumSetValueValidator implements ConstraintValidator<EnumSetValue, 
         if (values == null) {
             return true;
         }
-        
+
         boolean isValid = acceptedValues.containsAll(values);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(
-                    "Invalid values provided. Allowed values are: " + String.join(", ", acceptedValues))
+                            "Invalid values provided. Allowed values are: " + String.join(", ", acceptedValues))
                     .addConstraintViolation();
         }
         return isValid;

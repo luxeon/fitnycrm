@@ -8,12 +8,12 @@ import java.util.List;
  * Represents a standardized error response for API errors.
  *
  * @param message The high-level error message (e.g., "Bad Request", "Not Found")
- * @param errors List of specific validation errors, if any
+ * @param errors  List of specific validation errors, if any
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ErrorResponse(
-    String message,
-    List<ValidationError> errors
+        String message,
+        List<ValidationError> errors
 ) {
     /**
      * Creates an error response with just a message.

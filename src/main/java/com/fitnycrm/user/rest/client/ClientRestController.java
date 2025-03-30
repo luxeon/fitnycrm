@@ -1,20 +1,8 @@
 package com.fitnycrm.user.rest.client;
 
-import com.fitnycrm.user.rest.client.model.ClientDetailsResponse;
-import com.fitnycrm.user.rest.client.model.ClientPageItemResponse;
-import com.fitnycrm.user.rest.client.model.CreateClientRequest;
-import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
-import com.fitnycrm.user.rest.client.model.InviteClientRequest;
-import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
 import com.fitnycrm.user.facade.client.ClientFacade;
-
+import com.fitnycrm.user.rest.client.model.*;
+import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,12 +11,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tenants/{tenantId}")
+@RequestMapping("/api/tenants/{tenantId}/clients")
 @Tag(name = "client", description = "Client management endpoints")
 public class ClientRestController {
 
@@ -42,7 +36,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PostMapping("/clients")
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse create(@PathVariable UUID tenantId,
@@ -59,7 +53,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "404", description = "Client not found"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PutMapping("/clients/{clientId}")
+    @PutMapping("/{clientId}")
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse update(@PathVariable UUID tenantId,
                                         @PathVariable UUID clientId,
@@ -74,7 +68,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Client not found")
     })
-    @GetMapping("/clients/{clientId}")
+    @GetMapping("/{clientId}")
     @PreAuthorize("((hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId))")
     public ClientDetailsResponse findById(@PathVariable UUID tenantId,
                                           @PathVariable UUID clientId) {
@@ -87,7 +81,7 @@ public class ClientRestController {
                     content = @Content(schema = @Schema(implementation = ClientPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    @GetMapping("/clients")
+    @GetMapping("/")
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public Page<ClientPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                        Pageable pageable) {
@@ -100,7 +94,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Client not found")
     })
-    @DeleteMapping("/clients/{clientId}")
+    @DeleteMapping("/{clientId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
@@ -115,7 +109,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PostMapping("/clients/invite")
+    @PostMapping("/invite")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void invite(@PathVariable UUID tenantId,

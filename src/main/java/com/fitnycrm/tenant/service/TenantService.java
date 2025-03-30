@@ -1,11 +1,11 @@
 package com.fitnycrm.tenant.service;
 
-import com.fitnycrm.tenant.service.exception.TenantAlreadyCreatedException;
-import com.fitnycrm.tenant.service.exception.TenantNotFoundException;
 import com.fitnycrm.tenant.repository.TenantRepository;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
 import com.fitnycrm.tenant.rest.model.UpdateTenantRequest;
+import com.fitnycrm.tenant.service.exception.TenantAlreadyCreatedException;
+import com.fitnycrm.tenant.service.exception.TenantNotFoundException;
 import com.fitnycrm.tenant.service.mapper.TenantRequestMapper;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.service.admin.AdminUserService;

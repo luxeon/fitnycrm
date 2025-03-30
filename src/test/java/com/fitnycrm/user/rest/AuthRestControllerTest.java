@@ -2,9 +2,9 @@ package com.fitnycrm.user.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnycrm.common.annotation.IntegrationTest;
-import com.fitnycrm.user.rest.model.AdminDetailsResponse;
 import com.fitnycrm.user.repository.UserRepository;
 import com.fitnycrm.user.repository.entity.User;
+import com.fitnycrm.user.rest.model.AdminDetailsResponse;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
@@ -21,8 +21,8 @@ import java.util.UUID;
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -141,14 +141,14 @@ class AuthRestControllerTest {
     @Test
     void confirmEmail_whenValidToken_thenConfirmEmail() throws Exception {
         var token = "valid-confirmation-token";
-        
+
         mockMvc.perform(get(AUTH_URL + "/confirm-email")
                         .param("token", token))
                 .andExpect(status().isOk());
 
         // Verify that email is confirmed in database
         var user = userRepository.findById(UUID.fromString("935ac7f5-3e4f-462a-a76d-524bd3a5fd01"))
-                        .orElseThrow();
+                .orElseThrow();
         assertThat(user.isEmailConfirmed()).isTrue();
         assertThat(user.getConfirmationToken()).isNull();
     }

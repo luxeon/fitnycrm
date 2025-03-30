@@ -16,10 +16,7 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -266,8 +263,8 @@ class ScheduleRestControllerTest {
     void findAll_whenLocationNotFound_thenReturn404() throws Exception {
         var expectedResponse = readFile("fixture/schedule/findAll/response/location-not-found.json");
 
-        mockMvc.perform(get("/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/{locationId}/schedules", 
-                NON_EXISTING_LOCATION_ID)
+        mockMvc.perform(get("/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/{locationId}/schedules",
+                        NON_EXISTING_LOCATION_ID)
                         .param("page", "0")
                         .param("size", "10")
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
@@ -287,8 +284,8 @@ class ScheduleRestControllerTest {
     void findAll_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         var expectedResponse = readFile("fixture/schedule/findAll/response/access-denied.json");
 
-        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}/schedules", 
-                DIFFERENT_TENANT_ID, LOCATION_ID)
+        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}/schedules",
+                        DIFFERENT_TENANT_ID, LOCATION_ID)
                         .param("page", "0")
                         .param("size", "10")
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))

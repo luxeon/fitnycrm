@@ -30,4 +30,5 @@ public record ClientPageItemResponse(
         @Schema(description = "Last update timestamp", example = "2024-03-15T12:00:00Z")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime updatedAt
-) {} 
+) {
+}

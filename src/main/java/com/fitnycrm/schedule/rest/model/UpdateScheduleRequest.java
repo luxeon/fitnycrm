@@ -28,4 +28,5 @@ public record UpdateScheduleRequest(
         @Schema(description = "ID of the default trainer for this training")
         @NotNull
         UUID defaultTrainerId
-) {} 
+) {
+}

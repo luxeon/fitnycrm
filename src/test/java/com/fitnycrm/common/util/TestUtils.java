@@ -1,12 +1,11 @@
 package com.fitnycrm.common.util;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
+import lombok.experimental.UtilityClass;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StreamUtils;
 
-import lombok.experimental.UtilityClass;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @UtilityClass
 public final class TestUtils {

@@ -41,7 +41,7 @@ public class TrainerRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public TrainerDetailsResponse create(@PathVariable UUID tenantId,
-                                       @RequestBody @Valid CreateTrainerRequest request) {
+                                         @RequestBody @Valid CreateTrainerRequest request) {
         return trainerFacade.create(tenantId, request);
     }
 
@@ -57,8 +57,8 @@ public class TrainerRestController {
     @PutMapping("/trainers/{trainerId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public TrainerDetailsResponse update(@PathVariable UUID tenantId,
-                                       @PathVariable UUID trainerId,
-                                       @RequestBody @Valid UpdateTrainerRequest request) {
+                                         @PathVariable UUID trainerId,
+                                         @RequestBody @Valid UpdateTrainerRequest request) {
         return trainerFacade.update(tenantId, trainerId, request);
     }
 
@@ -72,7 +72,7 @@ public class TrainerRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
-                      @PathVariable UUID trainerId) {
+                       @PathVariable UUID trainerId) {
         trainerFacade.delete(tenantId, trainerId);
     }
 
@@ -86,7 +86,7 @@ public class TrainerRestController {
     @GetMapping("/trainers/{trainerId}")
     @PreAuthorize("((hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #trainerId))")
     public TrainerDetailsResponse findById(@PathVariable UUID tenantId,
-                                         @PathVariable UUID trainerId) {
+                                           @PathVariable UUID trainerId) {
         return trainerFacade.findById(tenantId, trainerId);
     }
 
@@ -99,7 +99,7 @@ public class TrainerRestController {
     @GetMapping("/trainers")
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public Page<TrainerPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
-                                                       Pageable pageable) {
+                                                        Pageable pageable) {
         return trainerFacade.findByTenantId(tenantId, pageable);
     }
 } 

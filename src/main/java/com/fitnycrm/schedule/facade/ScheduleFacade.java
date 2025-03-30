@@ -7,8 +7,6 @@ import com.fitnycrm.schedule.rest.model.ScheduleListItemResponse;
 import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
 import com.fitnycrm.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
