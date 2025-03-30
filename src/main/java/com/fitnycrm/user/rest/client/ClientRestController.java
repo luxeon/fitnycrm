@@ -36,7 +36,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PostMapping("/")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public ClientDetailsResponse create(@PathVariable UUID tenantId,
@@ -81,7 +81,7 @@ public class ClientRestController {
                     content = @Content(schema = @Schema(implementation = ClientPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    @GetMapping("/")
+    @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public Page<ClientPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                        Pageable pageable) {
