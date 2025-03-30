@@ -343,7 +343,7 @@ class ClientRestControllerTest {
     }
 
     @Test
-    void invite_whenValidRequest_thenSendInvitationEmail() throws Exception {
+    void invite_whenValidRequestForNewUser_thenSendInvitationEmail() throws Exception {
         var request = readFile("fixture/client/invite/request/valid-request.json");
 
         mockMvc.perform(post(BASE_URL + "/invite")
@@ -359,6 +359,18 @@ class ClientRestControllerTest {
         assertThat(receivedMessage.getAllRecipients()).hasSize(1);
         assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("client@example.com");
         assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to FitTrack CRM by Max Power");
+    }
+
+    @Test
+    @Sql({"/db/client/insert.sql", "/db/client/insert-with-secondary-tenant.sql"})
+    void invite_whenValidRequestForExistingUser_thenAddUserToTenant() throws Exception {
+        var request = readFile("fixture/client/invite/request/existing-email-in-another-tenant.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -411,7 +423,7 @@ class ClientRestControllerTest {
 
     @Test
     @Sql("/db/client/insert.sql")
-    void invite_whenEmailExists_thenReturnConflict() throws Exception {
+    void invite_whenUserAlreadyInTenant_thenReturnConflict() throws Exception {
         var request = readFile("fixture/client/invite/request/existing-email.json");
         var expectedResponse = readFile("fixture/client/invite/response/email-exists.json");
 

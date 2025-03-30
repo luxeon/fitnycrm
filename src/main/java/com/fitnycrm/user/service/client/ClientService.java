@@ -13,6 +13,7 @@ import com.fitnycrm.user.repository.entity.UserRole;
 import com.fitnycrm.user.rest.client.model.CreateClientRequest;
 import com.fitnycrm.user.rest.client.model.SignupClientRequest;
 import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
+import com.fitnycrm.user.service.client.exception.TenantAlreadyContainsUserException;
 import com.fitnycrm.user.service.client.mapper.ClientRequestMapper;
 import com.fitnycrm.user.service.exception.*;
 import lombok.RequiredArgsConstructor;
@@ -91,23 +92,26 @@ public class ClientService {
 
     @Transactional
     public void invite(UUID tenantId, String email, UUID inviterId) {
-        if (repository.existsByEmail(email)) {
-            throw new UserEmailAlreadyExistsException(email);
-        }
         Tenant tenant = tenantService.findById(tenantId);
-        User inviter = repository.findById(inviterId).orElseThrow(() -> new UserNotFoundException(inviterId));
+        repository.findByEmail(email).ifPresentOrElse(user -> {
+            if (user.getTenants().contains(tenant)) {
+                throw new TenantAlreadyContainsUserException(tenantId, user.getId());
+            }
+        }, () -> {
+            User inviter = repository.findById(inviterId).orElseThrow(() -> new UserNotFoundException(inviterId));
 
-        Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
-        ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
+            Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
+            ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
 
-        invitation.setTenant(tenant);
-        invitation.setEmail(email);
-        invitation.setInviter(inviter);
-        invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
-        invitation.setCreatedAt(OffsetDateTime.now());
-        invitationRepository.save(invitation);
+            invitation.setTenant(tenant);
+            invitation.setEmail(email);
+            invitation.setInviter(inviter);
+            invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
+            invitation.setCreatedAt(OffsetDateTime.now());
+            invitationRepository.save(invitation);
 
-        emailService.sendClientInvitation(tenant, invitation, inviter);
+            emailService.sendClientInvitation(tenant, invitation, inviter);
+        });
     }
 
     @Transactional
@@ -118,7 +122,6 @@ public class ClientService {
         if (!invitation.getTenant().equals(tenant)) {
             throw new InvitationNotFoundException(clientInvitationId);
         }
-
         if (TokenUtils.isTokenExpired(invitation.getExpiresAt())) {
             throw new InvitationExpiredException(clientInvitationId);
         }

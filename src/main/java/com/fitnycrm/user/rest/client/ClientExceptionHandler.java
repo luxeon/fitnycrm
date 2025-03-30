@@ -1,6 +1,7 @@
 package com.fitnycrm.user.rest.client;
 
 import com.fitnycrm.common.rest.model.ErrorResponse;
+import com.fitnycrm.user.service.client.exception.TenantAlreadyContainsUserException;
 import com.fitnycrm.user.service.exception.InvitationExpiredException;
 import com.fitnycrm.user.service.exception.InvitationNotFoundException;
 import org.springframework.core.Ordered;
@@ -23,6 +24,12 @@ public class ClientExceptionHandler {
     @ExceptionHandler(InvitationExpiredException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvitationExpiredException(InvitationExpiredException e) {
+        return ErrorResponse.of(e.getMessage());
+    }
+
+    @ExceptionHandler(TenantAlreadyContainsUserException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleTenantAlreadyContainsUserException(TenantAlreadyContainsUserException e) {
         return ErrorResponse.of(e.getMessage());
     }
 } 
