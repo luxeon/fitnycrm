@@ -2,7 +2,7 @@ package com.fitnycrm.schedule.facade.mapper;
 
 import com.fitnycrm.schedule.repository.entity.Schedule;
 import com.fitnycrm.schedule.rest.model.ScheduleDetailsResponse;
-import com.fitnycrm.schedule.rest.model.SchedulePageItemResponse;
+import com.fitnycrm.schedule.rest.model.ScheduleListItemResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,5 +15,5 @@ public interface ScheduleResponseMapper {
 
     @Mapping(source = "training.id", target = "trainingId")
     @Mapping(source = "defaultTrainer.id", target = "defaultTrainerId")
-    SchedulePageItemResponse toListResponse(Schedule schedule);
+    ScheduleListItemResponse toListResponse(Schedule schedule);
 } 

@@ -1,52 +1,25 @@
-{
-  "content": [
-    {
-      "id": "9a7632b1-e932-48fd-9296-001036b4ec19",
-      "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
-      "daysOfWeek": [
-        "MONDAY",
-        "SUNDAY"
-      ],
-      "startTime": "09:00:00",
-      "endTime": "10:00:00",
-      "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03"
-    },
-    {
-      "id": "1b350914-43f5-4433-a82e-ff60dc8aa47a",
-      "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
-      "daysOfWeek": [
-        "TUESDAY",
-        "THURSDAY",
-        "SATURDAY"
-      ],
-      "startTime": "08:00:00",
-      "endTime": "09:30:00",
-      "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01"
-    }
-  ],
-  "pageable": {
-    "pageNumber": 0,
-    "pageSize": 10,
-    "sort": {
-      "sorted": true,
-      "empty": false,
-      "unsorted": false
-    },
-    "offset": 0,
-    "paged": true,
-    "unpaged": false
+[
+  {
+    "id": "9a7632b1-e932-48fd-9296-001036b4ec19",
+    "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+    "daysOfWeek": [
+      "MONDAY",
+      "SUNDAY"
+    ],
+    "startTime": "09:00:00",
+    "endTime": "10:00:00",
+    "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03"
   },
-  "last": true,
-  "totalPages": 1,
-  "totalElements": 2,
-  "first": true,
-  "size": 10,
-  "number": 0,
-  "sort": {
-    "sorted": true,
-    "empty": false,
-    "unsorted": false
-  },
-  "numberOfElements": 2,
-  "empty": false
-}
+  {
+    "id": "1b350914-43f5-4433-a82e-ff60dc8aa47a",
+    "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+    "daysOfWeek": [
+      "TUESDAY",
+      "THURSDAY",
+      "SATURDAY"
+    ],
+    "startTime": "08:00:00",
+    "endTime": "09:30:00",
+    "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01"
+  }
+]

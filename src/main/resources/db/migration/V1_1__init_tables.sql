@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS trainings
     tenant_id        uuid         NOT NULL,
     name             VARCHAR(255) NOT NULL,
     description      TEXT,
-    duration_minutes INTEGER,
-    client_capacity  INTEGER,
+    duration_minutes INTEGER NOT NULL,
+    client_capacity  INTEGER NOT NULL,
     created_at       TIMESTAMP WITHOUT TIME ZONE,
     updated_at       TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
@@ -75,15 +75,15 @@ CREATE TABLE IF NOT EXISTS trainings
 
 CREATE TABLE IF NOT EXISTS schedules
 (
-    id                    uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    training_id           uuid          NOT NULL,
-    location_id           uuid          NOT NULL,
-    days_of_week          varchar[] NOT NULL,
-    start_time            TIME          NOT NULL,
-    end_time              TIME          NOT NULL,
-    default_trainer_id uuid          NOT NULL,
-    created_at            TIMESTAMP WITHOUT TIME ZONE,
-    updated_at            TIMESTAMP WITHOUT TIME ZONE,
+    id                 uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    training_id        uuid      NOT NULL,
+    location_id        uuid      NOT NULL,
+    days_of_week       varchar[] NOT NULL,
+    start_time         TIME      NOT NULL,
+    end_time           TIME      NOT NULL,
+    default_trainer_id uuid      NOT NULL,
+    created_at         TIMESTAMP WITHOUT TIME ZONE,
+    updated_at         TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (training_id) REFERENCES trainings (id),
     FOREIGN KEY (location_id) REFERENCES locations (id),
     FOREIGN KEY (default_trainer_id) REFERENCES users (id)
@@ -91,12 +91,12 @@ CREATE TABLE IF NOT EXISTS schedules
 
 CREATE TABLE IF NOT EXISTS sessions
 (
-    id            uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    schedule_id   uuid                        NOT NULL,
-    session_date  DATE                        NOT NULL,
-    trainer_id uuid,
-    start_time    TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time      TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    schedule_id  uuid                        NOT NULL,
+    session_date DATE                        NOT NULL,
+    trainer_id   uuid,
+    start_time   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    end_time     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     FOREIGN KEY (schedule_id) REFERENCES schedules (id),
     FOREIGN KEY (trainer_id) REFERENCES users (id)
 );

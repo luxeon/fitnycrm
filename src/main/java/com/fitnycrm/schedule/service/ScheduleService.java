@@ -80,8 +80,8 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Schedule> findByLocation(UUID tenantId, UUID locationId, Pageable pageable) {
+    public List<Schedule> findByLocation(UUID tenantId, UUID locationId) {
         Location location = locationService.findById(tenantId, locationId);
-        return scheduleRepository.findAllByLocation(location, pageable);
+        return scheduleRepository.findAllByLocation(location);
     }
 } 

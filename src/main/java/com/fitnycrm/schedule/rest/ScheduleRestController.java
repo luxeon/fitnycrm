@@ -3,7 +3,7 @@ package com.fitnycrm.schedule.rest;
 import com.fitnycrm.schedule.facade.ScheduleFacade;
 import com.fitnycrm.schedule.rest.model.CreateScheduleRequest;
 import com.fitnycrm.schedule.rest.model.ScheduleDetailsResponse;
-import com.fitnycrm.schedule.rest.model.SchedulePageItemResponse;
+import com.fitnycrm.schedule.rest.model.ScheduleListItemResponse;
 import com.fitnycrm.schedule.rest.model.UpdateScheduleRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,12 +13,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -81,15 +81,15 @@ public class ScheduleRestController {
     @Operation(summary = "Get a page of schedules for a location")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Schedules found",
-                    content = @Content(schema = @Schema(implementation = SchedulePageItemResponse.class))),
+                    content = @Content(schema = @Schema(implementation = ScheduleListItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
-    public Page<SchedulePageItemResponse> findAll(@PathVariable UUID tenantId,
-                                                  @PathVariable UUID locationId, Pageable pageable) {
-        return scheduleFacade.findAll(tenantId, locationId, pageable);
+    public List<ScheduleListItemResponse> findAll(@PathVariable UUID tenantId,
+                                                  @PathVariable UUID locationId) {
+        return scheduleFacade.findAll(tenantId, locationId);
     }
 
     @Operation(summary = "Delete a schedule")

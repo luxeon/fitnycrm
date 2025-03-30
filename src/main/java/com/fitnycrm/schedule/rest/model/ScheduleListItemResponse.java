@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Schema(description = "Response object containing schedule information")
-public record SchedulePageItemResponse(
+public record ScheduleListItemResponse(
     @Schema(description = "Unique identifier of the schedule")
     UUID id,
 

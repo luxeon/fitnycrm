@@ -32,9 +32,11 @@ public class Training {
     private String description;
 
     @Min(1)
+    @Column(nullable = false)
     private Integer durationMinutes;
 
     @Min(1)
+    @Column(nullable = false)
     private Integer clientCapacity;
 
     @CreationTimestamp
