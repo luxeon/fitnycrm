@@ -371,6 +371,14 @@ class ClientRestControllerTest {
                         .content(request)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isNoContent());
+
+        // Verify email was sent
+        MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        assertThat(receivedMessages).hasSize(1);
+        MimeMessage receivedMessage = receivedMessages[0];
+        assertThat(receivedMessage.getAllRecipients()).hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("bill.gates@example.com");
+        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to FitTrack CRM by Max Power");
     }
 
     @Test

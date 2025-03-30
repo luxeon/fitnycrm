@@ -93,25 +93,25 @@ public class ClientService {
     @Transactional
     public void invite(UUID tenantId, String email, UUID inviterId) {
         Tenant tenant = tenantService.findById(tenantId);
-        repository.findByEmail(email).ifPresentOrElse(user -> {
+        repository.findByEmail(email).ifPresent(user -> {
             if (user.getTenants().contains(tenant)) {
                 throw new TenantAlreadyContainsUserException(tenantId, user.getId());
             }
-        }, () -> {
-            User inviter = repository.findById(inviterId).orElseThrow(() -> new UserNotFoundException(inviterId));
-
-            Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
-            ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
-
-            invitation.setTenant(tenant);
-            invitation.setEmail(email);
-            invitation.setInviter(inviter);
-            invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
-            invitation.setCreatedAt(OffsetDateTime.now());
-            invitationRepository.save(invitation);
-
-            emailService.sendClientInvitation(tenant, invitation, inviter);
         });
+
+        User inviter = repository.findById(inviterId).orElseThrow(() -> new UserNotFoundException(inviterId));
+
+        Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
+        ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
+
+        invitation.setTenant(tenant);
+        invitation.setEmail(email);
+        invitation.setInviter(inviter);
+        invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
+        invitation.setCreatedAt(OffsetDateTime.now());
+        invitationRepository.save(invitation);
+
+        emailService.sendClientInvitation(tenant, invitation, inviter);
     }
 
     @Transactional
