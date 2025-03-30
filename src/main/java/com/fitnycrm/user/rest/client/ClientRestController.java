@@ -117,4 +117,18 @@ public class ClientRestController {
                        @AuthenticationPrincipal AuthenticatedUserDetails user) {
         clientFacade.invite(tenantId, request, user);
     }
+
+    @Operation(summary = "Sign up a new client using invitation token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Client signed up successfully",
+                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Invitation not found or expired")
+    })
+    @PostMapping("/signup/{token}")
+    public ClientDetailsResponse signup(@PathVariable UUID tenantId,
+                                        @PathVariable String token,
+                                        @RequestBody @Valid SignupClientRequest request) {
+        return clientFacade.signup(tenantId, token, request);
+    }
 } 

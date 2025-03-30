@@ -11,8 +11,11 @@ import com.fitnycrm.user.repository.entity.ClientInvitation;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.repository.entity.UserRole;
 import com.fitnycrm.user.rest.client.model.CreateClientRequest;
+import com.fitnycrm.user.rest.client.model.SignupClientRequest;
 import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
 import com.fitnycrm.user.service.client.mapper.ClientRequestMapper;
+import com.fitnycrm.user.service.exception.InvitationExpiredException;
+import com.fitnycrm.user.service.exception.InvitationNotFoundException;
 import com.fitnycrm.user.service.exception.RoleNotFoundException;
 import com.fitnycrm.user.service.exception.UserEmailAlreadyExistsException;
 import com.fitnycrm.user.service.exception.UserNotFoundException;
@@ -37,28 +40,6 @@ public class ClientService {
     private final ClientRequestMapper requestMapper;
     private final EmailService emailService;
     private final ClientInvitationRepository invitationRepository;
-
-    @Transactional
-    public void invite(UUID tenantId, String email, String inviterName) {
-        if (repository.existsByEmail(email)) {
-            throw new UserEmailAlreadyExistsException(email);
-        }
-
-        Tenant tenant = tenantService.findById(tenantId);
-        Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
-        ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
-
-        String token = TokenUtils.generateToken();
-        invitation.setTenant(tenant);
-        invitation.setEmail(email);
-        invitation.setInviterName(inviterName);
-        invitation.setToken(token);
-        invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
-        invitation.setCreatedAt(OffsetDateTime.now());
-        invitationRepository.save(invitation);
-
-        emailService.sendClientInvitation(tenant, email, token, inviterName);
-    }
 
     @Transactional
     public User create(UUID tenantId, CreateClientRequest request) {
@@ -108,5 +89,54 @@ public class ClientService {
     @Transactional(readOnly = true)
     public Page<User> findByTenantId(UUID tenantId, Pageable pageable) {
         return repository.findByTenantIdAndRole(tenantId, UserRole.Name.CLIENT, pageable);
+    }
+
+    @Transactional
+    public void invite(UUID tenantId, String email, String inviterName) {
+        if (repository.existsByEmail(email)) {
+            throw new UserEmailAlreadyExistsException(email);
+        }
+
+        Tenant tenant = tenantService.findById(tenantId);
+        Optional<ClientInvitation> optionalInvitation = invitationRepository.findByTenantAndEmail(tenant, email);
+        ClientInvitation invitation = optionalInvitation.orElseGet(ClientInvitation::new);
+
+        String token = TokenUtils.generateToken();
+        invitation.setTenant(tenant);
+        invitation.setEmail(email);
+        invitation.setInviterName(inviterName);
+        invitation.setToken(token);
+        invitation.setExpiresAt(TokenUtils.calculateExpirationTime());
+        invitation.setCreatedAt(OffsetDateTime.now());
+        invitationRepository.save(invitation);
+
+        emailService.sendClientInvitation(tenant, email, token, inviterName);
+    }
+
+    @Transactional
+    public User signup(UUID tenantId, String token, SignupClientRequest request) {
+        Tenant tenant = tenantService.findById(tenantId);
+        ClientInvitation invitation = invitationRepository.findByTenantAndToken(tenant, token)
+                .orElseThrow(() -> new InvitationNotFoundException(token));
+
+        if (TokenUtils.isTokenExpired(invitation.getExpiresAt())) {
+            throw new InvitationExpiredException(token);
+        }
+
+        User user = new User();
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setEmail(invitation.getEmail());
+        user.setPassword(request.password());
+
+        UserRole role = roleRepository.findByName(UserRole.Name.CLIENT).orElseThrow(() ->
+                new RoleNotFoundException(UserRole.Name.CLIENT));
+
+        user.getRoles().add(role);
+        user.getTenants().add(tenant);
+        user = repository.save(user);
+
+        invitationRepository.delete(invitation);
+        return user;
     }
 }

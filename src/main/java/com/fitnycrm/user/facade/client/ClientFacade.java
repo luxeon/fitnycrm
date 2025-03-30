@@ -53,4 +53,9 @@ public class ClientFacade {
         return clientService.findByTenantId(tenantId, pageable)
                 .map(responseMapper::toPageItemResponse);
     }
+
+    public ClientDetailsResponse signup(UUID tenantId, String token, SignupClientRequest request) {
+        User client = clientService.signup(tenantId, token, request);
+        return responseMapper.toDetailsResponse(client);
+    }
 } 
