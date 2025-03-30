@@ -3,7 +3,12 @@ package com.fitnycrm.user.rest;
 import com.fitnycrm.common.annotation.IntegrationTest;
 import com.fitnycrm.user.util.JwtTokenCreator;
 import com.fitnycrm.user.repository.entity.UserRole;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql"})
@@ -30,6 +36,10 @@ class ClientRestControllerTest {
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
     private static final UUID EXISTING_CLIENT_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID NON_EXISTING_CLIENT_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd99");
+
+    @RegisterExtension
+    static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withConfiguration(GreenMailConfiguration.aConfig().withUser("test@fittrackcrm.com", "test"));
 
     @Autowired
     private MockMvc mockMvc;
@@ -330,5 +340,86 @@ class ClientRestControllerTest {
                         .param("size", "10")
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void invite_whenValidRequest_thenSendInvitationEmail() throws Exception {
+        var request = readFile("fixture/client/invite/request/valid-request.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNoContent());
+
+        // Verify email was sent
+        MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        assertThat(receivedMessages).hasSize(1);
+        MimeMessage receivedMessage = receivedMessages[0];
+        assertThat(receivedMessage.getAllRecipients()).hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("client@example.com");
+        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to FitTrack CRM by Max Power");
+    }
+
+    @Test
+    void invite_whenInvalidEmail_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/client/invite/request/invalid-email.json");
+        var expectedResponse = readFile("fixture/client/invite/response/invalid-email.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void invite_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/client/invite/request/valid-request.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void invite_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/client/invite/request/valid-request.json");
+        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
+
+        mockMvc.perform(post("/api/tenants/{tenantId}/clients/invite", DIFFERENT_TENANT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT"})
+    void invite_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/client/invite/request/valid-request.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/client/insert.sql")
+    void invite_whenEmailExists_thenReturnConflict() throws Exception {
+        var request = readFile("fixture/client/invite/request/existing-email.json");
+        var expectedResponse = readFile("fixture/client/invite/response/email-exists.json");
+
+        mockMvc.perform(post(BASE_URL + "/invite")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isConflict())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 

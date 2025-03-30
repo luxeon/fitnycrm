@@ -1,3 +1,4 @@
+DELETE FROM client_invitations;
 DELETE FROM user_roles;
 DELETE FROM tenant_users;
 DELETE FROM schedules;
