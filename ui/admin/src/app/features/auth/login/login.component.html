@@ -21,7 +21,7 @@
           [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           [placeholder]="'login.email.placeholder' | translate">
         <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          {{ getErrorMessage('email') | async }}
+          {{ getErrorMessage('email') }}
         </div>
       </div>
 
@@ -34,7 +34,7 @@
           [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
           [placeholder]="'login.password.placeholder' | translate">
         <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          {{ getErrorMessage('password') | async }}
+          {{ getErrorMessage('password') }}
         </div>
       </div>
 
