@@ -4,13 +4,15 @@ import { Router } from '@angular/router';
 import { AuthService, UserDetailsResponse } from '../../core/services/auth.service';
 import { TenantService, TenantResponse } from '../../core/services/tenant.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { LocationsComponent } from './components/locations/locations.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    TranslateModule
+    TranslateModule,
+    LocationsComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']

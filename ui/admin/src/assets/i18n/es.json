@@ -31,6 +31,17 @@
     "fitnessClub": {
       "label": "Club de Fitness:"
     },
-    "subtitle": "Tu gestión del viaje fitness comienza aquí."
+    "subtitle": "Tu gestión del viaje fitness comienza aquí.",
+    "locations": {
+      "title": "Ubicaciones del Club",
+      "noLocations": "No se encontraron ubicaciones. Agrega tu primera ubicación para comenzar.",
+      "loading": "Cargando ubicaciones..."
+    }
+  },
+  "common": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página",
+    "of": "de"
   }
 } 

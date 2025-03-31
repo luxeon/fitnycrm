@@ -31,6 +31,17 @@
     "fitnessClub": {
       "label": "Fitness Club:"
     },
-    "subtitle": "Your fitness journey management starts here."
+    "subtitle": "Your fitness journey management starts here.",
+    "locations": {
+      "title": "Club Locations",
+      "noLocations": "No locations found. Add your first location to get started.",
+      "loading": "Loading locations..."
+    }
+  },
+  "common": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
   }
 } 

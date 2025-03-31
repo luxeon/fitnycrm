@@ -6,5 +6,7 @@
       <h2>{{ tenantDetails.name }}</h2>
     </div>
     <p>{{ 'dashboard.subtitle' | translate }}</p>
+
+    <app-locations *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-locations>
   </div>
 </div> 
