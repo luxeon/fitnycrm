@@ -21,9 +21,14 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
       
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
         <div class="location-card" *ngFor="let location of locations?.content">
-          <button class="delete-btn" (click)="onDeleteClick(location)">
-            <span class="delete-icon">×</span>
-          </button>
+          <div class="card-actions">
+            <button class="edit-btn" (click)="onEditClick(location)">
+              <span class="edit-icon">✎</span>
+            </button>
+            <button class="delete-btn" (click)="onDeleteClick(location)">
+              <span class="delete-icon">×</span>
+            </button>
+          </div>
           <div class="location-info">
             <div class="address">{{ location.address }}</div>
             <div class="city-state">{{ location.city }}, {{ location.state }} {{ location.postalCode }}</div>
@@ -122,21 +127,43 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
-      .delete-btn {
+      .card-actions {
         position: absolute;
         top: 8px;
         right: 8px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .edit-btn, .delete-btn {
         width: 24px;
         height: 24px;
         border-radius: 50%;
-        background: #e74c3c;
         border: none;
-        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: background-color 0.2s;
+      }
+
+      .edit-btn {
+        background: #3498db;
+        color: white;
+
+        .edit-icon {
+          font-size: 14px;
+          line-height: 1;
+        }
+
+        &:hover {
+          background: #2980b9;
+        }
+      }
+
+      .delete-btn {
+        background: #e74c3c;
+        color: white;
 
         .delete-icon {
           font-size: 18px;
@@ -244,6 +271,15 @@ export class LocationsComponent implements OnInit {
 
   onAddLocation(): void {
     this.router.navigate(['/create-location'], { queryParams: { tenantId: this.tenantId } });
+  }
+
+  onEditClick(location: LocationPageItemResponse): void {
+    this.router.navigate(['/edit-location'], { 
+      queryParams: { 
+        tenantId: this.tenantId,
+        locationId: location.id
+      } 
+    });
   }
 
   onDeleteClick(location: LocationPageItemResponse): void {

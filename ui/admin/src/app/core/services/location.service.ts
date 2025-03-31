@@ -24,6 +24,8 @@ export interface CreateLocationRequest {
   timezone: string;
 }
 
+export interface UpdateLocationRequest extends CreateLocationRequest {}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -42,5 +44,13 @@ export class LocationService {
 
   deleteLocation(tenantId: string, locationId: string): Observable<void> {
     return this.http.delete<void>(`/api/tenants/${tenantId}/locations/${locationId}`);
+  }
+
+  getLocation(tenantId: string, locationId: string): Observable<LocationPageItemResponse> {
+    return this.http.get<LocationPageItemResponse>(`/api/tenants/${tenantId}/locations/${locationId}`);
+  }
+
+  updateLocation(tenantId: string, locationId: string, request: UpdateLocationRequest): Observable<LocationPageItemResponse> {
+    return this.http.put<LocationPageItemResponse>(`/api/tenants/${tenantId}/locations/${locationId}`, request);
   }
 }

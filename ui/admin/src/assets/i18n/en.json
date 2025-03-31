@@ -48,6 +48,9 @@
     "create": {
       "title": "Add New Location"
     },
+    "edit": {
+      "title": "Edit Location"
+    },
     "form": {
       "address": "Address",
       "addressRequired": "Address is required",
@@ -72,4 +75,4 @@
     "saving": "Saving...",
     "cancel": "Cancel"
   }
-} 
+}
