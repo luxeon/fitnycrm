@@ -176,4 +176,20 @@ describe('LocationsComponent', () => {
       { queryParams: { tenantId: 'tenant-1' } }
     );
   });
+
+  it('should show edit button for each location', () => {
+    const editButtons = fixture.debugElement.queryAll(By.css('.edit-btn'));
+    expect(editButtons.length).toBe(2);
+  });
+
+  it('should navigate to edit location page when edit button is clicked', () => {
+    const editButton = fixture.debugElement.query(By.css('.edit-btn'));
+    editButton.triggerEventHandler('click');
+    fixture.detectChanges();
+
+    expect(router.navigate).toHaveBeenCalledWith(
+      ['/edit-location'],
+      { queryParams: { tenantId: 'tenant-1', locationId: '1' } }
+    );
+  });
 }); 

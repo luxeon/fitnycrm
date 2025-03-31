@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -172,7 +172,7 @@ import { firstValueFrom } from 'rxjs';
     }
   `]
 })
-export class EditLocationComponent {
+export class EditLocationComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly locationService = inject(LocationService);
   private readonly router = inject(Router);
@@ -192,7 +192,9 @@ export class EditLocationComponent {
       country: ['', Validators.required],
       timezone: ['', Validators.required]
     });
+  }
 
+  ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.tenantId = params['tenantId'];
       this.locationId = params['locationId'];
