@@ -8,6 +8,7 @@ import { Observable, of } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { Page } from '../../../../core/models/page.model';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 class FakeLoader implements TranslateLoader {
   getTranslation(): Observable<any> {
@@ -80,7 +81,8 @@ describe('LocationsComponent', () => {
       ],
       providers: [
         { provide: LocationService, useValue: locationServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        provideAnimations()
       ]
     }).compileComponents();
 

@@ -51,6 +51,9 @@
     "edit": {
       "title": "Edit Location"
     },
+    "details": {
+      "title": "Club Details"
+    },
     "form": {
       "address": "Address",
       "addressRequired": "Address is required",
@@ -71,8 +74,10 @@
     "next": "Next",
     "page": "Page",
     "of": "of",
+    "cancel": "Cancel",
     "save": "Save",
     "saving": "Saving...",
-    "cancel": "Cancel"
+    "loading": "Loading...",
+    "back": "Back to Dashboard"
   }
 }

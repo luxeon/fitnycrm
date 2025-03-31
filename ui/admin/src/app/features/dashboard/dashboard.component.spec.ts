@@ -8,6 +8,7 @@ import { TenantService, TenantResponse } from '../../core/services/tenant.servic
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { By } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 class FakeLoader implements TranslateLoader {
   getTranslation(): Observable<any> {
@@ -45,7 +46,8 @@ describe('DashboardComponent', () => {
         provideHttpClient(),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: TenantService, useValue: tenantServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        provideAnimations()
       ]
     }).compileComponents();
 

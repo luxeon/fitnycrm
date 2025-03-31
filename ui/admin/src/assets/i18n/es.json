@@ -48,6 +48,12 @@
     "create": {
       "title": "Agregar Nueva Ubicación"
     },
+    "edit": {
+      "title": "Editar Ubicación"
+    },
+    "details": {
+      "title": "Detalles del Club"
+    },
     "form": {
       "address": "Dirección",
       "addressRequired": "La dirección es requerida",
@@ -68,8 +74,10 @@
     "next": "Siguiente",
     "page": "Página",
     "of": "de",
+    "cancel": "Cancelar",
     "save": "Guardar",
     "saving": "Guardando...",
-    "cancel": "Cancelar"
+    "loading": "Cargando...",
+    "back": "Volver al Panel"
   }
 } 

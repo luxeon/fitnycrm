@@ -5,13 +5,25 @@ import { Page } from '../../../../core/models/page.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-locations',
   standalone: true,
   imports: [CommonModule, TranslateModule, ConfirmationDialogComponent],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-out', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0 }))
+      ])
+    ])
+  ],
   template: `
-    <div class="locations-section">
+    <div class="locations-section" @fadeInOut>
       <div class="section-header">
         <h3>{{ 'dashboard.locations.title' | translate }}</h3>
         <button class="add-location-btn" (click)="onAddLocation()">
@@ -19,9 +31,9 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
         </button>
       </div>
       
-      <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
-        <div class="location-card" *ngFor="let location of locations?.content">
-          <div class="card-actions">
+      <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length" @fadeInOut>
+        <div class="location-card" *ngFor="let location of locations?.content" (click)="onLocationClick(location)">
+          <div class="card-actions" (click)="$event.stopPropagation()">
             <button class="edit-btn" (click)="onEditClick(location)">
               <span class="edit-icon">✎</span>
             </button>
@@ -37,15 +49,15 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
         </div>
       </div>
 
-      <div class="no-locations" *ngIf="!isLoading && !locations?.content?.length">
+      <div class="no-locations" *ngIf="!isLoading && !locations?.content?.length" @fadeInOut>
         {{ 'dashboard.locations.noLocations' | translate }}
       </div>
 
-      <div class="loading" *ngIf="isLoading">
+      <div class="loading" *ngIf="isLoading" @fadeInOut>
         {{ 'dashboard.locations.loading' | translate }}
       </div>
 
-      <div class="pagination" *ngIf="locations && locations.totalPages > 1">
+      <div class="pagination" *ngIf="locations && locations.totalPages > 1" @fadeInOut>
         <button 
           [disabled]="locations.first"
           (click)="loadPage(locations.number - 1)">
@@ -121,10 +133,12 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
       border-radius: 6px;
       border: 1px solid #e9ecef;
       transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
 
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background: #f1f3f5;
       }
 
       .card-actions {
@@ -250,13 +264,21 @@ export class LocationsComponent implements OnInit {
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
   locationToDelete: LocationPageItemResponse | null = null;
+  private currentPage = 0;
 
   ngOnInit(): void {
-    this.loadPage(0);
+    // Try to restore the last known page
+    const savedPage = sessionStorage.getItem('lastLocationPage');
+    this.currentPage = savedPage ? parseInt(savedPage, 10) : 0;
+    this.loadPage(this.currentPage);
   }
 
   loadPage(page: number): void {
     this.isLoading = true;
+    this.currentPage = page;
+    // Save the current page to session storage
+    sessionStorage.setItem('lastLocationPage', page.toString());
+    
     this.locationService.getLocations(this.tenantId, page)
       .subscribe({
         next: (response) => {
@@ -300,5 +322,17 @@ export class LocationsComponent implements OnInit {
 
   onDeleteCancel(): void {
     this.locationToDelete = null;
+  }
+
+  onLocationClick(location: LocationPageItemResponse): void {
+    // Save the current scroll position
+    sessionStorage.setItem('dashboardScrollPos', window.scrollY.toString());
+    
+    this.router.navigate(['/club-details'], { 
+      queryParams: { 
+        tenantId: this.tenantId,
+        locationId: location.id
+      } 
+    });
   }
 } 
