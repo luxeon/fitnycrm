@@ -6,5 +6,4 @@ export interface Page<T> {
   number: number;
   first: boolean;
   last: boolean;
-  empty: boolean;
 } 

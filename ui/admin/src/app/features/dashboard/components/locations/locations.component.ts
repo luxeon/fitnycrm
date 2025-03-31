@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LocationService, LocationPageItemResponse } from '../../../../core/services/location.service';
 import { Page } from '../../../../core/models/page.model';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-locations',
@@ -10,7 +11,12 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [CommonModule, TranslateModule],
   template: `
     <div class="locations-section">
-      <h3>{{ 'dashboard.locations.title' | translate }}</h3>
+      <div class="section-header">
+        <h3>{{ 'dashboard.locations.title' | translate }}</h3>
+        <button class="add-location-btn" (click)="onAddLocation()">
+          {{ 'dashboard.locations.addLocation' | translate }}
+        </button>
+      </div>
       
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
         <div class="location-card" *ngFor="let location of locations?.content">
@@ -55,9 +61,31 @@ import { TranslateModule } from '@ngx-translate/core';
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-      h3 {
-        margin: 0 0 1rem;
-        color: #2c3e50;
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        h3 {
+          margin: 0;
+          color: #2c3e50;
+        }
+
+        .add-location-btn {
+          padding: 8px 16px;
+          background: #3498db;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background: #2980b9;
+          }
+        }
       }
     }
 
@@ -150,6 +178,7 @@ export class LocationsComponent implements OnInit {
   @Input() tenantId!: string;
 
   private readonly locationService = inject(LocationService);
+  private readonly router = inject(Router);
 
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
@@ -170,5 +199,9 @@ export class LocationsComponent implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  onAddLocation(): void {
+    this.router.navigate(['/create-location'], { queryParams: { tenantId: this.tenantId } });
   }
 } 

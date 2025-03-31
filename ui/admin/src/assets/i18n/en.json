@@ -35,13 +35,36 @@
     "locations": {
       "title": "Club Locations",
       "noLocations": "No locations found. Add your first location to get started.",
-      "loading": "Loading locations..."
+      "loading": "Loading locations...",
+      "addLocation": "Add Location"
+    }
+  },
+  "location": {
+    "create": {
+      "title": "Add New Location"
+    },
+    "form": {
+      "address": "Address",
+      "addressRequired": "Address is required",
+      "city": "City",
+      "cityRequired": "City is required",
+      "state": "State",
+      "stateRequired": "State is required",
+      "postalCode": "Postal Code",
+      "postalCodeRequired": "Postal code is required",
+      "country": "Country",
+      "countryRequired": "Country is required",
+      "timezone": "Timezone",
+      "timezoneRequired": "Timezone is required"
     }
   },
   "common": {
     "previous": "Previous",
     "next": "Next",
     "page": "Page",
-    "of": "of"
+    "of": "of",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel"
   }
 } 

@@ -15,6 +15,15 @@ export interface LocationPageItemResponse {
   updatedAt: string;
 }
 
+export interface CreateLocationRequest {
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  timezone: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,4 +35,8 @@ export class LocationService {
       params: { page, size }
     });
   }
-} 
+
+  createLocation(tenantId: string, request: CreateLocationRequest): Observable<LocationPageItemResponse> {
+    return this.http.post<LocationPageItemResponse>(`/api/tenants/${tenantId}/locations`, request);
+  }
+}
