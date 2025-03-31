@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+// import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TenantService, CreateTenantRequest } from '../../core/services/tenant.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -162,7 +162,7 @@ import { firstValueFrom } from 'rxjs';
 export class CreateTenantComponent {
   private readonly tenantService = inject(TenantService);
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
+  // private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
 
   tenantForm: FormGroup = this.fb.group({
@@ -187,12 +187,16 @@ export class CreateTenantComponent {
         // Create tenant
         await firstValueFrom(this.tenantService.createTenant(request));
 
-        // Refresh token to get updated claims
-        const tokenResponse = await firstValueFrom(this.authService.refreshToken());
-        this.authService.updateTokens(tokenResponse);
+        // Uncomment this section when refresh token will be available and remove await this.authService.logoutAndRedirect();
+            // Refresh token to get updated claims
+            // const tokenResponse = await firstValueFrom(this.authService.refreshToken());
+            // this.authService.updateTokens(tokenResponse);
 
-        // Navigate to dashboard after token update
-        await this.router.navigate(['/dashboard']);
+            // Navigate to dashboard after token update
+            // await this.router.navigate(['/dashboard']);
+
+        // Logout and redirect to login page to get fresh token with updated claims
+        await this.authService.logoutAndRedirect();
       } catch (error: any) {
         console.error('Error creating tenant:', error);
         this.errorMessage = error.status === 401

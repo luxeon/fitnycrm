@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 import { JwtPayload, decodeJwtToken } from '../utils/jwt.utils';
+import { Router } from '@angular/router';
 
 export interface UserSignupRequest {
   firstName: string;
@@ -37,6 +38,7 @@ export interface RefreshTokenResponse {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly router = inject(Router);
 
   signup(request: UserSignupRequest): Observable<UserDetailsResponse> {
     return this.http.post<UserDetailsResponse>(`${this.apiUrl}/signup`, request);
@@ -59,6 +61,11 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+  }
+
+  async logoutAndRedirect(): Promise<void> {
+    this.logout();
+    await this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
