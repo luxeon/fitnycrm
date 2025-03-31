@@ -19,6 +19,8 @@ export interface UserDetailsResponse {
   lastName: string;
   email: string;
   phoneNumber?: string;
+  roles: string[];
+  tenantIds: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -55,6 +57,18 @@ export class AuthService {
     return payload.exp > now;
   }
 
+  hasRole(role: string): boolean {
+    const payload = this.getDecodedToken();
+    if (!payload) return false;
+    return payload.roles.includes(role);
+  }
+
+  hasTenant(tenantId: string): boolean {
+    const payload = this.getDecodedToken();
+    if (!payload) return false;
+    return payload.tenantIds.includes(tenantId);
+  }
+
   getCurrentUser(): UserDetailsResponse | null {
     const payload = this.getDecodedToken();
     if (!payload) return null;
@@ -64,6 +78,8 @@ export class AuthService {
       firstName: payload.firstName,
       lastName: payload.lastName,
       email: payload.email,
+      roles: payload.roles,
+      tenantIds: payload.tenantIds,
       createdAt: new Date(payload.iat * 1000).toISOString(),
       updatedAt: new Date(payload.iat * 1000).toISOString()
     };

@@ -42,9 +42,12 @@ export class LoginComponent implements OnInit {
     this.translate.use(browserLang?.match(/en|es/) ? browserLang : 'en');
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    // Wait for translations to be loaded
+    await firstValueFrom(this.translate.get('login'));
+    
     // Pre-load error messages
-    this.preloadErrorMessages();
+    await this.preloadErrorMessages();
 
     // Handle autofill changes
     setTimeout(() => {
@@ -95,6 +98,6 @@ export class LoginComponent implements OnInit {
       return this.errorMessages['emailInvalid'];
     }
 
-    return 'Invalid input';
+    return '';
   }
 }

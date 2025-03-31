@@ -310,6 +310,8 @@ describe('RegistrationComponent', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
+      roles: ['ROLE_CLIENT'],
+      tenantIds: ['tenant-123'],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
