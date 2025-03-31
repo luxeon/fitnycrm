@@ -60,7 +60,7 @@ export class AuthService {
   hasRole(role: string): boolean {
     const payload = this.getDecodedToken();
     if (!payload) return false;
-    return payload.roles.includes(role);
+    return payload.roles.some(r => r.authority === role);
   }
 
   hasTenant(tenantId: string): boolean {
@@ -78,7 +78,7 @@ export class AuthService {
       firstName: payload.firstName,
       lastName: payload.lastName,
       email: payload.email,
-      roles: payload.roles,
+      roles: payload.roles.map(role => role.authority),
       tenantIds: payload.tenantIds,
       createdAt: new Date(payload.iat * 1000).toISOString(),
       updatedAt: new Date(payload.iat * 1000).toISOString()
@@ -94,4 +94,4 @@ export class AuthService {
     if (!token) return null;
     return decodeJwtToken(token);
   }
-} 
+}

@@ -38,12 +38,13 @@ describe('LoginComponent', () => {
   };
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'hasRole']);
     authServiceSpy.login.and.returnValue(of({
       accessToken: 'mock-access-token',
       refreshToken: 'mock-refresh-token',
       expiresIn: 3600
     }));
+    authServiceSpy.hasRole.and.returnValue(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -151,6 +152,7 @@ describe('LoginComponent', () => {
   it('should handle login error and subsequent retry', fakeAsync(() => {
     // First attempt - trigger an error
     authService.login.and.returnValue(throwError(() => new Error('Invalid credentials')));
+    authService.hasRole.and.returnValue(true);
 
     component.loginForm.patchValue({
       email: 'test@example.com',
@@ -177,6 +179,26 @@ describe('LoginComponent', () => {
     tick();
 
     expect(component.errorMessage).toBeNull();
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it('should handle unauthorized role after successful login', fakeAsync(() => {
+    authService.login.and.returnValue(of({
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+      expiresIn: 3600
+    }));
+    authService.hasRole.and.returnValue(false);
+
+    component.loginForm.patchValue({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    component.onSubmit();
+    tick();
+
+    expect(component.errorMessage).toBe(translations.login.error.invalidCredentials);
     expect(component.isLoading).toBeFalse();
   }));
 
@@ -237,7 +259,7 @@ describe('LoginComponent', () => {
   it('should initialize with correct translations', () => {
     const emailLabel = fixture.debugElement.query(By.css('label[for="email"]'));
     const passwordLabel = fixture.debugElement.query(By.css('label[for="password"]'));
-    
+
     expect(emailLabel.nativeElement.textContent).toBe(translations.login.email.label);
     expect(passwordLabel.nativeElement.textContent).toBe(translations.login.password.label);
   });

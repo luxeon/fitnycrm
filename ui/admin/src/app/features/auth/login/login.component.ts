@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
   async ngOnInit() {
     // Wait for translations to be loaded
     await firstValueFrom(this.translate.get('login'));
-    
+
     // Pre-load error messages
     await this.preloadErrorMessages();
 
@@ -76,7 +76,15 @@ export class LoginComponent implements OnInit {
         if (response) {
           localStorage.setItem('accessToken', response.accessToken);
           localStorage.setItem('refreshToken', response.refreshToken);
-          await this.router.navigate(['/dashboard']);
+
+          // Check if user has ADMIN role
+          if (!this.authService.hasRole('ROLE_ADMIN')) {
+            this.errorMessage = await firstValueFrom(this.translate.get('login.error.invalidCredentials'));
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          } else {
+            await this.router.navigate(['/dashboard']);
+          }
         }
       } catch (error) {
         this.errorMessage = await firstValueFrom(this.translate.get('login.error.invalidCredentials'));

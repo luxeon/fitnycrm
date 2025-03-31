@@ -5,7 +5,7 @@ export interface JwtPayload {
   lastName: string;
   exp: number;
   iat: number;
-  roles: string[];
+  roles: Array<{ authority: string }>;
   tenantIds: string[];
 }
 
