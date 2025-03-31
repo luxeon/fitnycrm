@@ -39,4 +39,8 @@ export class LocationService {
   createLocation(tenantId: string, request: CreateLocationRequest): Observable<LocationPageItemResponse> {
     return this.http.post<LocationPageItemResponse>(`/api/tenants/${tenantId}/locations`, request);
   }
+
+  deleteLocation(tenantId: string, locationId: string): Observable<void> {
+    return this.http.delete<void>(`/api/tenants/${tenantId}/locations/${locationId}`);
+  }
 }

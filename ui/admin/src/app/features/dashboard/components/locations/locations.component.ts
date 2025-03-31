@@ -4,11 +4,12 @@ import { LocationService, LocationPageItemResponse } from '../../../../core/serv
 import { Page } from '../../../../core/models/page.model';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-locations',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent],
   template: `
     <div class="locations-section">
       <div class="section-header">
@@ -20,6 +21,9 @@ import { Router } from '@angular/router';
       
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
         <div class="location-card" *ngFor="let location of locations?.content">
+          <button class="delete-btn" (click)="onDeleteClick(location)">
+            <span class="delete-icon">×</span>
+          </button>
           <div class="location-info">
             <div class="address">{{ location.address }}</div>
             <div class="city-state">{{ location.city }}, {{ location.state }} {{ location.postalCode }}</div>
@@ -52,6 +56,15 @@ import { Router } from '@angular/router';
         </button>
       </div>
     </div>
+
+    <app-confirmation-dialog
+      *ngIf="locationToDelete"
+      [title]="'dashboard.locations.delete.title' | translate"
+      [message]="'dashboard.locations.delete.message' | translate"
+      [confirmText]="'dashboard.locations.delete.confirm' | translate"
+      (confirm)="onDeleteConfirm()"
+      (cancel)="onDeleteCancel()"
+    ></app-confirmation-dialog>
   `,
   styles: [`
     .locations-section {
@@ -97,6 +110,7 @@ import { Router } from '@angular/router';
     }
 
     .location-card {
+      position: relative;
       padding: 1rem;
       background: #f8f9fa;
       border-radius: 6px;
@@ -106,6 +120,32 @@ import { Router } from '@angular/router';
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .delete-btn {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #e74c3c;
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s;
+
+        .delete-icon {
+          font-size: 18px;
+          line-height: 1;
+        }
+
+        &:hover {
+          background: #c0392b;
+        }
       }
 
       .location-info {
@@ -182,6 +222,7 @@ export class LocationsComponent implements OnInit {
 
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
+  locationToDelete: LocationPageItemResponse | null = null;
 
   ngOnInit(): void {
     this.loadPage(0);
@@ -203,5 +244,25 @@ export class LocationsComponent implements OnInit {
 
   onAddLocation(): void {
     this.router.navigate(['/create-location'], { queryParams: { tenantId: this.tenantId } });
+  }
+
+  onDeleteClick(location: LocationPageItemResponse): void {
+    this.locationToDelete = location;
+  }
+
+  onDeleteConfirm(): void {
+    if (this.locationToDelete) {
+      this.locationService.deleteLocation(this.tenantId, this.locationToDelete.id)
+        .subscribe({
+          next: () => {
+            this.locationToDelete = null;
+            this.loadPage(this.locations?.number || 0);
+          }
+        });
+    }
+  }
+
+  onDeleteCancel(): void {
+    this.locationToDelete = null;
   }
 } 

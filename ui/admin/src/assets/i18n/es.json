@@ -36,7 +36,12 @@
       "title": "Ubicaciones del Club",
       "noLocations": "No se encontraron ubicaciones. Agrega tu primera ubicación para comenzar.",
       "loading": "Cargando ubicaciones...",
-      "addLocation": "Agregar Ubicación"
+      "addLocation": "Agregar Ubicación",
+      "delete": {
+        "title": "Eliminar Ubicación",
+        "message": "¿Estás seguro de que deseas eliminar esta ubicación? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar"
+      }
     }
   },
   "location": {
