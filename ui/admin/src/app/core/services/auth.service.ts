@@ -25,6 +25,12 @@ export interface UserDetailsResponse {
   updatedAt: string;
 }
 
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -38,6 +44,16 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request);
+  }
+
+  refreshToken(): Observable<RefreshTokenResponse> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<RefreshTokenResponse>('/api/auth/refresh', { refreshToken });
+  }
+
+  updateTokens(response: RefreshTokenResponse): void {
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
   }
 
   logout(): void {
