@@ -40,6 +40,6 @@
     "typescript": "~5.7.2"
   },
   "overrides": {
-    "vite": "^6.2.3"
+    "vite": "^6.2.4"
   }
 }
