@@ -24,4 +24,8 @@ export class TenantService {
   createTenant(request: CreateTenantRequest): Observable<TenantResponse> {
     return this.http.post<TenantResponse>('/api/tenants', request);
   }
+
+  getById(id: string): Observable<TenantResponse> {
+    return this.http.get<TenantResponse>(`/api/tenants/${id}`);
+  }
 } 

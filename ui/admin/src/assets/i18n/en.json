@@ -24,5 +24,13 @@
       "text": "Don't have an account?",
       "link": "Sign up"
     }
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}!",
+    "user": "User",
+    "fitnessClub": {
+      "label": "Fitness Club:"
+    },
+    "subtitle": "Your fitness journey management starts here."
   }
 } 

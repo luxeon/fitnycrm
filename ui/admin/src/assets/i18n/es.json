@@ -24,5 +24,13 @@
       "text": "¿No tienes una cuenta?",
       "link": "Regístrate"
     }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido, {{name}}!",
+    "user": "Usuario",
+    "fitnessClub": {
+      "label": "Club de Fitness:"
+    },
+    "subtitle": "Tu gestión del viaje fitness comienza aquí."
   }
 } 
