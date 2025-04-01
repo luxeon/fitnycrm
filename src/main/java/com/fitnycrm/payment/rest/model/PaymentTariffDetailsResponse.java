@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Schema(description = "Payment tariff details")
-public record PaymentTariffResponse(
+public record PaymentTariffDetailsResponse(
         @Schema(description = "Unique identifier of the payment tariff")
         UUID id,
 

@@ -2,7 +2,7 @@ package com.fitnycrm.payment.rest;
 
 import com.fitnycrm.payment.facade.PaymentTariffFacade;
 import com.fitnycrm.payment.rest.model.CreatePaymentTariffRequest;
-import com.fitnycrm.payment.rest.model.PaymentTariffResponse;
+import com.fitnycrm.payment.rest.model.PaymentTariffDetailsResponse;
 import com.fitnycrm.payment.rest.model.UpdatePaymentTariffRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,31 +30,47 @@ public class PaymentTariffRestController {
     @Operation(summary = "Create a new payment tariff")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Payment tariff created successfully",
-                    content = @Content(schema = @Schema(implementation = PaymentTariffResponse.class))),
+                    content = @Content(schema = @Schema(implementation = PaymentTariffDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
-    public PaymentTariffResponse create(
+    public PaymentTariffDetailsResponse create(
             @PathVariable UUID tenantId,
             @PathVariable UUID trainingId,
             @RequestBody @Valid CreatePaymentTariffRequest request) {
         return paymentTariffFacade.create(tenantId, trainingId, request);
     }
 
+    @GetMapping("/{tariffId}")
+    @Operation(summary = "Get payment tariff by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment tariff found",
+                    content = @Content(schema = @Schema(implementation = PaymentTariffDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Payment tariff not found")
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public PaymentTariffDetailsResponse findById(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID trainingId,
+            @PathVariable UUID tariffId) {
+        return paymentTariffFacade.findById(tenantId, trainingId, tariffId);
+    }
+
     @PutMapping("/{tariffId}")
     @Operation(summary = "Update an existing payment tariff")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Payment tariff updated successfully",
-                    content = @Content(schema = @Schema(implementation = PaymentTariffResponse.class))),
+                    content = @Content(schema = @Schema(implementation = PaymentTariffDetailsResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Payment tariff or training not found"),
             @ApiResponse(responseCode = "409", description = "Payment tariff does not belong to the specified training")
     })
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
-    public PaymentTariffResponse update(
+    public PaymentTariffDetailsResponse update(
             @PathVariable UUID tenantId,
             @PathVariable UUID trainingId,
             @PathVariable UUID tariffId,
