@@ -53,7 +53,7 @@ public class AuthRestController {
             @ApiResponse(responseCode = "200", description = "Email confirmed successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid or expired token")
     })
-    @GetMapping("/confirm-email")
+    @PostMapping("/confirm-email")
     public void confirmEmail(@RequestParam String token) {
         facade.confirmEmail(token);
     }

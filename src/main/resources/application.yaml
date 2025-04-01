@@ -26,8 +26,8 @@ fitny:
 
 mail:
   from: noreply@fitnycrm.com
-  confirmationUrl: ${fitny.base-url}/api/auth/confirm-email
-  clientRegistrationUrl: ${fitny.base-url}/api/tenants/%s/clients/signup/%s
+  confirmationUrl: ${fitny.base-url}/auth/confirm-email
+  clientRegistrationUrl: ${fitny.base-url}/tenants/%s/clients/signup/%s
 
 cors:
   allowed-origins:
