@@ -135,5 +135,57 @@
     "next": "Next",
     "page": "Page",
     "of": "of"
+  },
+  "registration": {
+    "title": "Create Account",
+    "subtitle": "Join us to start your fitness journey",
+    "form": {
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter your first name",
+        "required": "Please enter your first name",
+        "minLength": "First name must be at least {{length}} characters long",
+        "maxLength": "First name cannot be longer than {{length}} characters"
+      },
+      "lastName": {
+        "label": "Last Name",
+        "placeholder": "Enter your last name",
+        "required": "Please enter your last name",
+        "minLength": "Last name must be at least {{length}} characters long",
+        "maxLength": "Last name cannot be longer than {{length}} characters"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "required": "Please enter your email address",
+        "invalid": "Please enter a valid email address"
+      },
+      "phoneNumber": {
+        "label": "Phone Number (Optional)",
+        "placeholder": "Enter your phone number (e.g., +1234567890)",
+        "invalid": "Please enter a valid phone number starting with + followed by country code and number (e.g., +12125551234)"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "required": "Please enter your password",
+        "pattern": "Your password must include at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)"
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm your password",
+        "required": "Please confirm your password",
+        "mismatch": "The passwords you entered do not match"
+      },
+      "submit": {
+        "label": "Create Account",
+        "loading": "Creating Account..."
+      }
+    },
+    "success": "Registration successful! Please check your email to confirm your account.",
+    "error": {
+      "emailExists": "An account with this email already exists.",
+      "generic": "An error occurred during registration. Please try again."
+    }
   }
 }
