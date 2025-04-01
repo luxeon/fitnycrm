@@ -29,7 +29,7 @@ class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/*", "/swagger-ui.html", "/swagger-ui/**",
                                 "/v3/api-docs/**", "/api/tenants/*/clients/signup/*").permitAll()
-                        .anyRequest().hasRole("ADMIN"))
+                        .anyRequest().authenticated())
                 .sessionManagement(configurer ->
                         configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

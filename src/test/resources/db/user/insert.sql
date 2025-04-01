@@ -27,7 +27,3 @@ VALUES ('7a7632b1-e932-48fd-9296-001036b4ec19', 'b35ac7f5-3e4f-462a-a76d-524bd3a
 -- Client role
 INSERT INTO user_roles(user_id, role_id)
 VALUES ('b35ac7f5-3e4f-462a-a76d-524bd3a5fd03', 'e90a9385-08cb-4489-8191-7c0e1de82b7d');
-
--- Trainer role
-INSERT INTO user_roles(user_id, role_id)
-VALUES ('b35ac7f5-3e4f-462a-a76d-524bd3a5fd03', 'ef32d172-df6f-4a19-8eff-ae70ac6852d7');

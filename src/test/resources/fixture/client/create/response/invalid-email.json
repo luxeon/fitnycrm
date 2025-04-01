@@ -1,9 +1,0 @@
-{
-    "message": "Validation failed",
-    "errors": [
-        {
-            "field": "email",
-            "message": "must be a well-formed email address"
-        }
-    ]
-} 

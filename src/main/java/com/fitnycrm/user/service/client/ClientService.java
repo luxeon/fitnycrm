@@ -10,7 +10,6 @@ import com.fitnycrm.user.repository.UserRoleRepository;
 import com.fitnycrm.user.repository.entity.ClientInvitation;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.repository.entity.UserRole;
-import com.fitnycrm.user.rest.client.model.CreateClientRequest;
 import com.fitnycrm.user.rest.client.model.SignupClientRequest;
 import com.fitnycrm.user.rest.client.model.UpdateClientRequest;
 import com.fitnycrm.user.service.client.exception.TenantAlreadyContainsUserException;
@@ -25,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -41,23 +39,6 @@ public class ClientService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public User create(UUID tenantId, CreateClientRequest request) {
-        User user = requestMapper.toUser(tenantId, request);
-        if (repository.existsByEmail(user.getEmail())) {
-            throw new UserEmailAlreadyExistsException(user.getEmail());
-        }
-
-        Tenant tenant = tenantService.findById(tenantId);
-        UserRole role = roleRepository.findByName(UserRole.Name.CLIENT).orElseThrow(() ->
-                new RoleNotFoundException(UserRole.Name.CLIENT));
-
-        user.getRoles().add(role);
-        user.getTenants().add(tenant);
-        user = repository.save(user);
-        return user;
-    }
-
-    @Transactional
     public User update(UUID tenantId, UUID clientId, UpdateClientRequest request) {
         User user = findById(tenantId, clientId);
         if (!user.getEmail().equals(request.email()) && repository.existsByEmail(request.email())) {
@@ -65,18 +46,6 @@ public class ClientService {
         }
         requestMapper.update(user, request);
         return repository.save(user);
-    }
-
-    @Transactional
-    public void delete(UUID tenantId, UUID clientId) {
-        User client = findById(tenantId, clientId);
-        Set<UserRole> roles = client.getRoles();
-        roles.forEach(role -> role.getUsers().remove(client));
-
-        Set<Tenant> tenants = client.getTenants();
-        tenants.forEach(tenant -> tenant.getUsers().remove(client));
-
-        repository.delete(client);
     }
 
     @Transactional(readOnly = true)
@@ -145,7 +114,7 @@ public class ClientService {
     }
 
     @Transactional
-    public User joinByInvitation(UUID tenantId, UUID clientInvitationId, UUID userId) {
+    public void joinByInvitation(UUID tenantId, UUID clientInvitationId, UUID userId) {
         Tenant tenant = tenantService.findById(tenantId);
         ClientInvitation invitation = invitationRepository.findById(clientInvitationId)
                 .orElseThrow(() -> new InvitationNotFoundException(clientInvitationId));
@@ -169,9 +138,8 @@ public class ClientService {
         }
 
         user.getTenants().add(tenant);
-        user = repository.save(user);
+        repository.save(user);
 
         invitationRepository.delete(invitation);
-        return user;
     }
 }

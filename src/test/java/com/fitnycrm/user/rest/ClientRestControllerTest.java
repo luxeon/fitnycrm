@@ -48,82 +48,6 @@ class ClientRestControllerTest {
     private JwtTokenCreator jwtTokenCreator;
 
     @Test
-    void createClient_whenValidRequest_thenCreateClient() throws Exception {
-        var request = readFile("fixture/client/create/request/valid-request.json");
-        var expectedResponse = readFile("fixture/client/create/response/success.json");
-
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isCreated())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @Test
-    void createClient_whenInvalidEmail_thenReturnBadRequest() throws Exception {
-        var request = readFile("fixture/client/create/request/invalid-email.json");
-        var expectedResponse = readFile("fixture/client/create/response/invalid-email.json");
-
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isBadRequest())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @Test
-    @Sql("/db/client/insert.sql")
-    void createClient_whenEmailAlreadyExists_thenReturnConflict() throws Exception {
-        var request = readFile("fixture/client/create/request/valid-request.json");
-        var expectedResponse = readFile("fixture/client/create/response/email-exists.json");
-
-        // Try to create second client with same email
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isConflict())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @Test
-    void createClient_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
-        var request = readFile("fixture/client/create/request/valid-request.json");
-
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void createClient_whenUserHasDifferentTenant_thenReturn403() throws Exception {
-        var request = readFile("fixture/client/create/request/valid-request.json");
-        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
-
-        mockMvc.perform(post("/api/tenants/{tenantId}/clients", DIFFERENT_TENANT_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isForbidden())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void createClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
-        var request = readFile("fixture/client/create/request/valid-request.json");
-
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     @Sql("/db/client/insert.sql")
     void updateClient_whenValidRequest_thenUpdateClient() throws Exception {
         var request = readFile("fixture/client/update/request/valid-request.json");
@@ -191,7 +115,7 @@ class ClientRestControllerTest {
     @Test
     void updateClient_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         var request = readFile("fixture/client/update/request/valid-request.json");
-        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
+        var expectedResponse = readFile("fixture/client/update/response/access-denied.json");
 
         mockMvc.perform(put("/api/tenants/{tenantId}/clients/{clientId}", DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -213,55 +137,14 @@ class ClientRestControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    @Sql("/db/client/insert.sql")
-    void deleteClient_whenClientExists_thenDeleteClient() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
-    void deleteClient_whenClientNotFound_thenReturn404() throws Exception {
-        var expectedResponse = readFile("fixture/client/update/response/not-found.json");
-
-        mockMvc.perform(delete(BASE_URL + "/{clientId}", NON_EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isNotFound())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @Test
-    void deleteClient_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    void deleteClient_whenUserHasDifferentTenant_thenReturn403() throws Exception {
-        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
-
-        mockMvc.perform(delete("/api/tenants/{tenantId}/clients/{clientId}", DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
-                .andExpect(status().isForbidden())
-                .andExpect(json().isEqualTo(expectedResponse));
-    }
-
     @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void deleteClient_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
+    @EnumSource(value = UserRole.Name.class)
     @Sql("/db/client/insert.sql")
-    void findById_whenClientExists_thenReturnClient() throws Exception {
+    void findById_whenClientExists_thenReturnClient(UserRole.Name name) throws Exception {
         var expectedResponse = readFile("fixture/client/findById/response/success.json");
 
         mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("james.bond@example.com", name)))
                 .andExpect(status().isOk())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
@@ -290,14 +173,6 @@ class ClientRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
                 .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
-        mockMvc.perform(get(BASE_URL + "/{clientId}", EXISTING_CLIENT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -407,7 +282,7 @@ class ClientRestControllerTest {
     @Test
     void invite_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         var request = readFile("fixture/client/invite/request/valid-request.json");
-        var expectedResponse = readFile("fixture/client/create/response/access-denied.json");
+        var expectedResponse = readFile("fixture/client/update/response/access-denied.json");
 
         mockMvc.perform(post("/api/tenants/{tenantId}/clients/invite", DIFFERENT_TENANT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -491,5 +366,30 @@ class ClientRestControllerTest {
                         .content(request))
                 .andExpect(status().isBadRequest())
                 .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql({"/db/client/insert-with-secondary-tenant.sql", "/db/client/insert-invitation.sql"})
+    void joinByInvitation_whenValidRequest_thenJoinClient() throws Exception {
+        mockMvc.perform(post(BASE_URL + "/join/{clientInvitationId}", "ac478971-4bb7-493d-93ca-8e9bbe381554")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("bill.gates@example.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql("/db/client/insert.sql")
+    void joinByInvitation_whenInvitationNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/client/join/response/not-found.json");
+
+        mockMvc.perform(post(BASE_URL + "/join/{clientInvitationId}", NON_EXISTING_INVITATION_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("james.bond@example.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void joinByInvitation_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(post(BASE_URL + "/join/{clientInvitationId}", EXISTING_INVITATION_ID))
+                .andExpect(status().isUnauthorized());
     }
 } 
