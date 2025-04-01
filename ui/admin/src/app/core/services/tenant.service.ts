@@ -15,6 +15,13 @@ export interface TenantResponse {
   updatedAt: string;
 }
 
+export interface TenantListItemResponse {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -27,5 +34,9 @@ export class TenantService {
 
   getById(id: string): Observable<TenantResponse> {
     return this.http.get<TenantResponse>(`/api/tenants/${id}`);
+  }
+
+  getAllForAuthenticatedUser(): Observable<TenantListItemResponse[]> {
+    return this.http.get<TenantListItemResponse[]>('/api/tenants');
   }
 } 

@@ -32,11 +32,13 @@ export class DashboardComponent implements OnInit {
     }
 
     this.userDetails = this.authService.getCurrentUser();
-    const tenantId = this.userDetails?.tenantIds?.[0];
     
-    if (tenantId) {
-      this.tenantService.getById(tenantId)
-        .subscribe(tenant => this.tenantDetails = tenant);
-    }
+    this.tenantService.getAllForAuthenticatedUser()
+      .subscribe(tenants => {
+        if (tenants.length > 0) {
+          this.tenantService.getById(tenants[0].id)
+            .subscribe(tenant => this.tenantDetails = tenant);
+        }
+      });
   }
 } 
