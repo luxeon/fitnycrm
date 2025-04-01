@@ -469,7 +469,7 @@ class ClientRestControllerTest {
     }
 
     @Test
-    void signup_whenTokenNotFound_thenReturn404() throws Exception {
+    void signup_whenInvitationNotFound_thenReturn404() throws Exception {
         var request = readFile("fixture/client/signup/request/valid-request.json");
         var expectedResponse = readFile("fixture/client/signup/response/not-found.json");
 
@@ -482,7 +482,7 @@ class ClientRestControllerTest {
 
     @Test
     @Sql("/db/client/insert-invitation.sql")
-    void signup_whenTokenExpired_thenReturn404() throws Exception {
+    void signup_whenInvitationExpired_thenReturn404() throws Exception {
         var request = readFile("fixture/client/signup/request/valid-request.json");
         var expectedResponse = readFile("fixture/client/signup/response/invitation-expired.json");
 
