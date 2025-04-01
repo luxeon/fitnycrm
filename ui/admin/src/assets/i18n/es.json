@@ -135,5 +135,61 @@
     "next": "Siguiente",
     "page": "Página",
     "of": "de"
+  },
+  "registration": {
+    "title": "Crear cuenta",
+    "subtitle": "Únete para comenzar tu viaje fitness",
+    "form": {
+      "firstName": {
+        "label": "Nombre",
+        "placeholder": "Introduce tu nombre",
+        "required": "Por favor, introduce tu nombre",
+        "minLength": "El nombre debe tener al menos {{length}} caracteres",
+        "maxLength": "El nombre no puede tener más de {{length}} caracteres"
+      },
+      "lastName": {
+        "label": "Apellido",
+        "placeholder": "Introduce tu apellido",
+        "required": "Por favor, introduce tu apellido",
+        "minLength": "El apellido debe tener al menos {{length}} caracteres",
+        "maxLength": "El apellido no puede tener más de {{length}} caracteres"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Introduce tu correo electrónico",
+        "required": "Por favor, introduce tu correo electrónico",
+        "invalid": "Por favor, introduce un correo electrónico válido"
+      },
+      "phoneNumber": {
+        "label": "Número de teléfono (Opcional)",
+        "placeholder": "Introduce tu número de teléfono (ej. +1234567890)",
+        "invalid": "Por favor, introduce un número de teléfono válido que comience con + seguido del código de país y número (ej. +12125551234)"
+      },
+      "password": {
+        "label": "Contraseña",
+        "placeholder": "Introduce tu contraseña",
+        "required": "Por favor, introduce tu contraseña",
+        "pattern": "Tu contraseña debe incluir al menos un número, una letra minúscula, una letra mayúscula y un carácter especial (@#$%^&+=)"
+      },
+      "confirmPassword": {
+        "label": "Confirmar contraseña",
+        "placeholder": "Confirma tu contraseña",
+        "required": "Por favor, confirma tu contraseña",
+        "mismatch": "Las contraseñas que has introducido no coinciden"
+      },
+      "submit": {
+        "label": "Crear cuenta",
+        "loading": "Creando cuenta..."
+      }
+    },
+    "success": "¡Registro exitoso! Por favor, revisa tu correo electrónico para confirmar tu cuenta.",
+    "error": {
+      "emailExists": "Ya existe una cuenta con este correo electrónico.",
+      "generic": "Ocurrió un error durante el registro. Por favor, inténtalo de nuevo."
+    },
+    "login": {
+      "text": "¿Ya tienes una cuenta?",
+      "link": "Iniciar sesión"
+    }
   }
 } 

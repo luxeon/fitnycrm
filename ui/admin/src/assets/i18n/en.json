@@ -186,6 +186,10 @@
     "error": {
       "emailExists": "An account with this email already exists.",
       "generic": "An error occurred during registration. Please try again."
+    },
+    "login": {
+      "text": "Already have an account?",
+      "link": "Log in"
     }
   }
 }
