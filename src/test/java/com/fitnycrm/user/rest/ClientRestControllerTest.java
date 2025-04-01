@@ -358,7 +358,7 @@ class ClientRestControllerTest {
         MimeMessage receivedMessage = receivedMessages[0];
         assertThat(receivedMessage.getAllRecipients()).hasSize(1);
         assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("client@example.com");
-        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to FitTrack CRM by Max Power");
+        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to Test Tenant by Max Power");
     }
 
     @Test
@@ -378,7 +378,7 @@ class ClientRestControllerTest {
         MimeMessage receivedMessage = receivedMessages[0];
         assertThat(receivedMessage.getAllRecipients()).hasSize(1);
         assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("bill.gates@example.com");
-        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to FitTrack CRM by Max Power");
+        assertThat(receivedMessage.getSubject()).isEqualTo("You've been invited to Test Tenant by Max Power");
     }
 
     @Test

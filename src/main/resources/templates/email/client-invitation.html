@@ -31,8 +31,8 @@
     </style>
 </head>
 <body>
-<h2>Welcome to FitTrack CRM!</h2>
-<p>You have been invited by <span th:text="${inviterName}"></span> to join FitTrack CRM as a client.</p>
+<h2>Welcome to <span th:text="${tenantName}"></span>!</h2>
+<p>You have been invited by <span th:text="${inviterName}"></span> to join <span th:text="${tenantName}"></span> as a client.</p>
 <p>Please click the button below to complete your registration:</p>
 
 <a th:href="${registrationUrl}" class="button">Complete Registration</a>

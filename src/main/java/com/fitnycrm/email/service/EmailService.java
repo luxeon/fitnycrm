@@ -58,12 +58,13 @@ public class EmailService {
                     .formatted(tenant.getId(), invitation.getId()));
             String inviterFullName = inviter.getFirstName() + " " + inviter.getLastName();
             context.setVariable("inviterName", inviterFullName);
+            context.setVariable("tenantName", tenant.getName());
 
             String content = templateEngine.process("email/client-invitation", context);
 
             helper.setFrom(emailProperties.getFrom());
             helper.setTo(invitation.getEmail());
-            helper.setSubject("You've been invited to FitTrack CRM by " + inviterFullName);
+            helper.setSubject("You've been invited to " + tenant.getName() + " by " + inviterFullName);
             helper.setText(content, true);
 
             mailSender.send(message);
