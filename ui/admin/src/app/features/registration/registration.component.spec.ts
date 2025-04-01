@@ -26,7 +26,7 @@ describe('RegistrationComponent', () => {
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         provideRouter([
-          { path: 'login', component: {} as any }
+          { path: 'email-confirmation', component: {} as any }
         ])
       ]
     }).compileComponents();
@@ -249,7 +249,7 @@ describe('RegistrationComponent', () => {
     expect(submitButton.nativeElement.disabled).toBeFalsy();
   });
 
-  it('should handle successful registration with translated message', () => {
+  it('should handle successful registration and redirect to email confirmation', () => {
     const navigateSpy = spyOn(component['router'], 'navigate');
 
     component.registrationForm.patchValue({
@@ -270,11 +270,7 @@ describe('RegistrationComponent', () => {
       password: 'StrongP@ss123',
       phoneNumber: '+1234567890'
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/login'], {
-      queryParams: {
-        message: 'Registration successful! Please check your email to confirm your account.'
-      }
-    });
+    expect(navigateSpy).toHaveBeenCalledWith(['/email-confirmation']);
   });
 
   it('should handle registration error with translated messages', fakeAsync(() => {
