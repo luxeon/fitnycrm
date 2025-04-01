@@ -40,14 +40,18 @@ public class JwtTokenCreator {
     private final JwtUtils jwtUtils;
 
     public String generateTestJwtToken(UserRole.Name role) {
+        return generateTestJwtToken(TEST_USER_EMAIL, role);
+    }
+
+    public String generateTestJwtToken(String email, UserRole.Name role) {
         AuthenticatedUserDetails user = new AuthenticatedUserDetails();
         user.setId(TEST_USER_ID);
         user.setTenantIds(Set.of(TENANT_ID));
         user.setFirstName(TEST_USER_FIRST_NAME);
         user.setLastName(TEST_USER_LAST_NAME);
-        user.setEmail(TEST_USER_EMAIL);
+        user.setEmail(email);
         user.setPhoneNumber(TEST_USER_PHONE);
-        user.setAuthorities(List.<SimpleGrantedAuthority>of(new SimpleGrantedAuthority("ROLE_" + role)));
+        user.setAuthorities(List.of(new SimpleGrantedAuthority("ROLE_" + role)));
         return BEARER + jwtUtils.generateToken(user);
     }
 

@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tenants/{tenantId}")
+@RequestMapping("/api/tenants/{tenantId}/trainers")
 @Tag(name = "trainer", description = "Trainer management endpoints")
 public class TrainerRestController {
 
@@ -37,9 +37,9 @@ public class TrainerRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PostMapping("/trainers")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public TrainerDetailsResponse create(@PathVariable UUID tenantId,
                                          @RequestBody @Valid CreateTrainerRequest request) {
         return trainerFacade.create(tenantId, request);
@@ -54,8 +54,8 @@ public class TrainerRestController {
             @ApiResponse(responseCode = "404", description = "Trainer not found"),
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
-    @PutMapping("/trainers/{trainerId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @PutMapping("/{trainerId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public TrainerDetailsResponse update(@PathVariable UUID tenantId,
                                          @PathVariable UUID trainerId,
                                          @RequestBody @Valid UpdateTrainerRequest request) {
@@ -68,9 +68,9 @@ public class TrainerRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    @DeleteMapping("/trainers/{trainerId}")
+    @DeleteMapping("/{trainerId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                        @PathVariable UUID trainerId) {
         trainerFacade.delete(tenantId, trainerId);
@@ -83,7 +83,7 @@ public class TrainerRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Trainer not found")
     })
-    @GetMapping("/trainers/{trainerId}")
+    @GetMapping("/{trainerId}")
     @PreAuthorize("((hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #trainerId))")
     public TrainerDetailsResponse findById(@PathVariable UUID tenantId,
                                            @PathVariable UUID trainerId) {
@@ -96,8 +96,8 @@ public class TrainerRestController {
                     content = @Content(schema = @Schema(implementation = TrainerPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    @GetMapping("/trainers")
-    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public Page<TrainerPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                         Pageable pageable) {
         return trainerFacade.findByTenantId(tenantId, pageable);

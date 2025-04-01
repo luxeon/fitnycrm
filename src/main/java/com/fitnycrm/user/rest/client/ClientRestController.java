@@ -28,22 +28,6 @@ public class ClientRestController {
 
     private final ClientFacade clientFacade;
 
-    @Operation(summary = "Create a new client account")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Client account created",
-                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "409", description = "User with this email already exists")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
-    public ClientDetailsResponse create(@PathVariable UUID tenantId,
-                                        @RequestBody @Valid CreateClientRequest request) {
-        return clientFacade.create(tenantId, request);
-    }
-
     @Operation(summary = "Update an existing client")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Client updated successfully",
@@ -54,7 +38,7 @@ public class ClientRestController {
             @ApiResponse(responseCode = "409", description = "User with this email already exists")
     })
     @PutMapping("/{clientId}")
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("((hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId))")
     public ClientDetailsResponse update(@PathVariable UUID tenantId,
                                         @PathVariable UUID clientId,
                                         @RequestBody @Valid UpdateClientRequest request) {
@@ -88,20 +72,6 @@ public class ClientRestController {
         return clientFacade.findByTenantId(tenantId, pageable);
     }
 
-    @Operation(summary = "Delete a client")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Client deleted successfully"),
-            @ApiResponse(responseCode = "403", description = "Access denied"),
-            @ApiResponse(responseCode = "404", description = "Client not found")
-    })
-    @DeleteMapping("/{clientId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
-    public void delete(@PathVariable UUID tenantId,
-                       @PathVariable UUID clientId) {
-        clientFacade.delete(tenantId, clientId);
-    }
-
     @Operation(summary = "Invite a new client by email")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Invitation sent successfully"),
@@ -130,5 +100,20 @@ public class ClientRestController {
                                         @PathVariable UUID clientInvitationId,
                                         @RequestBody @Valid SignupClientRequest request) {
         return clientFacade.signup(tenantId, clientInvitationId, request);
+    }
+
+    @Operation(summary = "Join tenant using invitation for authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully joined tenant",
+                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Invitation not found or expired")
+    })
+    @PostMapping("/join/{clientInvitationId}")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT')")
+    public void joinByInvitation(@PathVariable UUID tenantId,
+                                 @PathVariable UUID clientInvitationId,
+                                 @AuthenticationPrincipal AuthenticatedUserDetails user) {
+        clientFacade.joinByInvitation(tenantId, clientInvitationId, user);
     }
 } 

@@ -23,11 +23,6 @@ public class ClientFacade {
         clientService.invite(tenantId, request.email(), user.getId());
     }
 
-    public ClientDetailsResponse create(UUID tenantId, CreateClientRequest request) {
-        User client = clientService.create(tenantId, request);
-        return responseMapper.toDetailsResponse(client);
-    }
-
     public ClientDetailsResponse update(UUID tenantId, UUID clientId, UpdateClientRequest request) {
         return responseMapper.toDetailsResponse(
                 clientService.update(
@@ -36,10 +31,6 @@ public class ClientFacade {
                         request
                 )
         );
-    }
-
-    public void delete(UUID tenantId, UUID clientId) {
-        clientService.delete(tenantId, clientId);
     }
 
     public ClientDetailsResponse findById(UUID tenantId, UUID clientId) {
@@ -56,5 +47,9 @@ public class ClientFacade {
     public ClientDetailsResponse signup(UUID tenantId, UUID clientInvitationId, SignupClientRequest request) {
         User client = clientService.signup(tenantId, clientInvitationId, request);
         return responseMapper.toDetailsResponse(client);
+    }
+
+    public void joinByInvitation(UUID tenantId, UUID clientInvitationId, AuthenticatedUserDetails user) {
+        clientService.joinByInvitation(tenantId, clientInvitationId, user.getId());
     }
 } 

@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tenants/{tenantId}")
+@RequestMapping("/api/tenants/{tenantId}/locations")
 @Tag(name = "location", description = "Location management endpoints")
 public class LocationRestController {
 
@@ -35,8 +35,8 @@ public class LocationRestController {
                     content = @Content(schema = @Schema(implementation = LocationPageItemResponse.class))),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    @GetMapping("/locations")
-    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public Page<LocationPageItemResponse> getAll(@PathVariable UUID tenantId,
                                                  Pageable pageable) {
         return locationFacade.findAll(tenantId, pageable);
@@ -49,9 +49,9 @@ public class LocationRestController {
             @ApiResponse(responseCode = "400", description = "Invalid input"),
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
-    @PostMapping("/locations")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse create(@PathVariable UUID tenantId,
                                           @RequestBody @Valid CreateLocationRequest request) {
         return locationFacade.create(tenantId, request);
@@ -65,8 +65,8 @@ public class LocationRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
-    @PutMapping("/locations/{id}")
-    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse update(@PathVariable UUID tenantId,
                                           @PathVariable UUID id,
                                           @RequestBody @Valid UpdateLocationRequest request) {
@@ -80,8 +80,8 @@ public class LocationRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
-    @GetMapping("/locations/{id}")
-    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public LocationDetailsResponse findById(@PathVariable UUID tenantId,
                                             @PathVariable UUID id) {
         return locationFacade.findById(tenantId, id);
@@ -93,9 +93,9 @@ public class LocationRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
-    @DeleteMapping("/locations/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public void delete(@PathVariable UUID tenantId,
                        @PathVariable UUID id) {
         locationFacade.delete(tenantId, id);
