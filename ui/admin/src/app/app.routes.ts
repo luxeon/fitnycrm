@@ -21,5 +21,6 @@ export const routes: Routes = [
   { path: 'create-workout', component: CreateWorkoutComponent, canActivate: [adminGuard] },
   { path: 'edit-workout', component: EditWorkoutComponent, canActivate: [adminGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [adminGuard, tenantCheckGuard] },
+  { path: 'create-trainer', loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), canActivate: [adminGuard] },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

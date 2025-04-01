@@ -71,7 +71,12 @@
       "trainers": {
         "title": "Club Trainers",
         "add": "Add Trainer",
-        "empty": "No trainers assigned yet. Add trainers to start creating schedules."
+        "empty": "No trainers assigned yet. Add trainers to start creating schedules.",
+        "delete": {
+          "title": "Delete Trainer",
+          "message": "Are you sure you want to delete this trainer? This action cannot be undone.",
+          "confirm": "Delete"
+        }
       },
       "schedule": {
         "title": "Class Schedule",
@@ -190,6 +195,37 @@
     "login": {
       "text": "Already have an account?",
       "link": "Log in"
+    }
+  },
+  "trainer": {
+    "create": {
+      "title": "Add New Trainer",
+      "subtitle": "Fill in the trainer's details below"
+    },
+    "form": {
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter first name",
+        "required": "First name is required"
+      },
+      "lastName": {
+        "label": "Last Name",
+        "placeholder": "Enter last name",
+        "required": "Last name is required"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email address",
+        "required": "Email is required"
+      },
+      "phoneNumber": {
+        "label": "Phone Number",
+        "placeholder": "Enter phone number"
+      },
+      "specialization": {
+        "label": "Specialization",
+        "placeholder": "Enter specialization (e.g., Yoga, CrossFit)"
+      }
     }
   }
 }

@@ -7,11 +7,13 @@ import { firstValueFrom } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { TrainingService, TrainingPageItemResponse } from '../../core/services/training.service';
 import { WorkoutListComponent } from '../training/components/workout-list.component';
+import { TrainerService, TrainerPageItemResponse } from '../../core/services/trainer.service';
+import { TrainerListComponent } from '../trainer/components/trainer-list.component';
 
 @Component({
   selector: 'app-club-details',
   standalone: true,
-  imports: [CommonModule, TranslateModule, WorkoutListComponent],
+  imports: [CommonModule, TranslateModule, WorkoutListComponent, TrainerListComponent],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -43,8 +45,8 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
 
         <div class="tabs-container" *ngIf="!isLoading && location">
           <div class="tabs">
-            <button 
-              *ngFor="let tab of tabs" 
+            <button
+              *ngFor="let tab of tabs"
               [class.active]="activeTab === tab.id"
               (click)="setActiveTab(tab.id)"
               class="tab-button">
@@ -66,8 +68,8 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
               <div class="empty-state" *ngIf="!isLoadingWorkouts && !workouts?.length">
                 {{ 'location.details.workouts.empty' | translate }}
               </div>
-              <app-workout-list 
-                *ngIf="!isLoadingWorkouts && workouts?.length" 
+              <app-workout-list
+                *ngIf="!isLoadingWorkouts && workouts?.length"
                 [workouts]="workouts"
                 [currentPage]="currentWorkoutPage"
                 [totalPages]="totalWorkoutPages"
@@ -85,10 +87,22 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
                   {{ 'location.details.trainers.add' | translate }}
                 </button>
               </div>
-              <div class="empty-state" *ngIf="!hasTrainers">
+              <div class="loading" *ngIf="isLoadingTrainers">
+                {{ 'common.loading' | translate }}
+              </div>
+              <div class="empty-state" *ngIf="!isLoadingTrainers && !trainers?.length">
                 {{ 'location.details.trainers.empty' | translate }}
               </div>
-              <!-- Trainer list will be added here -->
+              <app-trainer-list
+                *ngIf="!isLoadingTrainers && trainers?.length"
+                [trainers]="trainers"
+                [currentPage]="currentTrainerPage"
+                [totalPages]="totalTrainerPages"
+                [tenantId]="tenantId"
+                [locationId]="location.id || ''"
+                (pageChange)="onTrainerPageChange($event)"
+                (trainerDeleted)="loadTrainers(tenantId)">
+              </app-trainer-list>
             </div>
 
             <div *ngSwitchCase="'schedule'" class="tab-pane">
@@ -265,20 +279,24 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
 export class ClubDetailsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly trainingService = inject(TrainingService);
+  private readonly trainerService = inject(TrainerService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   location: LocationPageItemResponse | null = null;
   workouts: TrainingPageItemResponse[] = [];
+  trainers: TrainerPageItemResponse[] = [];
   isLoading = false;
   isLoadingWorkouts = false;
+  isLoadingTrainers = false;
   activeTab = 'workouts';
   currentWorkoutPage = 0;
   totalWorkoutPages = 0;
+  currentTrainerPage = 0;
+  totalTrainerPages = 0;
   tenantId = '';
 
   // Temporary flags for empty states
-  hasTrainers = false;
   hasSchedules = false;
 
   tabs = [
@@ -290,11 +308,16 @@ export class ClubDetailsComponent implements OnInit {
   ngOnInit(): void {
     const tenantId = this.route.snapshot.queryParams['tenantId'];
     const locationId = this.route.snapshot.queryParams['locationId'];
+    const tab = this.route.snapshot.queryParams['tab'];
 
     if (tenantId && locationId) {
       this.tenantId = tenantId;
       this.loadLocation(tenantId, locationId);
       this.loadWorkouts(tenantId);
+      this.loadTrainers(tenantId);
+      if (tab && this.tabs.some(t => t.id === tab)) {
+        this.activeTab = tab;
+      }
     } else {
       this.router.navigate(['/dashboard']);
     }
@@ -327,6 +350,21 @@ export class ClubDetailsComponent implements OnInit {
     }
   }
 
+  async loadTrainers(tenantId: string, page: number = 0): Promise<void> {
+    this.isLoadingTrainers = true;
+    try {
+      const response = await firstValueFrom(this.trainerService.getTrainers(tenantId, page));
+      this.trainers = response.content;
+      this.currentTrainerPage = response.number;
+      this.totalTrainerPages = response.totalPages;
+    } catch (error) {
+      // Handle error appropriately
+      console.error('Failed to load trainers:', error);
+    } finally {
+      this.isLoadingTrainers = false;
+    }
+  }
+
   onWorkoutPageChange(page: number): void {
     const tenantId = this.route.snapshot.queryParams['tenantId'];
     if (tenantId) {
@@ -334,21 +372,39 @@ export class ClubDetailsComponent implements OnInit {
     }
   }
 
+  onTrainerPageChange(page: number): void {
+    const tenantId = this.route.snapshot.queryParams['tenantId'];
+    if (tenantId) {
+      this.loadTrainers(tenantId, page);
+    }
+  }
+
   setActiveTab(tabId: string): void {
     this.activeTab = tabId;
+    // Update URL with the new tab
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { ...this.route.snapshot.queryParams, tab: tabId },
+      queryParamsHandling: 'merge'
+    });
   }
 
   onAddWorkout(): void {
     const tenantId = this.route.snapshot.queryParams['tenantId'];
     const locationId = this.route.snapshot.queryParams['locationId'];
-    
+
     this.router.navigate(['/create-workout'], {
       queryParams: { tenantId, locationId }
     });
   }
 
   onAddTrainer(): void {
-    // To be implemented
+    const tenantId = this.route.snapshot.queryParams['tenantId'];
+    const locationId = this.route.snapshot.queryParams['locationId'];
+
+    this.router.navigate(['/create-trainer'], {
+      queryParams: { tenantId, locationId }
+    });
   }
 
   onAddSchedule(): void {
