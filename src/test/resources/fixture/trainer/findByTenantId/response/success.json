@@ -1,15 +1,6 @@
 {
   "content": [
     {
-      "id": "b35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
-      "firstName": "Test",
-      "lastName": "User",
-      "email": "test.user@gmail.com",
-      "phoneNumber": "+444555666",
-      "createdAt": "${json-unit.any-string}",
-      "updatedAt": "${json-unit.any-string}"
-    },
-    {
       "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
       "firstName": "John",
       "lastName": "Trainer",
@@ -50,9 +41,8 @@
     "unpaged": false
   },
   "last": true,
-  "totalElements": 4,
+  "totalElements": 3,
   "totalPages": 1,
-  "first": true,
   "size": 10,
   "number": 0,
   "sort": {
@@ -60,6 +50,7 @@
     "empty": false,
     "unsorted": false
   },
-  "numberOfElements": 4,
+  "first": true,
+  "numberOfElements": 3,
   "empty": false
 }
