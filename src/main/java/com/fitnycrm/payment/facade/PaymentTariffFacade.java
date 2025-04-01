@@ -24,4 +24,8 @@ public class PaymentTariffFacade {
     public PaymentTariffResponse update(UUID tenantId, UUID trainingId, UUID tariffId, UpdatePaymentTariffRequest request) {
         return responseMapper.toResponse(paymentTariffService.update(tenantId, trainingId, tariffId, request));
     }
+
+    public void delete(UUID tenantId, UUID trainingId, UUID tariffId) {
+        paymentTariffService.delete(tenantId, trainingId, tariffId);
+    }
 } 

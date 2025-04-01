@@ -32,6 +32,19 @@ public class PaymentTariffService {
 
     @Transactional
     public PaymentTariff update(UUID tenantId, UUID trainingId, UUID tariffId, UpdatePaymentTariffRequest request) {
+        PaymentTariff paymentTariff = findById(tenantId, trainingId, tariffId);
+        requestMapper.update(paymentTariff, request);
+        return paymentTariffRepository.save(paymentTariff);
+    }
+
+    @Transactional
+    public void delete(UUID tenantId, UUID trainingId, UUID tariffId) {
+        PaymentTariff paymentTariff = findById(tenantId, trainingId, tariffId);
+        paymentTariffRepository.delete(paymentTariff);
+    }
+
+    @Transactional(readOnly = true)
+    public PaymentTariff findById(UUID tenantId, UUID trainingId, UUID tariffId) {
         PaymentTariff paymentTariff = paymentTariffRepository.findById(tariffId)
                 .orElseThrow(() -> new PaymentTariffNotFoundException(tariffId));
 
@@ -42,8 +55,6 @@ public class PaymentTariffService {
         if (!paymentTariff.getTraining().getTenant().getId().equals(tenantId)) {
             throw new PaymentTariffNotFoundException(tariffId);
         }
-
-        requestMapper.update(paymentTariff, request);
-        return paymentTariffRepository.save(paymentTariff);
+        return paymentTariff;
     }
 } 

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,5 +60,21 @@ public class PaymentTariffRestController {
             @PathVariable UUID tariffId,
             @RequestBody @Valid UpdatePaymentTariffRequest request) {
         return paymentTariffFacade.update(tenantId, trainingId, tariffId, request);
+    }
+
+    @DeleteMapping("/{tariffId}")
+    @Operation(summary = "Delete a payment tariff")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Payment tariff deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Payment tariff not found")
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public void delete(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID trainingId,
+            @PathVariable UUID tariffId) {
+        paymentTariffFacade.delete(tenantId, trainingId, tariffId);
     }
 } 
