@@ -5,6 +5,8 @@ export interface JwtPayload {
   lastName: string;
   exp: number;
   iat: number;
+  roles: Array<{ authority: string }>;
+  tenantIds: string[];
 }
 
 export function decodeJwtToken(token: string): JwtPayload | null {

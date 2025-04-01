@@ -4,14 +4,14 @@
     "subtitle": "Inicia sesión para continuar tu viaje fitness",
     "email": {
       "label": "Correo electrónico",
-      "placeholder": "Ingresa tu correo electrónico",
-      "required": "El correo electrónico es requerido",
-      "invalid": "Por favor ingresa un correo electrónico válido"
+      "placeholder": "Introduce tu correo electrónico",
+      "required": "El correo electrónico es obligatorio",
+      "invalid": "Por favor, introduce un correo electrónico válido"
     },
     "password": {
       "label": "Contraseña",
-      "placeholder": "Ingresa tu contraseña",
-      "required": "La contraseña es requerida"
+      "placeholder": "Introduce tu contraseña",
+      "required": "La contraseña es obligatoria"
     },
     "button": {
       "login": "Iniciar sesión",
@@ -24,5 +24,80 @@
       "text": "¿No tienes una cuenta?",
       "link": "Regístrate"
     }
+  },
+  "dashboard": {
+    "welcome": "¡Bienvenido, {{name}}!",
+    "user": "Usuario",
+    "fitnessClub": {
+      "label": "Club de Fitness:"
+    },
+    "subtitle": "Tu gestión del viaje fitness comienza aquí.",
+    "locations": {
+      "title": "Ubicaciones del Club",
+      "noLocations": "No se encontraron ubicaciones. Añade tu primera ubicación para comenzar.",
+      "loading": "Cargando ubicaciones...",
+      "addLocation": "Añadir Ubicación",
+      "delete": {
+        "title": "Eliminar Ubicación",
+        "message": "¿Estás seguro de que quieres eliminar esta ubicación? Esta acción no se puede deshacer.",
+        "confirm": "Eliminar"
+      }
+    }
+  },
+  "location": {
+    "create": {
+      "title": "Añadir Nueva Ubicación"
+    },
+    "edit": {
+      "title": "Editar Ubicación"
+    },
+    "details": {
+      "title": "Detalles del Club",
+      "tabs": {
+        "workouts": "Entrenamientos",
+        "trainers": "Entrenadores",
+        "schedule": "Horario"
+      },
+      "workouts": {
+        "title": "Entrenamientos Disponibles",
+        "add": "Añadir Entrenamiento",
+        "empty": "Aún no hay entrenamientos disponibles. Añade tu primer tipo de entrenamiento para comenzar."
+      },
+      "trainers": {
+        "title": "Entrenadores del Club",
+        "add": "Añadir Entrenador",
+        "empty": "Aún no hay entrenadores asignados. Añade entrenadores para comenzar a crear horarios."
+      },
+      "schedule": {
+        "title": "Horario de Clases",
+        "add": "Añadir Clase",
+        "empty": "Aún no hay clases programadas. Primero añade entrenamientos y entrenadores, luego crea tu horario."
+      }
+    },
+    "form": {
+      "address": "Dirección",
+      "addressRequired": "La dirección es obligatoria",
+      "city": "Ciudad",
+      "cityRequired": "La ciudad es obligatoria",
+      "state": "Provincia",
+      "stateRequired": "La provincia es obligatoria",
+      "postalCode": "Código Postal",
+      "postalCodeRequired": "El código postal es obligatorio",
+      "country": "País",
+      "countryRequired": "El país es obligatorio",
+      "timezone": "Zona Horaria",
+      "timezoneRequired": "La zona horaria es obligatoria"
+    }
+  },
+  "common": {
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "loading": "Cargando...",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página",
+    "of": "de"
   }
 } 

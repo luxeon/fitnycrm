@@ -38,12 +38,13 @@ describe('LoginComponent', () => {
   };
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'hasRole']);
     authServiceSpy.login.and.returnValue(of({
       accessToken: 'mock-access-token',
       refreshToken: 'mock-refresh-token',
       expiresIn: 3600
     }));
+    authServiceSpy.hasRole.and.returnValue(true);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -69,6 +70,8 @@ describe('LoginComponent', () => {
     translateService.setTranslation('en', translations);
     translateService.use('en');
 
+    // Wait for translations to be loaded and error messages to be preloaded
+    await component.ngOnInit();
     fixture.detectChanges();
   });
 
@@ -149,6 +152,7 @@ describe('LoginComponent', () => {
   it('should handle login error and subsequent retry', fakeAsync(() => {
     // First attempt - trigger an error
     authService.login.and.returnValue(throwError(() => new Error('Invalid credentials')));
+    authService.hasRole.and.returnValue(true);
 
     component.loginForm.patchValue({
       email: 'test@example.com',
@@ -178,34 +182,60 @@ describe('LoginComponent', () => {
     expect(component.isLoading).toBeFalse();
   }));
 
+  it('should handle unauthorized role after successful login', fakeAsync(() => {
+    authService.login.and.returnValue(of({
+      accessToken: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+      expiresIn: 3600
+    }));
+    authService.hasRole.and.returnValue(false);
+
+    component.loginForm.patchValue({
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    component.onSubmit();
+    tick();
+
+    expect(component.errorMessage).toBe(translations.login.error.invalidCredentials);
+    expect(component.isLoading).toBeFalse();
+  }));
+
   it('should display appropriate error messages', fakeAsync(async () => {
     const form = component.loginForm;
 
-    // Test email error
+    // Wait for error messages to be preloaded
+    await component.ngOnInit();
+    tick();
+    fixture.detectChanges();
+
+    // Test email required error
     form.get('email')?.setValue('');
     form.get('email')?.markAsTouched();
-    let errorMessage = await component.getErrorMessage('email');
-    expect(errorMessage).toBe(translations.login.email.required);
+    fixture.detectChanges();
+    expect(component.getErrorMessage('email')).toBe(translations.login.email.required);
 
+    // Test email invalid error
     form.get('email')?.setValue('invalid');
-    errorMessage = await component.getErrorMessage('email');
-    expect(errorMessage).toBe(translations.login.email.invalid);
+    form.get('email')?.markAsTouched();
+    fixture.detectChanges();
+    expect(component.getErrorMessage('email')).toBe(translations.login.email.invalid);
 
-    // Test password error
+    // Test password required error
     form.get('password')?.setValue('');
     form.get('password')?.markAsTouched();
-    errorMessage = await component.getErrorMessage('password');
-    expect(errorMessage).toBe(translations.login.password.required);
+    fixture.detectChanges();
+    expect(component.getErrorMessage('password')).toBe(translations.login.password.required);
 
     // Test no error message when fields are valid
     form.patchValue({
       email: 'test@example.com',
       password: 'password123'
     });
-    errorMessage = await component.getErrorMessage('email');
-    expect(errorMessage).toBe('');
-    errorMessage = await component.getErrorMessage('password');
-    expect(errorMessage).toBe('');
+    fixture.detectChanges();
+    expect(component.getErrorMessage('email')).toBe('');
+    expect(component.getErrorMessage('password')).toBe('');
   }));
 
   it('should properly manage loading state during submission', fakeAsync(() => {
@@ -229,7 +259,7 @@ describe('LoginComponent', () => {
   it('should initialize with correct translations', () => {
     const emailLabel = fixture.debugElement.query(By.css('label[for="email"]'));
     const passwordLabel = fixture.debugElement.query(By.css('label[for="password"]'));
-    
+
     expect(emailLabel.nativeElement.textContent).toBe(translations.login.email.label);
     expect(passwordLabel.nativeElement.textContent).toBe(translations.login.password.label);
   });

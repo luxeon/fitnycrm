@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { LoginRequest, LoginResponse } from '../models/auth.model';
 import { environment } from '../../../environments/environment';
 import { JwtPayload, decodeJwtToken } from '../utils/jwt.utils';
+import { Router } from '@angular/router';
 
 export interface UserSignupRequest {
   firstName: string;
@@ -19,8 +20,16 @@ export interface UserDetailsResponse {
   lastName: string;
   email: string;
   phoneNumber?: string;
+  roles: string[];
+  tenantIds: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
 }
 
 @Injectable({
@@ -29,6 +38,7 @@ export interface UserDetailsResponse {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly router = inject(Router);
 
   signup(request: UserSignupRequest): Observable<UserDetailsResponse> {
     return this.http.post<UserDetailsResponse>(`${this.apiUrl}/signup`, request);
@@ -38,9 +48,24 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request);
   }
 
+  refreshToken(): Observable<RefreshTokenResponse> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<RefreshTokenResponse>('/api/auth/refresh', { refreshToken });
+  }
+
+  updateTokens(response: RefreshTokenResponse): void {
+    localStorage.setItem('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+  }
+
   logout(): void {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+  }
+
+  async logoutAndRedirect(): Promise<void> {
+    this.logout();
+    await this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
@@ -55,6 +80,18 @@ export class AuthService {
     return payload.exp > now;
   }
 
+  hasRole(role: string): boolean {
+    const payload = this.getDecodedToken();
+    if (!payload) return false;
+    return payload.roles.some(r => r.authority === role);
+  }
+
+  hasTenant(tenantId: string): boolean {
+    const payload = this.getDecodedToken();
+    if (!payload) return false;
+    return payload.tenantIds.includes(tenantId);
+  }
+
   getCurrentUser(): UserDetailsResponse | null {
     const payload = this.getDecodedToken();
     if (!payload) return null;
@@ -64,6 +101,8 @@ export class AuthService {
       firstName: payload.firstName,
       lastName: payload.lastName,
       email: payload.email,
+      roles: payload.roles.map(role => role.authority),
+      tenantIds: payload.tenantIds,
       createdAt: new Date(payload.iat * 1000).toISOString(),
       updatedAt: new Date(payload.iat * 1000).toISOString()
     };
@@ -78,4 +117,4 @@ export class AuthService {
     if (!token) return null;
     return decodeJwtToken(token);
   }
-} 
+}
