@@ -57,4 +57,9 @@ public class ClientFacade {
         User client = clientService.signup(tenantId, clientInvitationId, request);
         return responseMapper.toDetailsResponse(client);
     }
+
+    public ClientDetailsResponse joinByInvitation(UUID tenantId, UUID clientInvitationId, AuthenticatedUserDetails user) {
+        User client = clientService.joinByInvitation(tenantId, clientInvitationId, user.getId());
+        return responseMapper.toDetailsResponse(client);
+    }
 } 

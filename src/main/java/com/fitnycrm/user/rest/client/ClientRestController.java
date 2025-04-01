@@ -131,4 +131,19 @@ public class ClientRestController {
                                         @RequestBody @Valid SignupClientRequest request) {
         return clientFacade.signup(tenantId, clientInvitationId, request);
     }
+
+    @Operation(summary = "Join tenant using invitation for authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully joined tenant",
+                    content = @Content(schema = @Schema(implementation = ClientDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "404", description = "Invitation not found or expired")
+    })
+    @PostMapping("/join/{clientInvitationId}")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT')")
+    public ClientDetailsResponse joinByInvitation(@PathVariable UUID tenantId,
+                                        @PathVariable UUID clientInvitationId,
+                                        @AuthenticationPrincipal AuthenticatedUserDetails user) {
+        return clientFacade.joinByInvitation(tenantId, clientInvitationId, user);
+    }
 } 

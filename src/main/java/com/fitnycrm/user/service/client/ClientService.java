@@ -143,4 +143,35 @@ public class ClientService {
         invitationRepository.delete(invitation);
         return user;
     }
+
+    @Transactional
+    public User joinByInvitation(UUID tenantId, UUID clientInvitationId, UUID userId) {
+        Tenant tenant = tenantService.findById(tenantId);
+        ClientInvitation invitation = invitationRepository.findById(clientInvitationId)
+                .orElseThrow(() -> new InvitationNotFoundException(clientInvitationId));
+
+        if (!invitation.getTenant().equals(tenant)) {
+            throw new InvitationNotFoundException(clientInvitationId);
+        }
+        if (TokenUtils.isTokenExpired(invitation.getExpiresAt())) {
+            throw new InvitationExpiredException(clientInvitationId);
+        }
+
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        if (!user.getEmail().equals(invitation.getEmail())) {
+            throw new InvitationNotFoundException(clientInvitationId);
+        }
+
+        if (user.getTenants().contains(tenant)) {
+            throw new TenantAlreadyContainsUserException(tenantId, userId);
+        }
+
+        user.getTenants().add(tenant);
+        user = repository.save(user);
+
+        invitationRepository.delete(invitation);
+        return user;
+    }
 }
