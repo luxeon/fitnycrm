@@ -89,6 +89,33 @@
       "timezoneRequired": "Timezone is required"
     }
   },
+  "training": {
+    "create": {
+      "title": "Add New Workout",
+      "subtitle": "Create a new workout type for your club"
+    },
+    "form": {
+      "name": {
+        "label": "Workout Name",
+        "placeholder": "Enter workout name",
+        "required": "Workout name is required"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter workout description"
+      },
+      "duration": {
+        "label": "Duration (minutes)",
+        "placeholder": "Enter duration",
+        "required": "Duration is required"
+      },
+      "capacity": {
+        "label": "Maximum Capacity",
+        "placeholder": "Enter maximum capacity",
+        "required": "Maximum capacity is required"
+      }
+    }
+  },
   "common": {
     "back": "Back",
     "cancel": "Cancel",

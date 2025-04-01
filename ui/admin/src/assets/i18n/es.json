@@ -89,6 +89,33 @@
       "timezoneRequired": "La zona horaria es obligatoria"
     }
   },
+  "training": {
+    "create": {
+      "title": "Añadir Nuevo Entrenamiento",
+      "subtitle": "Crea un nuevo tipo de entrenamiento para tu club"
+    },
+    "form": {
+      "name": {
+        "label": "Nombre del Entrenamiento",
+        "placeholder": "Introduce el nombre del entrenamiento",
+        "required": "El nombre del entrenamiento es obligatorio"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Introduce la descripción del entrenamiento"
+      },
+      "duration": {
+        "label": "Duración (minutos)",
+        "placeholder": "Introduce la duración",
+        "required": "La duración es obligatoria"
+      },
+      "capacity": {
+        "label": "Capacidad Máxima",
+        "placeholder": "Introduce la capacidad máxima",
+        "required": "La capacidad máxima es obligatoria"
+      }
+    }
+  },
   "common": {
     "back": "Volver",
     "cancel": "Cancelar",
