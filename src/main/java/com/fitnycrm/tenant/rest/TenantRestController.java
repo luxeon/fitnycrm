@@ -39,6 +39,7 @@ public class TenantRestController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public TenantDetailsResponse create(@AuthenticationPrincipal AuthenticatedUserDetails user,
                                         @RequestBody @Valid CreateTenantRequest request) {
         return tenantFacade.create(user, request);
@@ -52,7 +53,7 @@ public class TenantRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("@permissionEvaluator.check(#id)")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#id)")
     public TenantDetailsResponse update(@Parameter(description = "ID of the tenant to update", required = true)
                                         @PathVariable UUID id,
                                         @RequestBody @Valid UpdateTenantRequest request) {

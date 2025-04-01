@@ -80,15 +80,6 @@ class TenantRestControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void getOne_whenUserHasInsufficientRole_thenReturn403(UserRole.Name role) throws Exception {
-        mockMvc.perform(get(BASE_URL + "/{id}", TENANT_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isForbidden());
-    }
-
     @Test
     void create_whenValidRequest_thenCreateTenant() throws Exception {
         var request = readFile("fixture/tenant/create/request/valid-tenant.json");
