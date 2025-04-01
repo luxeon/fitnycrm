@@ -72,11 +72,7 @@ export class RegistrationComponent {
       this.authService.signup(request).subscribe({
         next: () => {
           this.isLoading = false;
-          this.router.navigate(['/login'], {
-            queryParams: {
-              message: this.translate.instant('registration.success')
-            }
-          });
+          this.router.navigate(['/email-confirmation']);
         },
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;

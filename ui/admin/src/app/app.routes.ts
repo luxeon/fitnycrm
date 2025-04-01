@@ -10,10 +10,12 @@ import { EditLocationComponent } from './features/location/edit-location.compone
 import { ClubDetailsComponent } from './features/location/club-details.component';
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
+import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'email-confirmation', component: EmailConfirmationComponent },
   { path: 'create-tenant', component: CreateTenantComponent, canActivate: [adminGuard] },
   { path: 'create-location', component: CreateLocationComponent, canActivate: [adminGuard] },
   { path: 'edit-location', component: EditLocationComponent, canActivate: [adminGuard] },

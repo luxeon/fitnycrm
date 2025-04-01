@@ -141,6 +141,14 @@
     "page": "Page",
     "of": "of"
   },
+  "emailConfirmation": {
+    "title": "Email Confirmation Required",
+    "message": "Thank you for registering! We've sent a confirmation email to your address. Please check your inbox and click the confirmation link to activate your account.",
+    "login": {
+      "text": "Already confirmed your email?",
+      "link": "Log in"
+    }
+  },
   "registration": {
     "title": "Create Account",
     "subtitle": "Join us to start your fitness journey",
