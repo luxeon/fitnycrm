@@ -3,6 +3,7 @@ package com.fitnycrm.payment.rest;
 import com.fitnycrm.payment.facade.PaymentTariffFacade;
 import com.fitnycrm.payment.rest.model.CreatePaymentTariffRequest;
 import com.fitnycrm.payment.rest.model.PaymentTariffDetailsResponse;
+import com.fitnycrm.payment.rest.model.PaymentTariffListItemResponse;
 import com.fitnycrm.payment.rest.model.UpdatePaymentTariffRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +27,21 @@ import java.util.UUID;
 public class PaymentTariffRestController {
 
     private final PaymentTariffFacade paymentTariffFacade;
+
+    @GetMapping
+    @Operation(summary = "Get all payment tariffs for a training")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment tariffs found",
+                    content = @Content(schema = @Schema(implementation = PaymentTariffListItemResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Training not found")
+    })
+    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    public List<PaymentTariffListItemResponse> findAll(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID trainingId) {
+        return paymentTariffFacade.findAll(tenantId, trainingId);
+    }
 
     @PostMapping
     @Operation(summary = "Create a new payment tariff")

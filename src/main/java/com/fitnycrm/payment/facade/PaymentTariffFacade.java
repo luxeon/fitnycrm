@@ -3,11 +3,13 @@ package com.fitnycrm.payment.facade;
 import com.fitnycrm.payment.facade.mapper.PaymentTariffResponseMapper;
 import com.fitnycrm.payment.rest.model.CreatePaymentTariffRequest;
 import com.fitnycrm.payment.rest.model.PaymentTariffDetailsResponse;
+import com.fitnycrm.payment.rest.model.PaymentTariffListItemResponse;
 import com.fitnycrm.payment.rest.model.UpdatePaymentTariffRequest;
 import com.fitnycrm.payment.service.PaymentTariffService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -16,6 +18,12 @@ public class PaymentTariffFacade {
 
     private final PaymentTariffService paymentTariffService;
     private final PaymentTariffResponseMapper responseMapper;
+
+    public List<PaymentTariffListItemResponse> findAll(UUID tenantId, UUID trainingId) {
+        return paymentTariffService.findAll(tenantId, trainingId).stream()
+                .map(responseMapper::toListItemResponse)
+                .toList();
+    }
 
     public PaymentTariffDetailsResponse create(UUID tenantId, UUID trainingId, CreatePaymentTariffRequest request) {
         return responseMapper.toResponse(paymentTariffService.create(tenantId, trainingId, request));

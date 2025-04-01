@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,6 +22,12 @@ public class PaymentTariffService {
     private final PaymentTariffRepository paymentTariffRepository;
     private final PaymentTariffRequestMapper requestMapper;
     private final TrainingService trainingService;
+
+    @Transactional(readOnly = true)
+    public List<PaymentTariff> findAll(UUID tenantId, UUID trainingId) {
+        Training training = trainingService.findById(tenantId, trainingId);
+        return paymentTariffRepository.findAllByTraining(training);
+    }
 
     @Transactional
     public PaymentTariff create(UUID tenantId, UUID trainingId, CreatePaymentTariffRequest request) {
