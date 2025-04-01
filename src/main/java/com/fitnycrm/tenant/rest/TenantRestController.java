@@ -3,6 +3,7 @@ package com.fitnycrm.tenant.rest;
 import com.fitnycrm.tenant.facade.TenantFacade;
 import com.fitnycrm.tenant.rest.model.CreateTenantRequest;
 import com.fitnycrm.tenant.rest.model.TenantDetailsResponse;
+import com.fitnycrm.tenant.rest.model.TenantListItemResponse;
 import com.fitnycrm.tenant.rest.model.UpdateTenantRequest;
 import com.fitnycrm.user.service.auth.model.AuthenticatedUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -55,6 +57,17 @@ public class TenantRestController {
                                         @PathVariable UUID id,
                                         @RequestBody @Valid UpdateTenantRequest request) {
         return tenantFacade.update(id, request);
+    }
+
+    @Operation(summary = "Get all tenants for authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of tenants found",
+                    content = @Content(schema = @Schema(implementation = TenantListItemResponse.class)))
+    })
+    @GetMapping
+    public List<TenantListItemResponse> getAllForAuthenticatedUser(
+            @AuthenticationPrincipal AuthenticatedUserDetails user) {
+        return tenantFacade.getAllForUser(user);
     }
 
     @Operation(summary = "Get a tenant by ID")
