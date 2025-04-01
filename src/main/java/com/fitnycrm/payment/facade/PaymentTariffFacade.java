@@ -1,0 +1,22 @@
+package com.fitnycrm.payment.facade;
+
+import com.fitnycrm.payment.facade.mapper.PaymentTariffResponseMapper;
+import com.fitnycrm.payment.rest.model.CreatePaymentTariffRequest;
+import com.fitnycrm.payment.rest.model.PaymentTariffResponse;
+import com.fitnycrm.payment.service.PaymentTariffService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+
+@Component
+@RequiredArgsConstructor
+public class PaymentTariffFacade {
+
+    private final PaymentTariffService paymentTariffService;
+    private final PaymentTariffResponseMapper responseMapper;
+
+    public PaymentTariffResponse create(UUID tenantId, UUID trainingId, CreatePaymentTariffRequest request) {
+        return responseMapper.toResponse(paymentTariffService.create(tenantId, trainingId, request));
+    }
+} 

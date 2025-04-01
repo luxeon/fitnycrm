@@ -102,38 +102,17 @@ CREATE TABLE IF NOT EXISTS schedules
     FOREIGN KEY (default_trainer_id) REFERENCES users (id)
 );
 
-CREATE TABLE IF NOT EXISTS sessions
+CREATE TABLE IF NOT EXISTS payment_tariffs
 (
-    id           uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    schedule_id  uuid                        NOT NULL,
-    session_date DATE                        NOT NULL,
-    trainer_id   uuid,
-    start_time   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    end_time     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    FOREIGN KEY (schedule_id) REFERENCES schedules (id),
-    FOREIGN KEY (trainer_id) REFERENCES users (id)
-);
-
-CREATE TABLE IF NOT EXISTS visits
-(
-    id         uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    client_id  uuid NOT NULL,
-    session_id uuid NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES users (id),
-    FOREIGN KEY (session_id) REFERENCES sessions (id)
-);
-
-CREATE TABLE IF NOT EXISTS client_payments
-(
-    id               uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    client_id        uuid                        NOT NULL,
-    payment_type     VARCHAR(20)                 NOT NULL, -- "per_visit", "subscription"
-    training_id      uuid                        NOT NULL,
-    amount           NUMERIC                     NOT NULL,
-    valid_from       DATE,
-    valid_until      DATE,
-    visits_remaining INTEGER,
-    payment_date     TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    FOREIGN KEY (client_id) REFERENCES users (id),
+    id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    name            varchar(255)  NOT NULL,
+    training_id     uuid          NOT NULL,
+    trainings_count integer,
+    valid_days      integer,
+    price           numeric(5, 2) NOT NULL,
+    currency        VARCHAR(3)    NOT NULL,
+    created_at      TIMESTAMP WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP WITHOUT TIME ZONE,
+    CONSTRAINT trainings_count_or_valid_days CHECK (trainings_count is not null or valid_days is not null),
     FOREIGN KEY (training_id) REFERENCES trainings (id)
 );
