@@ -5,11 +5,13 @@ import { LocationService, LocationPageItemResponse } from '../../core/services/l
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { TrainingService, TrainingPageItemResponse } from '../../core/services/training.service';
+import { WorkoutListComponent } from '../training/components/workout-list.component';
 
 @Component({
   selector: 'app-club-details',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, WorkoutListComponent],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -58,10 +60,19 @@ import { animate, style, transition, trigger } from '@angular/animations';
                   {{ 'location.details.workouts.add' | translate }}
                 </button>
               </div>
-              <div class="empty-state" *ngIf="!hasWorkouts">
+              <div class="loading" *ngIf="isLoadingWorkouts">
+                {{ 'common.loading' | translate }}
+              </div>
+              <div class="empty-state" *ngIf="!isLoadingWorkouts && !workouts?.length">
                 {{ 'location.details.workouts.empty' | translate }}
               </div>
-              <!-- Workout list will be added here -->
+              <app-workout-list 
+                *ngIf="!isLoadingWorkouts && workouts?.length" 
+                [workouts]="workouts"
+                [currentPage]="currentWorkoutPage"
+                [totalPages]="totalWorkoutPages"
+                (pageChange)="onWorkoutPageChange($event)">
+              </app-workout-list>
             </div>
 
             <div *ngSwitchCase="'trainers'" class="tab-pane">
@@ -250,15 +261,19 @@ import { animate, style, transition, trigger } from '@angular/animations';
 })
 export class ClubDetailsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
+  private readonly trainingService = inject(TrainingService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   location: LocationPageItemResponse | null = null;
+  workouts: TrainingPageItemResponse[] = [];
   isLoading = false;
+  isLoadingWorkouts = false;
   activeTab = 'workouts';
+  currentWorkoutPage = 0;
+  totalWorkoutPages = 0;
 
   // Temporary flags for empty states
-  hasWorkouts = false;
   hasTrainers = false;
   hasSchedules = false;
 
@@ -274,6 +289,7 @@ export class ClubDetailsComponent implements OnInit {
 
     if (tenantId && locationId) {
       this.loadLocation(tenantId, locationId);
+      this.loadWorkouts(tenantId);
     } else {
       this.router.navigate(['/dashboard']);
     }
@@ -291,6 +307,28 @@ export class ClubDetailsComponent implements OnInit {
     }
   }
 
+  private async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {
+    this.isLoadingWorkouts = true;
+    try {
+      const response = await firstValueFrom(this.trainingService.getTrainings(tenantId, page));
+      this.workouts = response.content;
+      this.currentWorkoutPage = response.number;
+      this.totalWorkoutPages = response.totalPages;
+    } catch (error) {
+      // Handle error appropriately
+      console.error('Failed to load workouts:', error);
+    } finally {
+      this.isLoadingWorkouts = false;
+    }
+  }
+
+  onWorkoutPageChange(page: number): void {
+    const tenantId = this.route.snapshot.queryParams['tenantId'];
+    if (tenantId) {
+      this.loadWorkouts(tenantId, page);
+    }
+  }
+
   setActiveTab(tabId: string): void {
     this.activeTab = tabId;
   }
@@ -305,11 +343,11 @@ export class ClubDetailsComponent implements OnInit {
   }
 
   onAddTrainer(): void {
-    // Will be implemented
+    // To be implemented
   }
 
   onAddSchedule(): void {
-    // Will be implemented
+    // To be implemented
   }
 
   onBack(): void {

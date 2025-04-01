@@ -68,7 +68,7 @@ export class TrainingService {
     );
   }
 
-  getTrainings(tenantId: string, page: number = 0, size: number = 10): Observable<{
+  getTrainings(tenantId: string, page: number = 0, size: number = 9): Observable<{
     content: TrainingPageItemResponse[];
     totalElements: number;
     totalPages: number;
@@ -92,4 +92,4 @@ export class TrainingService {
       }
     });
   }
-} 
+}
