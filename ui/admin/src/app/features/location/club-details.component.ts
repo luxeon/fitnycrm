@@ -71,7 +71,9 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
                 [workouts]="workouts"
                 [currentPage]="currentWorkoutPage"
                 [totalPages]="totalWorkoutPages"
-                (pageChange)="onWorkoutPageChange($event)">
+                [tenantId]="tenantId"
+                (pageChange)="onWorkoutPageChange($event)"
+                (workoutDeleted)="loadWorkouts(tenantId)">
               </app-workout-list>
             </div>
 
@@ -272,6 +274,7 @@ export class ClubDetailsComponent implements OnInit {
   activeTab = 'workouts';
   currentWorkoutPage = 0;
   totalWorkoutPages = 0;
+  tenantId = '';
 
   // Temporary flags for empty states
   hasTrainers = false;
@@ -288,6 +291,7 @@ export class ClubDetailsComponent implements OnInit {
     const locationId = this.route.snapshot.queryParams['locationId'];
 
     if (tenantId && locationId) {
+      this.tenantId = tenantId;
       this.loadLocation(tenantId, locationId);
       this.loadWorkouts(tenantId);
     } else {
@@ -307,7 +311,7 @@ export class ClubDetailsComponent implements OnInit {
     }
   }
 
-  private async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {
+  async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {
     this.isLoadingWorkouts = true;
     try {
       const response = await firstValueFrom(this.trainingService.getTrainings(tenantId, page));

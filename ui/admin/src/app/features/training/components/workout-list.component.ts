@@ -1,16 +1,23 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { TrainingPageItemResponse } from '../../../core/services/training.service';
+import { TrainingService, TrainingPageItemResponse } from '../../../core/services/training.service';
+import { ConfirmationDialogComponent } from '../../dashboard/components/confirmation-dialog/confirmation-dialog.component';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-workout-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent],
   template: `
     <div class="workouts-grid">
       <div class="workout-card" *ngFor="let workout of workouts">
         <div class="workout-info">
+          <div class="card-actions">
+            <button class="delete-btn" (click)="onDeleteClick(workout)">
+              <span class="delete-icon">×</span>
+            </button>
+          </div>
           <h3>{{ workout.name }}</h3>
           <p *ngIf="workout.description" class="description">{{ workout.description }}</p>
           <div class="details">
@@ -42,6 +49,15 @@ import { TrainingPageItemResponse } from '../../../core/services/training.servic
         {{ 'common.next' | translate }}
       </button>
     </div>
+
+    <app-confirmation-dialog
+      *ngIf="workoutToDelete"
+      [title]="'location.details.workouts.delete.title' | translate"
+      [message]="'location.details.workouts.delete.message' | translate"
+      [confirmText]="'location.details.workouts.delete.confirm' | translate"
+      (confirm)="onDeleteConfirm()"
+      (cancel)="onDeleteCancel()"
+    ></app-confirmation-dialog>
   `,
   styles: [`
     .workouts-grid {
@@ -57,6 +73,7 @@ import { TrainingPageItemResponse } from '../../../core/services/training.servic
       border: 1px solid #e9ecef;
       padding: 1rem;
       transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
 
       &:hover {
         transform: translateY(-2px);
@@ -98,6 +115,37 @@ import { TrainingPageItemResponse } from '../../../core/services/training.servic
       }
     }
 
+    .card-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .delete-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      background: #e74c3c;
+      color: white;
+
+      .delete-icon {
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      &:hover {
+        background: #c0392b;
+      }
+    }
+
     .pagination {
       display: flex;
       align-items: center;
@@ -131,12 +179,39 @@ import { TrainingPageItemResponse } from '../../../core/services/training.servic
   `]
 })
 export class WorkoutListComponent {
+  private readonly trainingService = inject(TrainingService);
+
   @Input() workouts: TrainingPageItemResponse[] = [];
   @Input() currentPage = 0;
   @Input() totalPages = 0;
+  @Input() tenantId = '';
   @Output() pageChange = new EventEmitter<number>();
+  @Output() workoutDeleted = new EventEmitter<void>();
+
+  workoutToDelete: TrainingPageItemResponse | null = null;
 
   onPageChange(page: number): void {
     this.pageChange.emit(page);
+  }
+
+  onDeleteClick(workout: TrainingPageItemResponse): void {
+    this.workoutToDelete = workout;
+  }
+
+  onDeleteCancel(): void {
+    this.workoutToDelete = null;
+  }
+
+  async onDeleteConfirm(): Promise<void> {
+    if (this.workoutToDelete && this.tenantId) {
+      try {
+        await firstValueFrom(this.trainingService.deleteTraining(this.tenantId, this.workoutToDelete.id));
+        this.workoutToDelete = null;
+        this.workoutDeleted.emit();
+      } catch (error) {
+        // Handle error if needed
+        console.error('Failed to delete workout:', error);
+      }
+    }
   }
 } 

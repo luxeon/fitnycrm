@@ -61,7 +61,12 @@
       "workouts": {
         "title": "Entrenamientos Disponibles",
         "add": "Añadir Entrenamiento",
-        "empty": "Aún no hay entrenamientos disponibles. Añade tu primer tipo de entrenamiento para comenzar."
+        "empty": "Aún no hay entrenamientos disponibles. Añade tu primer tipo de entrenamiento para comenzar.",
+        "delete": {
+          "title": "Eliminar Entrenamiento",
+          "message": "¿Estás seguro de que quieres eliminar este entrenamiento? Esta acción no se puede deshacer.",
+          "confirm": "Eliminar"
+        }
       },
       "trainers": {
         "title": "Entrenadores del Club",

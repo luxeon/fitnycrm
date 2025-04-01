@@ -61,7 +61,12 @@
       "workouts": {
         "title": "Available Workouts",
         "add": "Add Workout",
-        "empty": "No workouts available yet. Add your first workout type to get started."
+        "empty": "No workouts available yet. Add your first workout type to get started.",
+        "delete": {
+          "title": "Delete Workout",
+          "message": "Are you sure you want to delete this workout? This action cannot be undone.",
+          "confirm": "Delete"
+        }
       },
       "trainers": {
         "title": "Club Trainers",
