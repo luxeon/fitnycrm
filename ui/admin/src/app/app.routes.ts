@@ -9,6 +9,7 @@ import { CreateLocationComponent } from './features/location/create-location.com
 import { EditLocationComponent } from './features/location/edit-location.component';
 import { ClubDetailsComponent } from './features/location/club-details.component';
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
+import { EditWorkoutComponent } from './features/training/edit-workout.component';
 
 export const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'edit-location', component: EditLocationComponent, canActivate: [adminGuard] },
   { path: 'club-details', component: ClubDetailsComponent, canActivate: [adminGuard] },
   { path: 'create-workout', component: CreateWorkoutComponent, canActivate: [adminGuard] },
+  { path: 'edit-workout', component: EditWorkoutComponent, canActivate: [adminGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [adminGuard, tenantCheckGuard] },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];

@@ -99,24 +99,28 @@
       "title": "Añadir Nuevo Entrenamiento",
       "subtitle": "Crea un nuevo tipo de entrenamiento para tu club"
     },
+    "edit": {
+      "title": "Editar Entrenamiento",
+      "subtitle": "Actualizar detalles del entrenamiento"
+    },
     "form": {
       "name": {
         "label": "Nombre del Entrenamiento",
-        "placeholder": "Introduce el nombre del entrenamiento",
+        "placeholder": "Ingresa el nombre del entrenamiento",
         "required": "El nombre del entrenamiento es obligatorio"
       },
       "description": {
         "label": "Descripción",
-        "placeholder": "Introduce la descripción del entrenamiento"
+        "placeholder": "Ingresa la descripción"
       },
       "duration": {
         "label": "Duración (minutos)",
-        "placeholder": "Introduce la duración",
+        "placeholder": "Ingresa la duración",
         "required": "La duración es obligatoria"
       },
       "capacity": {
         "label": "Capacidad Máxima",
-        "placeholder": "Introduce la capacidad máxima",
+        "placeholder": "Ingresa la capacidad máxima",
         "required": "La capacidad máxima es obligatoria"
       }
     }

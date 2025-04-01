@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TrainingService, TrainingPageItemResponse } from '../../../core/services/training.service';
 import { ConfirmationDialogComponent } from '../../dashboard/components/confirmation-dialog/confirmation-dialog.component';
 import { firstValueFrom } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-workout-list',
@@ -14,6 +15,9 @@ import { firstValueFrom } from 'rxjs';
       <div class="workout-card" *ngFor="let workout of workouts">
         <div class="workout-info">
           <div class="card-actions">
+            <button class="edit-btn" (click)="onEditClick(workout)">
+              <span class="edit-icon">✎</span>
+            </button>
             <button class="delete-btn" (click)="onDeleteClick(workout)">
               <span class="delete-icon">×</span>
             </button>
@@ -123,7 +127,7 @@ import { firstValueFrom } from 'rxjs';
       gap: 8px;
     }
 
-    .delete-btn {
+    .edit-btn, .delete-btn {
       width: 24px;
       height: 24px;
       border-radius: 50%;
@@ -133,6 +137,23 @@ import { firstValueFrom } from 'rxjs';
       justify-content: center;
       cursor: pointer;
       transition: background-color 0.2s;
+    }
+
+    .edit-btn {
+      background: #3498db;
+      color: white;
+
+      .edit-icon {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      &:hover {
+        background: #2980b9;
+      }
+    }
+
+    .delete-btn {
       background: #e74c3c;
       color: white;
 
@@ -180,11 +201,13 @@ import { firstValueFrom } from 'rxjs';
 })
 export class WorkoutListComponent {
   private readonly trainingService = inject(TrainingService);
+  private readonly router = inject(Router);
 
   @Input() workouts: TrainingPageItemResponse[] = [];
   @Input() currentPage = 0;
   @Input() totalPages = 0;
   @Input() tenantId = '';
+  @Input() locationId = '';
   @Output() pageChange = new EventEmitter<number>();
   @Output() workoutDeleted = new EventEmitter<void>();
 
@@ -192,6 +215,16 @@ export class WorkoutListComponent {
 
   onPageChange(page: number): void {
     this.pageChange.emit(page);
+  }
+
+  onEditClick(workout: TrainingPageItemResponse): void {
+    this.router.navigate(['/edit-workout'], {
+      queryParams: {
+        tenantId: this.tenantId,
+        locationId: this.locationId,
+        workoutId: workout.id
+      }
+    });
   }
 
   onDeleteClick(workout: TrainingPageItemResponse): void {

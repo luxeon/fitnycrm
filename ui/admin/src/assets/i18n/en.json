@@ -99,6 +99,10 @@
       "title": "Add New Workout",
       "subtitle": "Create a new workout type for your club"
     },
+    "edit": {
+      "title": "Edit Workout",
+      "subtitle": "Update workout details"
+    },
     "form": {
       "name": {
         "label": "Workout Name",

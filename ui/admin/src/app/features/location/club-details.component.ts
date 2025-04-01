@@ -72,6 +72,7 @@ import { WorkoutListComponent } from '../training/components/workout-list.compon
                 [currentPage]="currentWorkoutPage"
                 [totalPages]="totalWorkoutPages"
                 [tenantId]="tenantId"
+                [locationId]="location?.id || ''"
                 (pageChange)="onWorkoutPageChange($event)"
                 (workoutDeleted)="loadWorkouts(tenantId)">
               </app-workout-list>
