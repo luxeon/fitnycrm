@@ -142,7 +142,7 @@ class AuthRestControllerTest {
     void confirmEmail_whenValidToken_thenConfirmEmail() throws Exception {
         var token = "valid-confirmation-token";
 
-        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+        mockMvc.perform(post(AUTH_URL + "/confirm-email")
                         .param("token", token))
                 .andExpect(status().isOk());
 
@@ -158,7 +158,7 @@ class AuthRestControllerTest {
         var token = "invalid-token";
         var expectedResponse = readFile("fixture/auth/confirm-email/response/invalid-token.json");
 
-        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+        mockMvc.perform(post(AUTH_URL + "/confirm-email")
                         .param("token", token))
                 .andExpect(status().isBadRequest())
                 .andExpect(json().isEqualTo(expectedResponse));
@@ -169,7 +169,7 @@ class AuthRestControllerTest {
         var token = "expired-token";
         var expectedResponse = readFile("fixture/auth/confirm-email/response/expired-token.json");
 
-        mockMvc.perform(get(AUTH_URL + "/confirm-email")
+        mockMvc.perform(post(AUTH_URL + "/confirm-email")
                         .param("token", token))
                 .andExpect(status().isBadRequest())
                 .andExpect(json().isEqualTo(expectedResponse));

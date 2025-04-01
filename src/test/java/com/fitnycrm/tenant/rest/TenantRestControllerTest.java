@@ -231,4 +231,31 @@ class TenantRestControllerTest {
                         .content(request))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void getAllForAuthenticatedUser_whenUserHasTenants_thenReturnTenants() throws Exception {
+        var expectedResponse = readFile("fixture/tenant/getAllForAuthenticatedUser/response/tenants.json");
+
+        mockMvc.perform(get(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getAllForAuthenticatedUser_whenUserHasNoTenants_thenReturnEmptyList() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminWithoutTenantTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo("[]"));
+    }
+
+    @Test
+    void getAllForAuthenticatedUser_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
 } 

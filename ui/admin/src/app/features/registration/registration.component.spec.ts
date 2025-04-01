@@ -5,11 +5,13 @@ import { By } from '@angular/platform-browser';
 import { AuthService, UserDetailsResponse } from '../../core/services/auth.service';
 import { provideRouter } from '@angular/router';
 import { delay, of, throwError } from 'rxjs';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('RegistrationComponent', () => {
   let component: RegistrationComponent;
   let fixture: ComponentFixture<RegistrationComponent>;
   let authService: jasmine.SpyObj<AuthService>;
+  let translateService: TranslateService;
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['signup']);
@@ -18,12 +20,13 @@ describe('RegistrationComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         RegistrationComponent,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TranslateModule.forRoot()
       ],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
         provideRouter([
-          { path: 'login', component: {} as any }
+          { path: 'email-confirmation', component: {} as any }
         ])
       ]
     }).compileComponents();
@@ -31,6 +34,47 @@ describe('RegistrationComponent', () => {
     fixture = TestBed.createComponent(RegistrationComponent);
     component = fixture.componentInstance;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    translateService = TestBed.inject(TranslateService);
+
+    // Set up translations
+    translateService.setTranslation('en', {
+      registration: {
+        form: {
+          firstName: {
+            required: 'Please enter your first name',
+            minLength: 'First name must be at least {{length}} characters long',
+            maxLength: 'First name cannot be longer than {{length}} characters'
+          },
+          lastName: {
+            required: 'Please enter your last name',
+            minLength: 'Last name must be at least {{length}} characters long',
+            maxLength: 'Last name cannot be longer than {{length}} characters'
+          },
+          email: {
+            required: 'Please enter your email address',
+            invalid: 'Please enter a valid email address'
+          },
+          phoneNumber: {
+            pattern: 'Please enter a valid phone number starting with + followed by country code and number (e.g., +12125551234)'
+          },
+          password: {
+            required: 'Please enter your password',
+            pattern: 'Your password must include at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)'
+          },
+          confirmPassword: {
+            required: 'Please confirm your password',
+            mismatch: 'The passwords you entered do not match'
+          }
+        },
+        success: 'Registration successful! Please check your email to confirm your account.',
+        error: {
+          emailExists: 'An account with this email already exists.',
+          generic: 'An error occurred during registration. Please try again.'
+        }
+      }
+    });
+    translateService.use('en');
+
     fixture.detectChanges();
   });
 
@@ -47,7 +91,7 @@ describe('RegistrationComponent', () => {
     expect(component.registrationForm.get('confirmPassword')?.value).toBe('');
   });
 
-  it('should validate required fields', () => {
+  it('should validate required fields and show translated messages', () => {
     const form = component.registrationForm;
     expect(form.valid).toBeFalsy();
 
@@ -57,30 +101,45 @@ describe('RegistrationComponent', () => {
     });
 
     expect(form.get('firstName')?.hasError('required')).toBeTruthy();
+    expect(component.getErrorMessage('firstName')).toBe('Please enter your first name');
+
     expect(form.get('lastName')?.hasError('required')).toBeTruthy();
+    expect(component.getErrorMessage('lastName')).toBe('Please enter your last name');
+
     expect(form.get('email')?.hasError('required')).toBeTruthy();
+    expect(component.getErrorMessage('email')).toBe('Please enter your email address');
+
     expect(form.get('password')?.hasError('required')).toBeTruthy();
+    expect(component.getErrorMessage('password')).toBe('Please enter your password');
+
     expect(form.get('confirmPassword')?.hasError('required')).toBeFalsy();
     expect(form.get('phoneNumber')?.hasError('required')).toBeFalsy(); // Phone is optional
 
     form.get('password')?.setValue('1qQ@1234');
     expect(form.get('password')?.hasError('required')).toBeFalsy();
     expect(form.get('confirmPassword')?.hasError('passwordMismatch')).toBeTruthy();
+    expect(component.getErrorMessage('confirmPassword')).toBe('The passwords you entered do not match');
   });
 
-  it('should validate name length constraints', () => {
+  it('should validate name length constraints with translated messages', () => {
     const firstName = component.registrationForm.get('firstName');
     const lastName = component.registrationForm.get('lastName');
 
     firstName?.setValue('J');
     lastName?.setValue('D');
+    firstName?.markAsTouched();
+    lastName?.markAsTouched();
     expect(firstName?.hasError('minlength')).toBeTruthy();
     expect(lastName?.hasError('minlength')).toBeTruthy();
+    expect(component.getErrorMessage('firstName')).toBe('First name must be at least 2 characters long');
+    expect(component.getErrorMessage('lastName')).toBe('Last name must be at least 2 characters long');
 
     firstName?.setValue('J'.repeat(256));
     lastName?.setValue('D'.repeat(256));
     expect(firstName?.hasError('maxlength')).toBeTruthy();
     expect(lastName?.hasError('maxlength')).toBeTruthy();
+    expect(component.getErrorMessage('firstName')).toBe('First name cannot be longer than 255 characters');
+    expect(component.getErrorMessage('lastName')).toBe('Last name cannot be longer than 255 characters');
 
     firstName?.setValue('John');
     lastName?.setValue('Doe');
@@ -88,18 +147,21 @@ describe('RegistrationComponent', () => {
     expect(lastName?.errors).toBeNull();
   });
 
-  it('should validate email format', () => {
+  it('should validate email format with translated messages', () => {
     const emailControl = component.registrationForm.get('email');
 
     emailControl?.setValue('invalid-email');
+    emailControl?.markAsTouched();
     expect(emailControl?.hasError('email')).toBeTruthy();
+    expect(component.getErrorMessage('email')).toBe('Please enter a valid email address');
 
     emailControl?.setValue('valid@email.com');
     expect(emailControl?.errors).toBeNull();
   });
 
-  it('should validate phone number format', () => {
+  it('should validate phone number format with translated messages', () => {
     const phoneControl = component.registrationForm.get('phoneNumber');
+    const expectedErrorMessage = 'Please enter a valid phone number starting with + followed by country code and number (e.g., +12125551234)';
 
     // Invalid formats
     const invalidFormats = [
@@ -117,8 +179,7 @@ describe('RegistrationComponent', () => {
       phoneControl?.setValue(format);
       expect(phoneControl?.hasError('pattern')).toBeTruthy();
       phoneControl?.markAsTouched();
-      expect(component.getErrorMessage('phoneNumber'))
-        .toBe('Phone number must be in E.164 format (e.g., +12125551234) with 8-15 digits including country code');
+      expect(component.getErrorMessage('phoneNumber')).toBe(expectedErrorMessage);
     });
 
     // Valid formats
@@ -140,24 +201,29 @@ describe('RegistrationComponent', () => {
     expect(phoneControl?.errors).toBeNull();
   });
 
-  it('should validate password complexity', () => {
+  it('should validate password complexity with translated messages', () => {
     const passwordControl = component.registrationForm.get('password');
+    const expectedErrorMessage = 'Your password must include at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)';
 
     passwordControl?.setValue('weak');
+    passwordControl?.markAsTouched();
     expect(passwordControl?.hasError('pattern')).toBeTruthy();
+    expect(component.getErrorMessage('password')).toBe(expectedErrorMessage);
 
     passwordControl?.setValue('StrongP@ss123');
     expect(passwordControl?.errors).toBeNull();
   });
 
-  it('should validate password match', () => {
+  it('should validate password match with translated messages', () => {
     const form = component.registrationForm;
 
     form.patchValue({
       password: 'StrongP@ss123',
       confirmPassword: 'DifferentP@ss123'
     });
+    form.get('confirmPassword')?.markAsTouched();
     expect(form.get('confirmPassword')?.hasError('passwordMismatch')).toBeTruthy();
+    expect(component.getErrorMessage('confirmPassword')).toBe('The passwords you entered do not match');
 
     form.patchValue({
       password: 'StrongP@ss123',
@@ -183,7 +249,7 @@ describe('RegistrationComponent', () => {
     expect(submitButton.nativeElement.disabled).toBeFalsy();
   });
 
-  it('should handle successful registration', () => {
+  it('should handle successful registration and redirect to email confirmation', () => {
     const navigateSpy = spyOn(component['router'], 'navigate');
 
     component.registrationForm.patchValue({
@@ -204,14 +270,10 @@ describe('RegistrationComponent', () => {
       password: 'StrongP@ss123',
       phoneNumber: '+1234567890'
     });
-    expect(navigateSpy).toHaveBeenCalledWith(['/login'], {
-      queryParams: {
-        message: 'Registration successful! Please check your email to confirm your account.'
-      }
-    });
+    expect(navigateSpy).toHaveBeenCalledWith(['/email-confirmation']);
   });
 
-  it('should handle registration error', fakeAsync(() => {
+  it('should handle registration error with translated messages', fakeAsync(() => {
     authService.signup.and.returnValue(throwError(() => ({
       status: 409,
       error: { message: 'An account with this email already exists.' }
@@ -226,7 +288,7 @@ describe('RegistrationComponent', () => {
     });
 
     component.onSubmit();
-    tick(); // Allow async operation to complete
+    tick();
 
     expect(component.errorMessage).toBe('An account with this email already exists.');
     expect(component.isLoading).toBeFalse();
@@ -238,24 +300,24 @@ describe('RegistrationComponent', () => {
     // Test first name error
     form.get('firstName')?.setValue('');
     form.get('firstName')?.markAsTouched();
-    expect(component.getErrorMessage('firstName')).toBe('firstName is required');
+    expect(component.getErrorMessage('firstName')).toBe('Please enter your first name');
 
     // Test email error
     form.get('email')?.setValue('invalid');
     form.get('email')?.markAsTouched();
-    expect(component.getErrorMessage('email')).toBe('Please enter a valid email');
+    expect(component.getErrorMessage('email')).toBe('Please enter a valid email address');
 
     // Test password error
     form.get('password')?.setValue('weak');
     form.get('password')?.markAsTouched();
     expect(component.getErrorMessage('password'))
-      .toBe('Password must contain at least one digit, one lowercase, one uppercase, one special character and no whitespace');
+      .toBe('Your password must include at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)');
 
     // Test phone number error
     form.get('phoneNumber')?.setValue('invalid');
     form.get('phoneNumber')?.markAsTouched();
     expect(component.getErrorMessage('phoneNumber'))
-      .toBe('Phone number must be in E.164 format (e.g., +12125551234) with 8-15 digits including country code');
+      .toBe('Please enter a valid phone number starting with + followed by country code and number (e.g., +12125551234)');
 
     // Test no error message when phone is valid
     form.get('phoneNumber')?.setValue('+12125551234');
@@ -367,10 +429,10 @@ describe('RegistrationComponent', () => {
     // Test first name with both minlength and maxlength errors
     form.get('firstName')?.setValue('a');
     form.get('firstName')?.markAsTouched();
-    expect(component.getErrorMessage('firstName')).toBe('firstName must be at least 2 characters');
+    expect(component.getErrorMessage('firstName')).toBe('First name must be at least 2 characters long');
 
     form.get('firstName')?.setValue('a'.repeat(256));
     form.get('firstName')?.markAsTouched();
-    expect(component.getErrorMessage('firstName')).toBe('firstName cannot exceed 255 characters');
+    expect(component.getErrorMessage('firstName')).toBe('First name cannot be longer than 255 characters');
   });
 });

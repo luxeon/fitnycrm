@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -45,5 +46,10 @@ public class TenantService {
         Tenant tenant = findById(id);
         requestMapper.update(tenant, request);
         return tenantRepository.save(tenant);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Tenant> findByUserId(UUID userId) {
+        return tenantRepository.findByUserId(userId);
     }
 } 

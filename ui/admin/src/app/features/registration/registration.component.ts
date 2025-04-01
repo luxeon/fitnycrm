@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService, UserSignupRequest } from '../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-registration',
@@ -11,7 +12,8 @@ import { HttpErrorResponse } from '@angular/common/http';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink
+    RouterLink,
+    TranslateModule
   ],
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.scss']
@@ -27,7 +29,8 @@ export class RegistrationComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {
     this.registrationForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
@@ -69,20 +72,16 @@ export class RegistrationComponent {
       this.authService.signup(request).subscribe({
         next: () => {
           this.isLoading = false;
-          this.router.navigate(['/login'], { 
-            queryParams: { 
-              message: 'Registration successful! Please check your email to confirm your account.' 
-            }
-          });
+          this.router.navigate(['/email-confirmation']);
         },
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;
           if (error.status === 409) {
-            this.errorMessage = 'An account with this email already exists.';
+            this.errorMessage = this.translate.instant('registration.error.emailExists');
           } else if (error.error?.message) {
             this.errorMessage = error.error.message;
           } else {
-            this.errorMessage = 'An error occurred during registration. Please try again.';
+            this.errorMessage = this.translate.instant('registration.error.generic');
           }
         }
       });
@@ -93,20 +92,29 @@ export class RegistrationComponent {
     const control = this.registrationForm.get(controlName);
     if (!control?.errors || !control.touched) return '';
 
-    if (control.errors['required']) return `${controlName} is required`;
-    if (control.errors['email']) return 'Please enter a valid email';
-    if (control.errors['minlength']) return `${controlName} must be at least ${control.errors['minlength'].requiredLength} characters`;
-    if (control.errors['maxlength']) return `${controlName} cannot exceed ${control.errors['maxlength'].requiredLength} characters`;
-    if (control.errors['pattern']) {
-      if (controlName === 'password') {
-        return 'Password must contain at least one digit, one lowercase, one uppercase, one special character and no whitespace';
-      }
-      if (controlName === 'phoneNumber') {
-        return 'Phone number must be in E.164 format (e.g., +12125551234) with 8-15 digits including country code';
-      }
+    if (control.errors['required']) {
+      return this.translate.instant(`registration.form.${controlName}.required`);
     }
-    if (control.errors['passwordMismatch']) return 'Passwords do not match';
+    if (control.errors['email']) {
+      return this.translate.instant('registration.form.email.invalid');
+    }
+    if (control.errors['minlength']) {
+      return this.translate.instant(`registration.form.${controlName}.minLength`, {
+        length: control.errors['minlength'].requiredLength
+      });
+    }
+    if (control.errors['maxlength']) {
+      return this.translate.instant(`registration.form.${controlName}.maxLength`, {
+        length: control.errors['maxlength'].requiredLength
+      });
+    }
+    if (control.errors['pattern']) {
+      return this.translate.instant(`registration.form.${controlName}.pattern`);
+    }
+    if (control.errors['passwordMismatch']) {
+      return this.translate.instant('registration.form.confirmPassword.mismatch');
+    }
 
-    return 'Invalid input';
+    return this.translate.instant('common.error.invalid');
   }
 }

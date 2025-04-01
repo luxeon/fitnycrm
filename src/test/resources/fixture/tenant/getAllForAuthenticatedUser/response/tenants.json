@@ -1,0 +1,8 @@
+[
+  {
+    "id": "7a7632b1-e932-48fd-9296-001036b4ec19",
+    "name": "Test Tenant",
+    "createdAt": "${json-unit.any-string}",
+    "updatedAt": "${json-unit.any-string}"
+  }
+] 
