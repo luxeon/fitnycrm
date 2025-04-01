@@ -4,7 +4,7 @@ import { AuthService, UserDetailsResponse } from '../../core/services/auth.servi
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
-import { TenantService, TenantResponse } from '../../core/services/tenant.service';
+import { TenantService, TenantResponse, TenantListItemResponse } from '../../core/services/tenant.service';
 import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { By } from '@angular/platform-browser';
@@ -31,7 +31,7 @@ describe('DashboardComponent', () => {
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated', 'getCurrentUser']);
-    const tenantServiceSpy = jasmine.createSpyObj('TenantService', ['getById']);
+    const tenantServiceSpy = jasmine.createSpyObj('TenantService', ['getById', 'getAllForAuthenticatedUser']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
@@ -95,8 +95,16 @@ describe('DashboardComponent', () => {
       updatedAt: new Date().toISOString()
     };
 
+    const mockTenantList: TenantListItemResponse[] = [{
+      id: 'tenant-123',
+      name: 'Test Tenant',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of(mockTenantList));
     tenantService.getById.and.returnValue(of(mockTenantResponse));
 
     component.ngOnInit();
@@ -104,10 +112,11 @@ describe('DashboardComponent', () => {
     expect(router.navigate).not.toHaveBeenCalled();
     expect(component.userDetails).toEqual(mockUserDetails);
     expect(component.tenantDetails).toEqual(mockTenantResponse);
+    expect(tenantService.getAllForAuthenticatedUser).toHaveBeenCalled();
     expect(tenantService.getById).toHaveBeenCalledWith('tenant-123');
   });
 
-  it('should not load tenant details if user has no tenantIds', () => {
+  it('should not load tenant details if user has no tenants', () => {
     const mockUserDetails: UserDetailsResponse = {
       id: '123',
       firstName: 'John',
@@ -121,9 +130,11 @@ describe('DashboardComponent', () => {
 
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of([]));
 
     component.ngOnInit();
 
+    expect(tenantService.getAllForAuthenticatedUser).toHaveBeenCalled();
     expect(tenantService.getById).not.toHaveBeenCalled();
     expect(component.tenantDetails).toBeNull();
   });
@@ -147,8 +158,16 @@ describe('DashboardComponent', () => {
       updatedAt: new Date().toISOString()
     };
 
+    const mockTenantList: TenantListItemResponse[] = [{
+      id: 'tenant-123',
+      name: 'Test Fitness Club',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of(mockTenantList));
     tenantService.getById.and.returnValue(of(mockTenantResponse));
 
     component.ngOnInit();
@@ -178,8 +197,16 @@ describe('DashboardComponent', () => {
       updatedAt: new Date().toISOString()
     };
 
+    const mockTenantList: TenantListItemResponse[] = [{
+      id: 'tenant-123',
+      name: 'Test Fitness Club',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of(mockTenantList));
     tenantService.getById.and.returnValue(of(mockTenantResponse));
 
     component.ngOnInit();
@@ -209,8 +236,16 @@ describe('DashboardComponent', () => {
       updatedAt: new Date().toISOString()
     };
 
+    const mockTenantList: TenantListItemResponse[] = [{
+      id: 'tenant-123',
+      name: 'Test Fitness Club',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of(mockTenantList));
     tenantService.getById.and.returnValue(of(mockTenantResponse));
 
     component.ngOnInit();
@@ -219,28 +254,6 @@ describe('DashboardComponent', () => {
 
     const tenantName = fixture.debugElement.query(By.css('.fitness-club h2')).nativeElement;
     expect(tenantName.textContent).toBe('Test Fitness Club');
-  });
-
-  it('should not show tenant section when tenant details are not loaded', () => {
-    const mockUserDetails: UserDetailsResponse = {
-      id: '123',
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john@example.com',
-      roles: ['ROLE_ADMIN'],
-      tenantIds: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    authService.isAuthenticated.and.returnValue(true);
-    authService.getCurrentUser.and.returnValue(mockUserDetails);
-
-    component.ngOnInit();
-    fixture.detectChanges();
-
-    const tenantSection = fixture.debugElement.query(By.css('.fitness-club'));
-    expect(tenantSection).toBeNull();
   });
 
   it('should show locations component when tenant details are loaded', async () => {
@@ -262,8 +275,16 @@ describe('DashboardComponent', () => {
       updatedAt: new Date().toISOString()
     };
 
+    const mockTenantList: TenantListItemResponse[] = [{
+      id: 'tenant-123',
+      name: 'Test Fitness Club',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }];
+
     authService.isAuthenticated.and.returnValue(true);
     authService.getCurrentUser.and.returnValue(mockUserDetails);
+    tenantService.getAllForAuthenticatedUser.and.returnValue(of(mockTenantList));
     tenantService.getById.and.returnValue(of(mockTenantResponse));
 
     component.ngOnInit();
