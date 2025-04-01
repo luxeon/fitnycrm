@@ -1,5 +1,18 @@
 {
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "loading": "Loading...",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of",
+    "title": "FitNYC"
+  },
   "login": {
+    "pageTitle": "Login",
     "title": "Welcome Back",
     "subtitle": "Login to continue your fitness journey",
     "email": {
@@ -26,6 +39,7 @@
     }
   },
   "dashboard": {
+    "pageTitle": "Dashboard",
     "welcome": "Welcome, {{name}}!",
     "user": "User",
     "fitnessClub": {
@@ -46,12 +60,15 @@
   },
   "location": {
     "create": {
+      "pageTitle": "Add Location",
       "title": "Add New Location"
     },
     "edit": {
+      "pageTitle": "Edit Location",
       "title": "Edit Location"
     },
     "details": {
+      "pageTitle": "Club Details",
       "title": "Club Details",
       "tabs": {
         "workouts": "Workouts",
@@ -101,10 +118,12 @@
   },
   "training": {
     "create": {
+      "pageTitle": "Create Workout",
       "title": "Add New Workout",
       "subtitle": "Create a new workout type for your club"
     },
     "edit": {
+      "pageTitle": "Edit Workout",
       "title": "Edit Workout",
       "subtitle": "Update workout details"
     },
@@ -130,18 +149,8 @@
       }
     }
   },
-  "common": {
-    "back": "Back",
-    "cancel": "Cancel",
-    "save": "Save",
-    "saving": "Saving...",
-    "loading": "Loading...",
-    "previous": "Previous",
-    "next": "Next",
-    "page": "Page",
-    "of": "of"
-  },
   "emailConfirmation": {
+    "pageTitle": "Email Confirmation",
     "title": "Email Confirmation Required",
     "message": "Thank you for registering! We've sent a confirmation email to your address. Please check your inbox and click the confirmation link to activate your account.",
     "login": {
@@ -150,6 +159,7 @@
     }
   },
   "registration": {
+    "pageTitle": "Register",
     "title": "Create Account",
     "subtitle": "Join us to start your fitness journey",
     "form": {
@@ -207,6 +217,7 @@
   },
   "trainer": {
     "create": {
+      "pageTitle": "Add Trainer",
       "title": "Add New Trainer",
       "subtitle": "Fill in the trainer's details below"
     },
@@ -234,6 +245,11 @@
         "label": "Specialization",
         "placeholder": "Enter specialization (e.g., Yoga, CrossFit)"
       }
+    }
+  },
+  "tenant": {
+    "create": {
+      "pageTitle": "Create Fitness Club"
     }
   }
 }
