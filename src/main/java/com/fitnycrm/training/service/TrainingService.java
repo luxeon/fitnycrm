@@ -1,10 +1,13 @@
 package com.fitnycrm.training.service;
 
+import com.fitnycrm.payment.repository.PaymentTariffRepository;
+import com.fitnycrm.payment.repository.entity.PaymentTariff;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
 import com.fitnycrm.training.repository.TrainingRepository;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.training.rest.model.CreateTrainingRequest;
+import com.fitnycrm.training.rest.model.UpdateTrainingPaymentTariffsRequest;
 import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
 import com.fitnycrm.training.service.exception.TrainingNotFoundException;
 import com.fitnycrm.training.service.mapper.TrainingRequestMapper;
@@ -14,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -23,6 +28,7 @@ public class TrainingService {
     private final TrainingRepository trainingRepository;
     private final TrainingRequestMapper requestMapper;
     private final TenantService tenantService;
+    private final PaymentTariffRepository paymentTariffRepository;
 
     @Transactional
     public Training create(UUID tenantId, CreateTrainingRequest request) {
@@ -54,5 +60,25 @@ public class TrainingService {
     @Transactional(readOnly = true)
     public Page<Training> findByTenantId(UUID tenantId, Pageable pageable) {
         return trainingRepository.findByTenantId(tenantId, pageable);
+    }
+
+    @Transactional
+    public Set<PaymentTariff> updateTariffs(UUID tenantId, UUID trainingId, UpdateTrainingPaymentTariffsRequest request) {
+        Training training = findById(tenantId, trainingId);
+
+        Set<PaymentTariff> tariffs = new HashSet<>(paymentTariffRepository.findAllById(request.tariffIds()));
+
+        // Replace tariffs
+        training.getPaymentTariffs().clear();
+        training.getPaymentTariffs().addAll(tariffs);
+
+        trainingRepository.save(training);
+        return tariffs;
+    }
+
+    @Transactional(readOnly = true)
+    public Set<PaymentTariff> getTariffs(UUID tenantId, UUID trainingId) {
+        Training training = findById(tenantId, trainingId);
+        return training.getPaymentTariffs();
     }
 } 

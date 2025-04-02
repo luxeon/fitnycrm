@@ -13,13 +13,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "payment_tariffs")
-@ToString(exclude = {"tenant"})
-@EqualsAndHashCode(exclude = {"tenant"})
+@ToString(exclude = {"tenant", "trainings"})
+@EqualsAndHashCode(exclude = {"tenant", "trainings"})
 public class PaymentTariff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,10 @@ public class PaymentTariff {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
+
+    @ManyToMany(mappedBy = "paymentTariffs")
+    @JoinColumn(name = "training_id", nullable = false)
+    private Set<Training> trainings;
 
     @Min(1)
     @Column(nullable = false)

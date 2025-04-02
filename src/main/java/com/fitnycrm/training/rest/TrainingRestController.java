@@ -1,10 +1,9 @@
 package com.fitnycrm.training.rest;
 
+import com.fitnycrm.payment.rest.model.PaymentTariffDetailsResponse;
+import com.fitnycrm.payment.rest.model.PaymentTariffListItemResponse;
 import com.fitnycrm.training.facade.TrainingFacade;
-import com.fitnycrm.training.rest.model.CreateTrainingRequest;
-import com.fitnycrm.training.rest.model.TrainingDetailsResponse;
-import com.fitnycrm.training.rest.model.TrainingPageItemResponse;
-import com.fitnycrm.training.rest.model.UpdateTrainingRequest;
+import com.fitnycrm.training.rest.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -100,5 +100,35 @@ public class TrainingRestController {
     public void delete(@PathVariable UUID tenantId,
                        @PathVariable UUID id) {
         trainingFacade.delete(tenantId, id);
+    }
+
+    @Operation(summary = "Update training tariffs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Training tariffs updated successfully",
+                    content = @Content(schema = @Schema(implementation = PaymentTariffDetailsResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input"),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Training not found")
+    })
+    @PutMapping("/{id}/tariffs")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    public Set<PaymentTariffDetailsResponse> updatePaymentTariffs(@PathVariable UUID tenantId,
+                                                                  @PathVariable UUID id,
+                                                                  @RequestBody @Valid UpdateTrainingPaymentTariffsRequest request) {
+        return trainingFacade.updateTariffs(tenantId, id, request);
+    }
+
+    @Operation(summary = "Get training tariffs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Training tariffs retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = PaymentTariffDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Training not found")
+    })
+    @GetMapping("/{id}/tariffs")
+    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    public Set<PaymentTariffListItemResponse> getPaymentTariffs(@PathVariable UUID tenantId,
+                                                                @PathVariable UUID id) {
+        return trainingFacade.getTariffs(tenantId, id);
     }
 } 
