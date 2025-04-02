@@ -114,7 +114,12 @@
       "schedule": {
         "title": "Class Schedule",
         "add": "Add Schedule",
-        "empty": "No classes scheduled yet. Add workouts and trainers first, then create your schedule."
+        "empty": "No classes scheduled yet. Add workouts and trainers first, then create your schedule.",
+        "delete": {
+          "title": "Delete Schedule",
+          "message": "Are you sure you want to delete this class schedule? This action cannot be undone.",
+          "confirm": "Delete"
+        }
       }
     },
     "form": {
