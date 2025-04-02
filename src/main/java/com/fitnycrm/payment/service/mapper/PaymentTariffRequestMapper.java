@@ -11,7 +11,7 @@ import org.mapstruct.MappingTarget;
 public interface PaymentTariffRequestMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "training", ignore = true)
+    @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     PaymentTariff toEntity(CreatePaymentTariffRequest request);

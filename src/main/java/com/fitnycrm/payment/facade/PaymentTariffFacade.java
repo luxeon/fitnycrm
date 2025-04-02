@@ -19,25 +19,25 @@ public class PaymentTariffFacade {
     private final PaymentTariffService paymentTariffService;
     private final PaymentTariffResponseMapper responseMapper;
 
-    public List<PaymentTariffListItemResponse> findAll(UUID tenantId, UUID trainingId) {
-        return paymentTariffService.findAll(tenantId, trainingId).stream()
+    public List<PaymentTariffListItemResponse> findAll(UUID tenantId) {
+        return paymentTariffService.findAll(tenantId).stream()
                 .map(responseMapper::toListItemResponse)
                 .toList();
     }
 
-    public PaymentTariffDetailsResponse create(UUID tenantId, UUID trainingId, CreatePaymentTariffRequest request) {
-        return responseMapper.toResponse(paymentTariffService.create(tenantId, trainingId, request));
+    public PaymentTariffDetailsResponse create(UUID tenantId, CreatePaymentTariffRequest request) {
+        return responseMapper.toResponse(paymentTariffService.create(tenantId, request));
     }
 
-    public PaymentTariffDetailsResponse findById(UUID tenantId, UUID trainingId, UUID tariffId) {
-        return responseMapper.toResponse(paymentTariffService.findById(tenantId, trainingId, tariffId));
+    public PaymentTariffDetailsResponse findById(UUID tenantId, UUID tariffId) {
+        return responseMapper.toResponse(paymentTariffService.findById(tenantId, tariffId));
     }
 
-    public PaymentTariffDetailsResponse update(UUID tenantId, UUID trainingId, UUID tariffId, UpdatePaymentTariffRequest request) {
-        return responseMapper.toResponse(paymentTariffService.update(tenantId, trainingId, tariffId, request));
+    public PaymentTariffDetailsResponse update(UUID tenantId, UUID tariffId, UpdatePaymentTariffRequest request) {
+        return responseMapper.toResponse(paymentTariffService.update(tenantId, tariffId, request));
     }
 
-    public void delete(UUID tenantId, UUID trainingId, UUID tariffId) {
-        paymentTariffService.delete(tenantId, trainingId, tariffId);
+    public void delete(UUID tenantId, UUID tariffId) {
+        paymentTariffService.delete(tenantId, tariffId);
     }
 } 

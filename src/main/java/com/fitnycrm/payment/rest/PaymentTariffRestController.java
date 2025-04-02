@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/tenants/{tenantId}/trainings/{trainingId}/tariffs")
+@RequestMapping("/api/tenants/{tenantId}/tariffs")
 @RequiredArgsConstructor
 @Tag(name = "Payment Tariffs", description = "Payment tariffs management API")
 public class PaymentTariffRestController {
@@ -38,9 +38,8 @@ public class PaymentTariffRestController {
     })
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public List<PaymentTariffListItemResponse> findAll(
-            @PathVariable UUID tenantId,
-            @PathVariable UUID trainingId) {
-        return paymentTariffFacade.findAll(tenantId, trainingId);
+            @PathVariable UUID tenantId) {
+        return paymentTariffFacade.findAll(tenantId);
     }
 
     @PostMapping
@@ -55,9 +54,8 @@ public class PaymentTariffRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public PaymentTariffDetailsResponse create(
             @PathVariable UUID tenantId,
-            @PathVariable UUID trainingId,
             @RequestBody @Valid CreatePaymentTariffRequest request) {
-        return paymentTariffFacade.create(tenantId, trainingId, request);
+        return paymentTariffFacade.create(tenantId, request);
     }
 
     @GetMapping("/{tariffId}")
@@ -71,9 +69,8 @@ public class PaymentTariffRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public PaymentTariffDetailsResponse findById(
             @PathVariable UUID tenantId,
-            @PathVariable UUID trainingId,
             @PathVariable UUID tariffId) {
-        return paymentTariffFacade.findById(tenantId, trainingId, tariffId);
+        return paymentTariffFacade.findById(tenantId, tariffId);
     }
 
     @PutMapping("/{tariffId}")
@@ -89,10 +86,9 @@ public class PaymentTariffRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public PaymentTariffDetailsResponse update(
             @PathVariable UUID tenantId,
-            @PathVariable UUID trainingId,
             @PathVariable UUID tariffId,
             @RequestBody @Valid UpdatePaymentTariffRequest request) {
-        return paymentTariffFacade.update(tenantId, trainingId, tariffId, request);
+        return paymentTariffFacade.update(tenantId, tariffId, request);
     }
 
     @DeleteMapping("/{tariffId}")
@@ -106,8 +102,7 @@ public class PaymentTariffRestController {
     @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public void delete(
             @PathVariable UUID tenantId,
-            @PathVariable UUID trainingId,
             @PathVariable UUID tariffId) {
-        paymentTariffFacade.delete(tenantId, trainingId, tariffId);
+        paymentTariffFacade.delete(tenantId, tariffId);
     }
 } 

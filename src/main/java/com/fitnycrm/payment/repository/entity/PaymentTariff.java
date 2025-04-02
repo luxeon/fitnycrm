@@ -1,5 +1,6 @@
 package com.fitnycrm.payment.repository.entity;
 
+import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.training.repository.entity.Training;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -16,8 +17,8 @@ import java.util.UUID;
 @Entity
 @Data
 @Table(name = "payment_tariffs")
-@ToString(exclude = {"training"})
-@EqualsAndHashCode(exclude = {"training"})
+@ToString(exclude = {"tenant"})
+@EqualsAndHashCode(exclude = {"tenant"})
 public class PaymentTariff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,8 +30,8 @@ public class PaymentTariff {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "training_id", nullable = false)
-    private Training training;
+    @JoinColumn(name = "tenant_id", nullable = false)
+    private Tenant tenant;
 
     @Min(1)
     private Integer trainingsCount;
