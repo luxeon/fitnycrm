@@ -1,5 +1,6 @@
 {
   "login": {
+    "pageTitle": "Iniciar Sesión",
     "title": "Bienvenido de nuevo",
     "subtitle": "Inicia sesión para continuar tu viaje fitness",
     "email": {
@@ -26,6 +27,7 @@
     }
   },
   "dashboard": {
+    "pageTitle": "Panel de Control",
     "welcome": "¡Bienvenido, {{name}}!",
     "user": "Usuario",
     "fitnessClub": {
@@ -46,12 +48,15 @@
   },
   "location": {
     "create": {
+      "pageTitle": "Añadir Ubicación",
       "title": "Añadir Nueva Ubicación"
     },
     "edit": {
+      "pageTitle": "Editar Ubicación",
       "title": "Editar Ubicación"
     },
     "details": {
+      "pageTitle": "Detalles de la Ubicación",
       "title": "Detalles del Club",
       "tabs": {
         "workouts": "Entrenamientos",
@@ -96,10 +101,12 @@
   },
   "training": {
     "create": {
+      "pageTitle": "Crear Entrenamiento",
       "title": "Añadir Nuevo Entrenamiento",
       "subtitle": "Crea un nuevo tipo de entrenamiento para tu club"
     },
     "edit": {
+      "pageTitle": "Editar Entrenamiento",
       "title": "Editar Entrenamiento",
       "subtitle": "Actualizar detalles del entrenamiento"
     },
@@ -125,18 +132,17 @@
       }
     }
   },
-  "common": {
-    "back": "Volver",
-    "cancel": "Cancelar",
-    "save": "Guardar",
-    "saving": "Guardando...",
-    "loading": "Cargando...",
-    "previous": "Anterior",
-    "next": "Siguiente",
-    "page": "Página",
-    "of": "de"
+  "emailConfirmation": {
+    "pageTitle": "Confirmación de Correo",
+    "title": "Confirmación de Correo Requerida",
+    "message": "¡Gracias por registrarte! Hemos enviado un correo de confirmación a tu dirección. Por favor, revisa tu bandeja de entrada y haz clic en el enlace de confirmación para activar tu cuenta.",
+    "login": {
+      "text": "¿Ya confirmaste tu correo?",
+      "link": "Iniciar sesión"
+    }
   },
   "registration": {
+    "pageTitle": "Registro",
     "title": "Crear cuenta",
     "subtitle": "Únete para comenzar tu viaje fitness",
     "form": {
@@ -191,5 +197,54 @@
       "text": "¿Ya tienes una cuenta?",
       "link": "Iniciar sesión"
     }
+  },
+  "trainer": {
+    "create": {
+      "pageTitle": "Añadir Entrenador",
+      "title": "Añadir Nuevo Entrenador",
+      "subtitle": "Rellena los detalles del entrenador a continuación"
+    },
+    "form": {
+      "firstName": {
+        "label": "Nombre",
+        "placeholder": "Introduce el nombre",
+        "required": "El nombre es obligatorio"
+      },
+      "lastName": {
+        "label": "Apellido",
+        "placeholder": "Introduce el apellido",
+        "required": "El apellido es obligatorio"
+      },
+      "email": {
+        "label": "Correo electrónico",
+        "placeholder": "Introduce el correo electrónico",
+        "required": "El correo electrónico es obligatorio"
+      },
+      "phoneNumber": {
+        "label": "Número de teléfono",
+        "placeholder": "Introduce el número de teléfono"
+      },
+      "specialization": {
+        "label": "Especialización",
+        "placeholder": "Introduce la especialización (ej. Yoga, CrossFit)"
+      }
+    }
+  },
+  "tenant": {
+    "create": {
+      "pageTitle": "Crear Club de Fitness"
+    }
+  },
+  "common": {
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "loading": "Cargando...",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "page": "Página",
+    "of": "de",
+    "title": "FitNYC"
   }
 } 

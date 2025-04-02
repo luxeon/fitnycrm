@@ -17,8 +17,8 @@ import { firstValueFrom } from 'rxjs';
   template: `
     <div class="create-tenant-container">
       <div class="create-tenant-card">
-        <h2>Create Your Fitness Club</h2>
-        <p class="subtitle">Set up your fitness club to get started</p>
+        <h2>{{ 'tenant.create.title' | translate }}</h2>
+        <p class="subtitle">{{ 'tenant.create.subtitle' | translate }}</p>
 
         <div *ngIf="errorMessage" class="error-banner">
           {{ errorMessage }}
@@ -26,30 +26,30 @@ import { firstValueFrom } from 'rxjs';
 
         <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="tenant-form">
           <div class="form-group">
-            <label for="name">Club Name</label>
+            <label for="name">{{ 'tenant.form.name.label' | translate }}</label>
             <input
               id="name"
               type="text"
               formControlName="name"
               [class.error]="tenantForm.get('name')?.invalid && tenantForm.get('name')?.touched"
-              placeholder="Enter your club name">
+              [placeholder]="'tenant.form.name.placeholder' | translate">
             <div class="error-message" *ngIf="tenantForm.get('name')?.invalid && tenantForm.get('name')?.touched">
-              Club name is required
+              {{ 'tenant.form.name.required' | translate }}
             </div>
           </div>
 
           <div class="form-group">
-            <label for="description">Description (Optional)</label>
+            <label for="description">{{ 'tenant.form.description.label' | translate }}</label>
             <textarea
               id="description"
               formControlName="description"
-              placeholder="Enter club description"
+              [placeholder]="'tenant.form.description.placeholder' | translate"
               rows="3">
             </textarea>
           </div>
 
           <button type="submit" [disabled]="tenantForm.invalid || isLoading">
-            {{ isLoading ? 'Creating...' : 'Create Club' }}
+            {{ isLoading ? ('tenant.form.button.creating' | translate) : ('tenant.form.button.create' | translate) }}
           </button>
         </form>
       </div>
