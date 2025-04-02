@@ -107,14 +107,13 @@ CREATE TABLE IF NOT EXISTS payment_tariffs
     id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id       uuid          NOT NULL,
     name            varchar(255)  NOT NULL,
-    trainings_count integer,
-    valid_days      integer,
+    trainings_count integer       NOT NULL,
+    valid_days      integer       NOT NULL,
     price           numeric(5, 2) NOT NULL,
     currency        VARCHAR(3)    NOT NULL,
     created_at      TIMESTAMP WITHOUT TIME ZONE,
     updated_at      TIMESTAMP WITHOUT TIME ZONE,
-    FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-    CONSTRAINT trainings_count_or_valid_days CHECK (trainings_count is not null or valid_days is not null)
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE TABLE IF NOT EXISTS training_payment_tariffs

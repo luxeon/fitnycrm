@@ -13,10 +13,12 @@ public record CreatePaymentTariffRequest(
 
         @Schema(description = "Number of trainings included in this tariff")
         @Min(1)
+        @NotNull
         Integer trainingsCount,
 
         @Schema(description = "Number of days the tariff is valid for")
         @Min(1)
+        @NotNull
         Integer validDays,
 
         @Schema(description = "Price of the tariff")

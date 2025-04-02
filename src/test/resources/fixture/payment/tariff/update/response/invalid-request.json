@@ -1,4 +1,5 @@
 {
+  "message": "Validation failed",
   "errors": [
     {
       "field": "currency",
@@ -11,7 +12,14 @@
     {
       "field": "price",
       "message": "must be greater than 0.0"
+    },
+    {
+      "field": "trainingsCount",
+      "message": "must not be null"
+    },
+    {
+      "field": "validDays",
+      "message": "must not be null"
     }
-  ],
-  "message": "Validation failed"
+  ]
 }
