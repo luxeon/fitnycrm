@@ -250,6 +250,15 @@ export class CreateWorkoutComponent {
 
   errorMessage: string | null = null;
   isLoading = false;
+  locationId: string | null = null;
+
+  ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { returnUrl?: string };
+    if (state?.returnUrl) {
+      this.locationId = this.route.snapshot.queryParams['locationId'];
+    }
+  }
 
   async onSubmit(): Promise<void> {
     if (this.workoutForm.valid) {
@@ -265,7 +274,11 @@ export class CreateWorkoutComponent {
 
       try {
         await firstValueFrom(this.trainingService.createTraining(tenantId, this.workoutForm.value));
-        this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+        if (this.locationId) {
+          this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
+        } else {
+          this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+        }
       } catch (error) {
         this.errorMessage = 'Failed to create workout';
         console.error('Failed to create workout:', error);
@@ -276,6 +289,11 @@ export class CreateWorkoutComponent {
   }
 
   onCancel(): void {
-    this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+    const { tenantId } = this.route.snapshot.params;
+    if (this.locationId) {
+      this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
+    } else {
+      this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+    }
   }
 }

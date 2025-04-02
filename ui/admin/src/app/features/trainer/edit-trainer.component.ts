@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import { TrainerService } from '../../core/services/trainer.service';
 
 @Component({
-  selector: 'app-create-trainer',
+  selector: 'app-edit-trainer',
   standalone: true,
   imports: [
     CommonModule,
@@ -15,16 +15,20 @@ import { TrainerService } from '../../core/services/trainer.service';
     TranslateModule
   ],
   template: `
-    <div class="create-trainer-container">
-      <div class="create-trainer-card">
-        <h2>{{ 'trainer.create.title' | translate }}</h2>
-        <p class="subtitle">{{ 'trainer.create.subtitle' | translate }}</p>
+    <div class="edit-trainer-container">
+      <div class="edit-trainer-card">
+        <h2>{{ 'trainer.edit.title' | translate }}</h2>
+        <p class="subtitle">{{ 'trainer.edit.subtitle' | translate }}</p>
 
         <div *ngIf="errorMessage" class="error-banner">
           {{ errorMessage }}
         </div>
 
-        <form [formGroup]="trainerForm" (ngSubmit)="onSubmit()" class="trainer-form">
+        <div class="loading" *ngIf="isLoading">
+          {{ 'common.loading' | translate }}
+        </div>
+
+        <form *ngIf="!isLoading" [formGroup]="trainerForm" (ngSubmit)="onSubmit()" class="trainer-form">
           <div class="form-row">
             <div class="form-group">
               <label for="firstName">{{ 'trainer.form.firstName.label' | translate }}</label>
@@ -35,7 +39,12 @@ import { TrainerService } from '../../core/services/trainer.service';
                 [class.error]="trainerForm.get('firstName')?.invalid && trainerForm.get('firstName')?.touched"
                 [placeholder]="'trainer.form.firstName.placeholder' | translate">
               <div class="error-message" *ngIf="trainerForm.get('firstName')?.invalid && trainerForm.get('firstName')?.touched">
-                {{ 'trainer.form.firstName.required' | translate }}
+                <span *ngIf="trainerForm.get('firstName')?.errors?.['required']">
+                  {{ 'trainer.form.firstName.required' | translate }}
+                </span>
+                <span *ngIf="trainerForm.get('firstName')?.errors?.['minlength'] || trainerForm.get('firstName')?.errors?.['maxlength']">
+                  {{ 'trainer.form.firstName.length' | translate }}
+                </span>
               </div>
             </div>
 
@@ -48,7 +57,12 @@ import { TrainerService } from '../../core/services/trainer.service';
                 [class.error]="trainerForm.get('lastName')?.invalid && trainerForm.get('lastName')?.touched"
                 [placeholder]="'trainer.form.lastName.placeholder' | translate">
               <div class="error-message" *ngIf="trainerForm.get('lastName')?.invalid && trainerForm.get('lastName')?.touched">
-                {{ 'trainer.form.lastName.required' | translate }}
+                <span *ngIf="trainerForm.get('lastName')?.errors?.['required']">
+                  {{ 'trainer.form.lastName.required' | translate }}
+                </span>
+                <span *ngIf="trainerForm.get('lastName')?.errors?.['minlength'] || trainerForm.get('lastName')?.errors?.['maxlength']">
+                  {{ 'trainer.form.lastName.length' | translate }}
+                </span>
               </div>
             </div>
           </div>
@@ -62,7 +76,12 @@ import { TrainerService } from '../../core/services/trainer.service';
               [class.error]="trainerForm.get('email')?.invalid && trainerForm.get('email')?.touched"
               [placeholder]="'trainer.form.email.placeholder' | translate">
             <div class="error-message" *ngIf="trainerForm.get('email')?.invalid && trainerForm.get('email')?.touched">
-              {{ 'trainer.form.email.required' | translate }}
+              <span *ngIf="trainerForm.get('email')?.errors?.['required']">
+                {{ 'trainer.form.email.required' | translate }}
+              </span>
+              <span *ngIf="trainerForm.get('email')?.errors?.['email']">
+                {{ 'trainer.form.email.invalid' | translate }}
+              </span>
             </div>
           </div>
 
@@ -72,24 +91,24 @@ import { TrainerService } from '../../core/services/trainer.service';
               id="phoneNumber"
               type="tel"
               formControlName="phoneNumber"
+              [class.error]="trainerForm.get('phoneNumber')?.invalid && trainerForm.get('phoneNumber')?.touched"
               [placeholder]="'trainer.form.phoneNumber.placeholder' | translate">
-          </div>
-
-          <div class="form-group">
-            <label for="specialization">{{ 'trainer.form.specialization.label' | translate }}</label>
-            <input
-              id="specialization"
-              type="text"
-              formControlName="specialization"
-              [placeholder]="'trainer.form.specialization.placeholder' | translate">
+            <div class="error-message" *ngIf="trainerForm.get('phoneNumber')?.invalid && trainerForm.get('phoneNumber')?.touched">
+              <span *ngIf="trainerForm.get('phoneNumber')?.errors?.['required']">
+                {{ 'trainer.form.phoneNumber.required' | translate }}
+              </span>
+              <span *ngIf="trainerForm.get('phoneNumber')?.errors?.['minlength'] || trainerForm.get('phoneNumber')?.errors?.['maxlength']">
+                {{ 'trainer.form.phoneNumber.length' | translate }}
+              </span>
+            </div>
           </div>
 
           <div class="form-actions">
             <button type="button" class="cancel-button" (click)="onCancel()">
               {{ 'common.cancel' | translate }}
             </button>
-            <button type="submit" [disabled]="trainerForm.invalid || isLoading">
-              {{ isLoading ? ('common.saving' | translate) : ('common.save' | translate) }}
+            <button type="submit" [disabled]="trainerForm.invalid || isSaving">
+              {{ isSaving ? ('common.saving' | translate) : ('common.save' | translate) }}
             </button>
           </div>
         </form>
@@ -97,7 +116,7 @@ import { TrainerService } from '../../core/services/trainer.service';
     </div>
   `,
   styles: [`
-    .create-trainer-container {
+    .edit-trainer-container {
       min-height: 100vh;
       padding: 40px;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -106,7 +125,7 @@ import { TrainerService } from '../../core/services/trainer.service';
       justify-content: center;
     }
 
-    .create-trainer-card {
+    .edit-trainer-card {
       background: white;
       padding: 40px;
       border-radius: 12px;
@@ -187,6 +206,12 @@ import { TrainerService } from '../../core/services/trainer.service';
       text-align: center;
     }
 
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      color: #6c757d;
+    }
+
     .form-actions {
       display: flex;
       gap: 12px;
@@ -227,62 +252,85 @@ import { TrainerService } from '../../core/services/trainer.service';
     }
   `]
 })
-export class CreateTrainerComponent {
+export class EditTrainerComponent implements OnInit {
   private readonly trainerService = inject(TrainerService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
 
   trainerForm: FormGroup = this.fb.group({
-    firstName: ['', [Validators.required]],
-    lastName: ['', [Validators.required]],
+    firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
+    lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
     email: ['', [Validators.required, Validators.email]],
-    phoneNumber: [''],
+    phoneNumber: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(15)]],
     specialization: ['']
   });
 
   errorMessage: string | null = null;
-  isLoading = false;
+  isLoading = true;
+  isSaving = false;
+  locationId: string | null = null;
+
+  ngOnInit(): void {
+    const { tenantId, trainerId } = this.route.snapshot.params;
+    this.locationId = this.route.snapshot.queryParams['locationId'];
+
+    if (!tenantId || !trainerId) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
+    this.loadTrainer(tenantId, trainerId);
+  }
+
+  private async loadTrainer(tenantId: string, trainerId: string): Promise<void> {
+    try {
+      const trainer = await firstValueFrom(this.trainerService.getTrainer(tenantId, trainerId));
+      this.trainerForm.patchValue(trainer);
+    } catch (error) {
+      this.errorMessage = 'Failed to load trainer details';
+      console.error('Failed to load trainer:', error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
 
   async onSubmit(): Promise<void> {
     if (this.trainerForm.valid) {
-      this.isLoading = true;
+      this.isSaving = true;
       this.errorMessage = null;
 
-      const { tenantId } = this.route.snapshot.params;
-      const { locationId } = this.route.snapshot.queryParams;
+      const { tenantId, trainerId } = this.route.snapshot.params;
 
-      if (!tenantId) {
+      if (!tenantId || !trainerId) {
         this.router.navigate(['/dashboard']);
         return;
       }
 
       try {
-        await firstValueFrom(this.trainerService.createTrainer(tenantId, this.trainerForm.value));
-        if (locationId) {
-          this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'trainers' } });
+        await firstValueFrom(this.trainerService.updateTrainer(tenantId, trainerId, this.trainerForm.value));
+        if (this.locationId) {
+          this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'trainers' } });
         } else {
           this.router.navigate(['/dashboard'], { queryParams: { tab: 'trainers' } });
         }
       } catch (error: any) {
         this.errorMessage = error.status === 401
           ? 'Authentication failed. Please try logging in again.'
-          : 'Failed to create trainer. Please try again.';
-        console.error('Failed to create trainer:', error);
+          : 'Failed to update trainer. Please try again.';
+        console.error('Failed to update trainer:', error);
       } finally {
-        this.isLoading = false;
+        this.isSaving = false;
       }
     }
   }
 
   onCancel(): void {
     const { tenantId } = this.route.snapshot.params;
-    const { locationId } = this.route.snapshot.queryParams;
-    
-    if (locationId) {
-      this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'trainers' } });
+    if (this.locationId) {
+      this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'trainers' } });
     } else {
       this.router.navigate(['/dashboard'], { queryParams: { tab: 'trainers' } });
     }
   }
-}
+} 

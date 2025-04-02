@@ -217,12 +217,8 @@ export class TrainerListComponent {
   }
 
   onEditClick(trainer: TrainerPageItemResponse): void {
-    this.router.navigate(['/edit-trainer'], {
-      queryParams: {
-        tenantId: this.tenantId,
-        locationId: this.locationId,
-        trainerId: trainer.id
-      }
+    this.router.navigate([`/tenant/${this.tenantId}/trainer/${trainer.id}/edit`], {
+      queryParams: this.locationId ? { locationId: this.locationId } : undefined
     });
   }
 

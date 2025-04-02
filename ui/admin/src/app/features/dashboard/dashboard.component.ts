@@ -134,7 +134,7 @@ export class DashboardComponent implements OnInit {
     }
 
     this.userDetails = this.authService.getCurrentUser();
-    
+
     this.tenantService.getAllForAuthenticatedUser()
       .subscribe(tenants => {
         if (tenants.length > 0) {
@@ -221,4 +221,4 @@ export class DashboardComponent implements OnInit {
       this.router.navigate([`/tenant/${this.tenantDetails.id}/trainer/create`]);
     }
   }
-} 
+}

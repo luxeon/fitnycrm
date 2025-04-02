@@ -12,11 +12,14 @@ export interface CreateTrainerRequest {
 }
 
 export interface UpdateTrainerRequest {
+  /** First name of the trainer (2-50 characters) */
   firstName: string;
+  /** Last name of the trainer (2-50 characters) */
   lastName: string;
+  /** Email address of the trainer */
   email: string;
-  phoneNumber?: string;
-  specialization?: string;
+  /** Phone number of the trainer (10-15 characters) */
+  phoneNumber: string;
 }
 
 export interface TrainerDetailsResponse {

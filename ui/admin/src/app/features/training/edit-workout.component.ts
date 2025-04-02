@@ -261,9 +261,11 @@ export class EditWorkoutComponent implements OnInit {
   errorMessage: string | null = null;
   isLoading = true;
   isSaving = false;
+  locationId: string | null = null;
 
   ngOnInit(): void {
     const { tenantId, workoutId } = this.route.snapshot.params;
+    this.locationId = this.route.snapshot.queryParams['locationId'];
 
     if (!tenantId || !workoutId) {
       this.router.navigate(['/dashboard']);
@@ -290,7 +292,7 @@ export class EditWorkoutComponent implements OnInit {
       this.isSaving = true;
       this.errorMessage = null;
 
-      const { tenantId, workoutId, locationId } = this.route.snapshot.params;
+      const { tenantId, workoutId } = this.route.snapshot.params;
 
       if (!tenantId || !workoutId) {
         this.router.navigate(['/dashboard']);
@@ -299,7 +301,11 @@ export class EditWorkoutComponent implements OnInit {
 
       try {
         await firstValueFrom(this.trainingService.updateTraining(tenantId, workoutId, this.workoutForm.value));
-        this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
+        if (this.locationId) {
+          this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
+        } else {
+          this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+        }
       } catch (error: any) {
         this.errorMessage = error.status === 401
           ? 'Authentication failed. Please try logging in again.'
@@ -312,7 +318,11 @@ export class EditWorkoutComponent implements OnInit {
   }
 
   onCancel(): void {
-    const { tenantId, locationId } = this.route.snapshot.params;
-    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
+    const { tenantId } = this.route.snapshot.params;
+    if (this.locationId) {
+      this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
+    } else {
+      this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
+    }
   }
 }

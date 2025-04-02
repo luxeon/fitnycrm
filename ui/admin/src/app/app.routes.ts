@@ -11,6 +11,7 @@ import { ClubDetailsComponent } from './features/location/club-details.component
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
+import { EditTrainerComponent } from './features/trainer/edit-trainer.component';
 
 export const routes: Routes = [
   { 
@@ -69,6 +70,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), 
     canActivate: [adminGuard],
     data: { titleKey: 'trainer.create.pageTitle' }
+  },
+  { 
+    path: 'tenant/:tenantId/trainer/:trainerId/edit', 
+    component: EditTrainerComponent,
+    canActivate: [adminGuard],
+    data: { titleKey: 'trainer.edit.pageTitle' }
   },
   { 
     path: 'dashboard', 

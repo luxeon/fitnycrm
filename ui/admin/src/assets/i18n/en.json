@@ -236,25 +236,35 @@
       "title": "Add New Trainer",
       "subtitle": "Fill in the trainer's details below"
     },
+    "edit": {
+      "pageTitle": "Edit Trainer",
+      "title": "Edit Trainer",
+      "subtitle": "Update trainer's details"
+    },
     "form": {
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",
-        "required": "First name is required"
+        "required": "First name is required",
+        "length": "First name must be between 2 and 50 characters"
       },
       "lastName": {
         "label": "Last Name",
         "placeholder": "Enter last name",
-        "required": "Last name is required"
+        "required": "Last name is required",
+        "length": "Last name must be between 2 and 50 characters"
       },
       "email": {
         "label": "Email",
         "placeholder": "Enter email address",
-        "required": "Email is required"
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
       },
       "phoneNumber": {
         "label": "Phone Number",
-        "placeholder": "Enter phone number"
+        "placeholder": "Enter phone number",
+        "required": "Phone number is required",
+        "length": "Phone number must be between 10 and 15 characters"
       },
       "specialization": {
         "label": "Specialization",
