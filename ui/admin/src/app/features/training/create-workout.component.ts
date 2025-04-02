@@ -125,6 +125,7 @@ import { TrainingService } from '../../core/services/training.service';
     .workout-form {
       .form-group {
         margin-bottom: 20px;
+        width: 100%;
 
         label {
           display: block;
@@ -139,6 +140,8 @@ import { TrainingService } from '../../core/services/training.service';
           border: 1px solid #ddd;
           border-radius: 6px;
           font-size: 16px;
+          box-sizing: border-box;
+          background-color: #fff;
 
           &.error {
             border-color: #e74c3c;
@@ -147,11 +150,26 @@ import { TrainingService } from '../../core/services/training.service';
           &:focus {
             outline: none;
             border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.1);
+          }
+
+          &::placeholder {
+            color: #95a5a6;
           }
         }
 
         textarea {
           resize: vertical;
+          min-height: 100px;
+        }
+
+        input[type="number"] {
+          -moz-appearance: textfield;
+          &::-webkit-outer-spin-button,
+          &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
         }
       }
 
@@ -260,4 +278,4 @@ export class CreateWorkoutComponent {
   onCancel(): void {
     this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
   }
-} 
+}
