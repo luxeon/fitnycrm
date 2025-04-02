@@ -1,8 +1,10 @@
 package com.fitnycrm.payment.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Schema(description = "Payment tariff list item")
@@ -23,5 +25,14 @@ public record PaymentTariffListItemResponse(
         BigDecimal price,
 
         @Schema(description = "Currency code (ISO 4217)")
-        String currency
-) {} 
+        String currency,
+
+        @Schema(description = "Timestamp when the tariff was created")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+        OffsetDateTime createdAt,
+
+        @Schema(description = "Timestamp when the tariff was last updated")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+        OffsetDateTime updatedAt
+) {
+}

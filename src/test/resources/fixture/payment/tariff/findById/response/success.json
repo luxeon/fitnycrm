@@ -1,0 +1,10 @@
+{
+  "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+  "currency": "USD",
+  "name": "Basic monthly subscription",
+  "price": 29.99,
+  "trainingsCount": 5,
+  "validDays": 30,
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+}

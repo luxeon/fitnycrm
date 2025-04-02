@@ -1,0 +1,10 @@
+{
+  "id": "${json-unit.any-string}",
+  "name": "Premium Quarterly",
+  "trainingsCount": 10,
+  "validDays": 30,
+  "price": 79.99,
+  "currency": "USD",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+}

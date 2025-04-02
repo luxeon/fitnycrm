@@ -1,0 +1,22 @@
+[
+  {
+    "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+    "name": "Basic monthly subscription",
+    "trainingsCount": 5,
+    "validDays": 30,
+    "price": 29.99,
+    "currency": "USD",
+    "createdAt": "${json-unit.any-string}",
+    "updatedAt": "${json-unit.any-string}"
+  },
+  {
+    "id": "d45ac7f5-3e4f-462a-a76d-524bd3a5fd02",
+    "name": "Premium annual subscription",
+    "trainingsCount": 10,
+    "validDays": 365,
+    "price": 299.99,
+    "currency": "USD",
+    "createdAt": "${json-unit.any-string}",
+    "updatedAt": "${json-unit.any-string}"
+  }
+]

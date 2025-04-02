@@ -1,0 +1,17 @@
+{
+  "errors": [
+    {
+      "field": "currency",
+      "message": "must not be null"
+    },
+    {
+      "field": "name",
+      "message": "must not be blank"
+    },
+    {
+      "field": "price",
+      "message": "must be greater than 0.0"
+    }
+  ],
+  "message": "Validation failed"
+}

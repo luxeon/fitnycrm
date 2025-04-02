@@ -1,0 +1,10 @@
+{
+  "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+  "name": "Basic Monthly Updated",
+  "trainingsCount": 11,
+  "validDays": 31,
+  "price": 39.99,
+  "currency": "EUR",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+}

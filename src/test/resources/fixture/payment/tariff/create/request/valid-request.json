@@ -1,0 +1,7 @@
+{
+  "name": "Premium Quarterly",
+  "price": 79.99,
+  "currency": "USD",
+  "validDays": 30,
+  "trainingsCount": 10
+} 
