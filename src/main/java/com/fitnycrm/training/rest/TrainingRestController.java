@@ -1,5 +1,6 @@
 package com.fitnycrm.training.rest;
 
+import com.fitnycrm.payment.facade.PaymentTariffFacade;
 import com.fitnycrm.payment.rest.model.PaymentTariffDetailsResponse;
 import com.fitnycrm.payment.rest.model.PaymentTariffListItemResponse;
 import com.fitnycrm.training.facade.TrainingFacade;
@@ -28,6 +29,7 @@ import java.util.UUID;
 public class TrainingRestController {
 
     private final TrainingFacade trainingFacade;
+    private final PaymentTariffFacade paymentTariffFacade;
 
     @Operation(summary = "Create a new training")
     @ApiResponses(value = {
@@ -112,10 +114,10 @@ public class TrainingRestController {
     })
     @PutMapping("/{id}/tariffs")
     @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
-    public Set<PaymentTariffDetailsResponse> updatePaymentTariffs(@PathVariable UUID tenantId,
-                                                                  @PathVariable UUID id,
-                                                                  @RequestBody @Valid UpdateTrainingPaymentTariffsRequest request) {
-        return trainingFacade.updateTariffs(tenantId, id, request);
+    public void updatePaymentTariffs(@PathVariable UUID tenantId,
+                                     @PathVariable UUID id,
+                                     @RequestBody @Valid UpdateTrainingPaymentTariffsRequest request) {
+        trainingFacade.updateTariffs(tenantId, id, request);
     }
 
     @Operation(summary = "Get training tariffs")
@@ -126,9 +128,9 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @GetMapping("/{id}/tariffs")
-    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public Set<PaymentTariffListItemResponse> getPaymentTariffs(@PathVariable UUID tenantId,
                                                                 @PathVariable UUID id) {
-        return trainingFacade.getTariffs(tenantId, id);
+        return paymentTariffFacade.findAllByTrainingId(tenantId, id);
     }
 } 

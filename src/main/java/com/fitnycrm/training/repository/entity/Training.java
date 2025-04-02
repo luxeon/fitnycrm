@@ -49,7 +49,7 @@ public class Training {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "training_payment_tariffs",
+            name = "Training_Payment_Tariffs",
             joinColumns = {@JoinColumn(name = "training_id")},
             inverseJoinColumns = {@JoinColumn(name = "payment_tariff_id")}
     )

@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "field": "tariffIds",
+      "message": "must not be null"
+    }
+  ],
+  "message": "Validation failed"
+}

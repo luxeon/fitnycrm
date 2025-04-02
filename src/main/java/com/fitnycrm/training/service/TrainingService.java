@@ -63,7 +63,7 @@ public class TrainingService {
     }
 
     @Transactional
-    public Set<PaymentTariff> updateTariffs(UUID tenantId, UUID trainingId, UpdateTrainingPaymentTariffsRequest request) {
+    public void updateTariffs(UUID tenantId, UUID trainingId, UpdateTrainingPaymentTariffsRequest request) {
         Training training = findById(tenantId, trainingId);
 
         Set<PaymentTariff> tariffs = new HashSet<>(paymentTariffRepository.findAllById(request.tariffIds()));
@@ -73,7 +73,6 @@ public class TrainingService {
         training.getPaymentTariffs().addAll(tariffs);
 
         trainingRepository.save(training);
-        return tariffs;
     }
 
     @Transactional(readOnly = true)

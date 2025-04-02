@@ -8,6 +8,8 @@ import com.fitnycrm.payment.service.exception.PaymentTariffNotFoundException;
 import com.fitnycrm.payment.service.mapper.PaymentTariffRequestMapper;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
+import com.fitnycrm.training.repository.entity.Training;
+import com.fitnycrm.training.service.TrainingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class PaymentTariffService {
     private final PaymentTariffRepository paymentTariffRepository;
     private final PaymentTariffRequestMapper requestMapper;
     private final TenantService tenantService;
+    private final TrainingService trainingService;
 
     @Transactional(readOnly = true)
     public List<PaymentTariff> findAll(UUID tenantId) {
@@ -59,5 +62,12 @@ public class PaymentTariffService {
             throw new PaymentTariffNotFoundException(tariffId);
         }
         return paymentTariff;
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<PaymentTariff> findAllByTrainingId(UUID tenantId, UUID trainingId) {
+        Training training = trainingService.findById(tenantId, trainingId);
+        return paymentTariffRepository.findAllByTraining(training);
     }
 } 

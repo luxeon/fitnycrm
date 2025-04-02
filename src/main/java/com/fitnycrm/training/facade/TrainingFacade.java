@@ -21,7 +21,6 @@ import static java.util.stream.Collectors.toSet;
 public class TrainingFacade {
     private final TrainingService trainingService;
     private final TrainingResponseMapper responseMapper;
-    private final PaymentTariffResponseMapper paymentTariffResponseMapper;
 
     public TrainingDetailsResponse create(UUID tenantId, CreateTrainingRequest request) {
         return responseMapper.toDetailsResponse(
@@ -50,15 +49,7 @@ public class TrainingFacade {
                 .map(responseMapper::toPageItemResponse);
     }
 
-    public Set<PaymentTariffDetailsResponse> updateTariffs(UUID tenantId, UUID trainingId, UpdateTrainingPaymentTariffsRequest request) {
-        return trainingService.updateTariffs(tenantId, trainingId, request).stream()
-                .map(paymentTariffResponseMapper::toResponse)
-                .collect(toSet());
-    }
-
-    public Set<PaymentTariffListItemResponse> getTariffs(UUID tenantId, UUID trainingId) {
-        return trainingService.getTariffs(tenantId, trainingId).stream()
-                .map(paymentTariffResponseMapper::toListItemResponse)
-                .collect(toSet());
+    public void updateTariffs(UUID tenantId, UUID trainingId, UpdateTrainingPaymentTariffsRequest request) {
+        trainingService.updateTariffs(tenantId, trainingId, request);
     }
 } 

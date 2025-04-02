@@ -1,10 +1,13 @@
 package com.fitnycrm.payment.repository.entity;
 
+import com.fitnycrm.payment.model.Currency;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.training.repository.entity.Training;
-import com.fitnycrm.payment.model.Currency;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -36,7 +39,6 @@ public class PaymentTariff {
     private Tenant tenant;
 
     @ManyToMany(mappedBy = "paymentTariffs")
-    @JoinColumn(name = "training_id", nullable = false)
     private Set<Training> trainings;
 
     @Min(1)

@@ -298,4 +298,114 @@ class TrainingRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @Sql({"/db/training/insert.sql", "/db/payment/insert-tariffs.sql", "/db/payment/insert-training-tariffs.sql"})
+    void updatePaymentTariffs_whenValidRequest_thenUpdateTariffs() throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updatePaymentTariffs_whenInvalidRequest_thenReturnBadRequest() throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/invalid-request.json");
+        var expectedResponse = readFile("fixture/training/updatePaymentTariffs/response/invalid.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updatePaymentTariffs_whenTrainingNotFound_thenReturn404() throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/valid-request.json");
+        var expectedResponse = readFile("fixture/training/updatePaymentTariffs/response/not-found.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainingId}/tariffs", NON_EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void updatePaymentTariffs_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updatePaymentTariffs_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/valid-request.json");
+        var expectedResponse = readFile("fixture/training/updatePaymentTariffs/response/access-denied.json");
+
+        mockMvc.perform(put("/api/tenants/{tenantId}/trainings/{trainingId}/tariffs", DIFFERENT_TENANT_ID, EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
+    void updatePaymentTariffs_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+        var request = readFile("fixture/training/updatePaymentTariffs/request/valid-request.json");
+
+        mockMvc.perform(put(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql({"/db/training/insert.sql", "/db/payment/insert-tariffs.sql", "/db/payment/insert-training-tariffs.sql"})
+    void getPaymentTariffs_whenTrainingExists_thenReturnTariffs() throws Exception {
+        var expectedResponse = readFile("fixture/training/getPaymentTariffs/response/success.json");
+
+        mockMvc.perform(get(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getPaymentTariffs_whenTrainingNotFound_thenReturn404() throws Exception {
+        var expectedResponse = readFile("fixture/training/getPaymentTariffs/response/not-found.json");
+
+        mockMvc.perform(get(BASE_URL + "/{trainingId}/tariffs", NON_EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isNotFound())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getPaymentTariffs_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(BASE_URL + "/{trainingId}/tariffs", EXISTING_TRAINING_ID))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getPaymentTariffs_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/training/getPaymentTariffs/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/trainings/{trainingId}/tariffs", DIFFERENT_TENANT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
 } 

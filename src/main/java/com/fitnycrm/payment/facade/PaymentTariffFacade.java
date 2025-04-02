@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+
+import static java.util.stream.Collectors.toSet;
 
 @Component
 @RequiredArgsConstructor
@@ -39,5 +42,11 @@ public class PaymentTariffFacade {
 
     public void delete(UUID tenantId, UUID tariffId) {
         paymentTariffService.delete(tenantId, tariffId);
+    }
+
+    public Set<PaymentTariffListItemResponse> findAllByTrainingId(UUID tenantId, UUID trainingId) {
+        return paymentTariffService.findAllByTrainingId(tenantId, trainingId).stream()
+                .map(responseMapper::toListItemResponse)
+                .collect(toSet());
     }
 } 
