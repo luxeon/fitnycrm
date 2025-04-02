@@ -241,8 +241,7 @@ export class CreateTrainerComponent {
       this.isLoading = true;
       this.errorMessage = null;
 
-      const tenantId = this.route.snapshot.queryParams['tenantId'];
-      const locationId = this.route.snapshot.queryParams['locationId'];
+      const { tenantId, locationId } = this.route.snapshot.params;
 
       if (!tenantId || !locationId) {
         this.router.navigate(['/dashboard']);
@@ -251,15 +250,12 @@ export class CreateTrainerComponent {
 
       try {
         await firstValueFrom(this.trainerService.createTrainer(tenantId, this.trainerForm.value));
-        await this.router.navigate(['/club-details'], {
-          queryParams: { tenantId, locationId, tab: 'trainers' }
-        });
+        this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'trainers' } });
       } catch (error: any) {
         this.errorMessage = error.status === 401
           ? 'Authentication failed. Please try logging in again.'
-          : error.status === 409
-            ? 'A trainer with this email already exists.'
-            : 'Failed to create trainer. Please try again.';
+          : 'Failed to create trainer. Please try again.';
+        console.error('Failed to create trainer:', error);
       } finally {
         this.isLoading = false;
       }
@@ -267,11 +263,7 @@ export class CreateTrainerComponent {
   }
 
   onCancel(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-    
-    this.router.navigate(['/club-details'], {
-      queryParams: { tenantId, locationId, tab: 'trainers' }
-    });
+    const { tenantId, locationId } = this.route.snapshot.params;
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'trainers' } });
   }
 } 

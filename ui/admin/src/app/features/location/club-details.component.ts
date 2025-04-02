@@ -397,9 +397,7 @@ export class ClubDetailsComponent implements OnInit {
 
   onAddTrainer(): void {
     const { tenantId, locationId } = this.route.snapshot.params;
-    this.router.navigate(['/create-trainer'], {
-      queryParams: { tenantId, locationId }
-    });
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/trainer/create`]);
   }
 
   onAddSchedule(): void {

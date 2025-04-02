@@ -65,16 +65,16 @@ export const routes: Routes = [
     data: { titleKey: 'training.edit.pageTitle' }
   },
   { 
+    path: 'tenant/:tenantId/location/:locationId/trainer/create', 
+    loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), 
+    canActivate: [adminGuard],
+    data: { titleKey: 'trainer.create.pageTitle' }
+  },
+  { 
     path: 'dashboard', 
     component: DashboardComponent, 
     canActivate: [adminGuard, tenantCheckGuard],
     data: { titleKey: 'dashboard.pageTitle' }
-  },
-  { 
-    path: 'create-trainer', 
-    loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), 
-    canActivate: [adminGuard],
-    data: { titleKey: 'trainer.create.pageTitle' }
   },
   { 
     path: '', 
