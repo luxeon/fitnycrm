@@ -238,8 +238,7 @@ export class CreateWorkoutComponent {
       this.isLoading = true;
       this.errorMessage = null;
 
-      const tenantId = this.route.snapshot.queryParams['tenantId'];
-      const locationId = this.route.snapshot.queryParams['locationId'];
+      const { tenantId, locationId } = this.route.snapshot.params;
 
       if (!tenantId || !locationId) {
         this.router.navigate(['/dashboard']);
@@ -248,13 +247,10 @@ export class CreateWorkoutComponent {
 
       try {
         await firstValueFrom(this.trainingService.createTraining(tenantId, this.workoutForm.value));
-        await this.router.navigate(['/club-details'], {
-          queryParams: { tenantId, locationId }
-        });
-      } catch (error: any) {
-        this.errorMessage = error.status === 401
-          ? 'Authentication failed. Please try logging in again.'
-          : 'Failed to create workout. Please try again.';
+        this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
+      } catch (error) {
+        this.errorMessage = 'Failed to create workout';
+        console.error('Failed to create workout:', error);
       } finally {
         this.isLoading = false;
       }
@@ -262,11 +258,7 @@ export class CreateWorkoutComponent {
   }
 
   onCancel(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-    
-    this.router.navigate(['/club-details'], {
-      queryParams: { tenantId, locationId }
-    });
+    const { tenantId, locationId } = this.route.snapshot.params;
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
   }
 } 

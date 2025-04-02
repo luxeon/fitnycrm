@@ -50,16 +50,9 @@ describe('WorkoutListComponent', () => {
   it('should navigate to edit workout page when edit button is clicked', () => {
     component.onEditClick(mockWorkout);
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/edit-workout'],
-      {
-        queryParams: {
-          tenantId: '7a7632b1-e932-48fd-9296-001036b4ec19',
-          locationId: 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01',
-          workoutId: mockWorkout.id
-        }
-      }
-    );
+    expect(router.navigate).toHaveBeenCalledWith([
+      `/tenant/${component.tenantId}/location/${component.locationId}/workout/${mockWorkout.id}/edit`
+    ]);
   });
 
   it('should emit page change event', () => {

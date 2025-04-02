@@ -245,8 +245,7 @@ export class EditWorkoutComponent implements OnInit {
   isSaving = false;
 
   ngOnInit(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const workoutId = this.route.snapshot.queryParams['workoutId'];
+    const { tenantId, workoutId } = this.route.snapshot.params;
 
     if (!tenantId || !workoutId) {
       this.router.navigate(['/dashboard']);
@@ -259,14 +258,9 @@ export class EditWorkoutComponent implements OnInit {
   private async loadWorkout(tenantId: string, workoutId: string): Promise<void> {
     try {
       const workout = await firstValueFrom(this.trainingService.getTraining(tenantId, workoutId));
-      this.workoutForm.patchValue({
-        name: workout.name,
-        description: workout.description,
-        durationMinutes: workout.durationMinutes,
-        clientCapacity: workout.clientCapacity
-      });
+      this.workoutForm.patchValue(workout);
     } catch (error) {
-      this.errorMessage = 'Failed to load workout details. Please try again.';
+      this.errorMessage = 'Failed to load workout details';
       console.error('Failed to load workout:', error);
     } finally {
       this.isLoading = false;
@@ -278,24 +272,21 @@ export class EditWorkoutComponent implements OnInit {
       this.isSaving = true;
       this.errorMessage = null;
 
-      const tenantId = this.route.snapshot.queryParams['tenantId'];
-      const workoutId = this.route.snapshot.queryParams['workoutId'];
-      const locationId = this.route.snapshot.queryParams['locationId'];
+      const { tenantId, locationId, workoutId } = this.route.snapshot.params;
 
-      if (!tenantId || !workoutId || !locationId) {
+      if (!tenantId || !workoutId) {
         this.router.navigate(['/dashboard']);
         return;
       }
 
       try {
         await firstValueFrom(this.trainingService.updateTraining(tenantId, workoutId, this.workoutForm.value));
-        await this.router.navigate(['/club-details'], {
-          queryParams: { tenantId, locationId }
-        });
+        this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
       } catch (error: any) {
         this.errorMessage = error.status === 401
           ? 'Authentication failed. Please try logging in again.'
           : 'Failed to update workout. Please try again.';
+        console.error('Failed to update workout:', error);
       } finally {
         this.isSaving = false;
       }
@@ -303,11 +294,7 @@ export class EditWorkoutComponent implements OnInit {
   }
 
   onCancel(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-    
-    this.router.navigate(['/club-details'], {
-      queryParams: { tenantId, locationId }
-    });
+    const { tenantId, locationId } = this.route.snapshot.params;
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/details`], { queryParams: { tab: 'workouts' } });
   }
-} 
+}

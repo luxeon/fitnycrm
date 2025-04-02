@@ -218,13 +218,7 @@ export class WorkoutListComponent {
   }
 
   onEditClick(workout: TrainingPageItemResponse): void {
-    this.router.navigate(['/edit-workout'], {
-      queryParams: {
-        tenantId: this.tenantId,
-        locationId: this.locationId,
-        workoutId: workout.id
-      }
-    });
+    this.router.navigate([`/tenant/${this.tenantId}/location/${this.locationId}/workout/${workout.id}/edit`]);
   }
 
   onDeleteClick(workout: TrainingPageItemResponse): void {

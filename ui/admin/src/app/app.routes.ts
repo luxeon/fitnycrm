@@ -53,13 +53,13 @@ export const routes: Routes = [
     data: { titleKey: 'location.details.pageTitle' }
   },
   { 
-    path: 'create-workout', 
+    path: 'tenant/:tenantId/location/:locationId/workout/create', 
     component: CreateWorkoutComponent, 
     canActivate: [adminGuard],
     data: { titleKey: 'training.create.pageTitle' }
   },
   { 
-    path: 'edit-workout', 
+    path: 'tenant/:tenantId/location/:locationId/workout/:workoutId/edit', 
     component: EditWorkoutComponent, 
     canActivate: [adminGuard],
     data: { titleKey: 'training.edit.pageTitle' }

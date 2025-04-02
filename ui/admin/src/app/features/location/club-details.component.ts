@@ -392,9 +392,7 @@ export class ClubDetailsComponent implements OnInit {
 
   onAddWorkout(): void {
     const { tenantId, locationId } = this.route.snapshot.params;
-    this.router.navigate(['/create-workout'], {
-      queryParams: { tenantId, locationId }
-    });
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/workout/create`]);
   }
 
   onAddTrainer(): void {

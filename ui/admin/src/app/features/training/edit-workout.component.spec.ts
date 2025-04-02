@@ -24,14 +24,18 @@ describe('EditWorkoutComponent', () => {
     updatedAt: '2024-03-20T10:00:00Z'
   };
 
+  const tenantId = '7a7632b1-e932-48fd-9296-001036b4ec19';
+  const locationId = 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01';
+  const workoutId = 'ae4d661a-ed70-4e36-9caf-048ee8060290';
+
   const mockRouteSnapshot: Partial<ActivatedRouteSnapshot> = {
     url: [],
-    params: {},
-    queryParams: {
-      tenantId: '7a7632b1-e932-48fd-9296-001036b4ec19',
-      locationId: 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01',
-      workoutId: 'ae4d661a-ed70-4e36-9caf-048ee8060290'
+    params: {
+      tenantId,
+      locationId,
+      workoutId
     },
+    queryParams: {},
     fragment: null,
     data: {} as Data,
     outlet: 'primary',
@@ -42,12 +46,12 @@ describe('EditWorkoutComponent', () => {
     firstChild: null,
     children: [],
     pathFromRoot: [],
-    paramMap: convertToParamMap({}),
-    queryParamMap: convertToParamMap({
-      tenantId: '7a7632b1-e932-48fd-9296-001036b4ec19',
-      locationId: 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01',
-      workoutId: 'ae4d661a-ed70-4e36-9caf-048ee8060290'
-    })
+    paramMap: convertToParamMap({
+      tenantId,
+      locationId,
+      workoutId
+    }),
+    queryParamMap: convertToParamMap({})
   };
 
   beforeEach(async () => {
@@ -85,10 +89,7 @@ describe('EditWorkoutComponent', () => {
     fixture.detectChanges();
     tick();
 
-    expect(trainingService.getTraining).toHaveBeenCalledWith(
-      '7a7632b1-e932-48fd-9296-001036b4ec19',
-      'ae4d661a-ed70-4e36-9caf-048ee8060290'
-    );
+    expect(trainingService.getTraining).toHaveBeenCalledWith(tenantId, workoutId);
     expect(component.workoutForm.value).toEqual({
       name: mockWorkout.name,
       description: mockWorkout.description,
@@ -128,17 +129,10 @@ describe('EditWorkoutComponent', () => {
     component.onSubmit();
     tick();
 
-    expect(trainingService.updateTraining).toHaveBeenCalledWith(
-      '7a7632b1-e932-48fd-9296-001036b4ec19',
-      'ae4d661a-ed70-4e36-9caf-048ee8060290',
-      updatedWorkout
-    );
+    expect(trainingService.updateTraining).toHaveBeenCalledWith(tenantId, workoutId, updatedWorkout);
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/club-details'],
-      { queryParams: {
-        tenantId: '7a7632b1-e932-48fd-9296-001036b4ec19',
-        locationId: 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01'
-      }}
+      [`/tenant/${tenantId}/location/${locationId}/details`],
+      { queryParams: { tab: 'workouts' } }
     );
   }));
 
@@ -152,7 +146,7 @@ describe('EditWorkoutComponent', () => {
     component.onSubmit();
     tick();
 
-    expect(component.errorMessage).toBeTruthy();
+    expect(component.errorMessage).toBe('Failed to update workout. Please try again.');
     expect(component.isSaving).toBeFalse();
   }));
 
@@ -166,7 +160,7 @@ describe('EditWorkoutComponent', () => {
     component.onSubmit();
     tick();
 
-    expect(component.errorMessage).toContain('Authentication failed');
+    expect(component.errorMessage).toBe('Authentication failed. Please try logging in again.');
     expect(component.isSaving).toBeFalse();
   }));
 
@@ -174,11 +168,8 @@ describe('EditWorkoutComponent', () => {
     component.onCancel();
 
     expect(router.navigate).toHaveBeenCalledWith(
-      ['/club-details'],
-      { queryParams: {
-        tenantId: '7a7632b1-e932-48fd-9296-001036b4ec19',
-        locationId: 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01'
-      }}
+      [`/tenant/${tenantId}/location/${locationId}/details`],
+      { queryParams: { tab: 'workouts' } }
     );
   });
 
