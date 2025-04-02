@@ -285,8 +285,12 @@
   },
   "schedule": {
     "create": {
-      "pageTitle": "Add Schedule",
-      "title": "Add New Schedule"
+      "pageTitle": "Create Schedule",
+      "title": "Create New Schedule"
+    },
+    "edit": {
+      "pageTitle": "Edit Schedule",
+      "title": "Edit Schedule"
     },
     "form": {
       "workout": "Workout",
@@ -297,6 +301,10 @@
       "trainerRequired": "Please select a trainer",
       "daysOfWeek": "Days of Week",
       "daysRequired": "Please select at least one day",
+      "startTime": "Start Time",
+      "startTimeRequired": "Please enter a start time",
+      "endTime": "End Time",
+      "endTimeRequired": "Please enter an end time",
       "days": {
         "monday": "Monday",
         "tuesday": "Tuesday",
@@ -305,11 +313,7 @@
         "friday": "Friday",
         "saturday": "Saturday",
         "sunday": "Sunday"
-      },
-      "startTime": "Start Time",
-      "startTimeRequired": "Start time is required",
-      "endTime": "End Time",
-      "endTimeRequired": "End time is required"
+      }
     }
   }
 }

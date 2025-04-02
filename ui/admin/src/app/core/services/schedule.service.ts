@@ -11,6 +11,11 @@ export interface ScheduleListItemResponse {
   defaultTrainerId: string;
 }
 
+export interface ScheduleDetailsResponse extends ScheduleListItemResponse {
+  trainingName: string;
+  defaultTrainerName: string;
+}
+
 export interface CreateScheduleRequest {
   trainingId: string;
   daysOfWeek: string[];
@@ -31,12 +36,16 @@ export class ScheduleService {
     return this.http.get<ScheduleListItemResponse[]>(`/api/tenants/${tenantId}/locations/${locationId}/schedules`);
   }
 
-  createSchedule(tenantId: string, locationId: string, request: CreateScheduleRequest): Observable<ScheduleListItemResponse> {
-    return this.http.post<ScheduleListItemResponse>(`/api/tenants/${tenantId}/locations/${locationId}/schedules`, request);
+  getSchedule(tenantId: string, locationId: string, scheduleId: string): Observable<ScheduleDetailsResponse> {
+    return this.http.get<ScheduleDetailsResponse>(`/api/tenants/${tenantId}/locations/${locationId}/schedules/${scheduleId}`);
   }
 
-  updateSchedule(tenantId: string, locationId: string, scheduleId: string, request: UpdateScheduleRequest): Observable<ScheduleListItemResponse> {
-    return this.http.put<ScheduleListItemResponse>(`/api/tenants/${tenantId}/locations/${locationId}/schedules/${scheduleId}`, request);
+  createSchedule(tenantId: string, locationId: string, request: CreateScheduleRequest): Observable<ScheduleDetailsResponse> {
+    return this.http.post<ScheduleDetailsResponse>(`/api/tenants/${tenantId}/locations/${locationId}/schedules`, request);
+  }
+
+  updateSchedule(tenantId: string, locationId: string, scheduleId: string, request: UpdateScheduleRequest): Observable<ScheduleDetailsResponse> {
+    return this.http.put<ScheduleDetailsResponse>(`/api/tenants/${tenantId}/locations/${locationId}/schedules/${scheduleId}`, request);
   }
 
   deleteSchedule(tenantId: string, locationId: string, scheduleId: string): Observable<void> {

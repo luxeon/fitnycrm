@@ -1,15 +1,15 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
-import { ScheduleService, CreateScheduleRequest } from '../../core/services/schedule.service';
+import { ScheduleService, UpdateScheduleRequest } from '../../core/services/schedule.service';
 import { TrainingService, TrainingPageItemResponse } from '../../core/services/training.service';
 import { TrainerService, TrainerPageItemResponse } from '../../core/services/trainer.service';
 
 @Component({
-  selector: 'app-create-schedule',
+  selector: 'app-edit-schedule',
   standalone: true,
   imports: [
     CommonModule,
@@ -17,10 +17,13 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
     TranslateModule
   ],
   template: `
-    <div class="create-schedule-container">
-      <div class="create-schedule-content">
-        <h2>{{ 'schedule.create.title' | translate }}</h2>
-        <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
+    <div class="edit-schedule-container">
+      <div class="edit-schedule-content">
+        <h2>{{ 'schedule.edit.title' | translate }}</h2>
+        <div class="loading" *ngIf="isLoading">
+          {{ 'common.loading' | translate }}
+        </div>
+        <form *ngIf="!isLoading" [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="trainingId">{{ 'schedule.form.workout' | translate }}</label>
             <select id="trainingId" formControlName="trainingId" class="form-control">
@@ -51,7 +54,7 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
             <label>{{ 'schedule.form.daysOfWeek' | translate }}</label>
             <div class="days-of-week">
               <label *ngFor="let day of daysOfWeek" class="day-checkbox">
-                <input type="checkbox" [value]="day" (change)="onDayChange($event)">
+                <input type="checkbox" [value]="day" [checked]="selectedDays.includes(day)" (change)="onDayChange($event)">
                 {{ 'schedule.form.days.' + day.toLowerCase() | translate }}
               </label>
             </div>
@@ -80,8 +83,8 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
             <button type="button" class="btn btn-secondary" (click)="onCancel()">
               {{ 'common.cancel' | translate }}
             </button>
-            <button type="submit" class="btn btn-primary" [disabled]="scheduleForm.invalid || !selectedDays.length || isLoading">
-              {{ (isLoading ? 'common.saving' : 'common.save') | translate }}
+            <button type="submit" class="btn btn-primary" [disabled]="scheduleForm.invalid || !selectedDays.length || isSaving">
+              {{ (isSaving ? 'common.saving' : 'common.save') | translate }}
             </button>
           </div>
         </form>
@@ -89,13 +92,13 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
     </div>
   `,
   styles: [`
-    .create-schedule-container {
+    .edit-schedule-container {
       min-height: 100vh;
       padding: 40px;
       background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     }
 
-    .create-schedule-content {
+    .edit-schedule-content {
       background: white;
       padding: 40px;
       border-radius: 12px;
@@ -205,9 +208,15 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
         }
       }
     }
+
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      color: #6c757d;
+    }
   `]
 })
-export class CreateScheduleComponent {
+export class EditScheduleComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly scheduleService = inject(ScheduleService);
   private readonly trainingService = inject(TrainingService);
@@ -216,9 +225,11 @@ export class CreateScheduleComponent {
   private readonly route = inject(ActivatedRoute);
 
   scheduleForm: FormGroup;
-  isLoading = false;
+  isLoading = true;
+  isSaving = false;
   tenantId: string;
   locationId: string;
+  scheduleId: string;
   workouts: TrainingPageItemResponse[] = [];
   trainers: TrainerPageItemResponse[] = [];
   selectedDays: string[] = [];
@@ -228,6 +239,7 @@ export class CreateScheduleComponent {
     const params = this.route.snapshot.params;
     this.tenantId = params['tenantId'];
     this.locationId = params['locationId'];
+    this.scheduleId = params['scheduleId'];
 
     this.scheduleForm = this.fb.group({
       trainingId: ['', Validators.required],
@@ -236,9 +248,18 @@ export class CreateScheduleComponent {
       endTime: ['', Validators.required],
       days: [[], Validators.required]
     });
+  }
 
-    this.loadWorkouts();
-    this.loadTrainers();
+  async ngOnInit(): Promise<void> {
+    try {
+      await Promise.all([
+        this.loadWorkouts(),
+        this.loadTrainers(),
+        this.loadSchedule()
+      ]);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   private async loadWorkouts(): Promise<void> {
@@ -249,42 +270,54 @@ export class CreateScheduleComponent {
     this.trainers = await firstValueFrom(this.trainerService.getAllTrainers(this.tenantId));
   }
 
+  private async loadSchedule(): Promise<void> {
+    const schedule = await firstValueFrom(
+      this.scheduleService.getSchedule(this.tenantId, this.locationId, this.scheduleId)
+    );
+
+    this.scheduleForm.patchValue({
+      trainingId: schedule.trainingId,
+      defaultTrainerId: schedule.defaultTrainerId,
+      startTime: schedule.startTime,
+      endTime: schedule.endTime
+    });
+
+    this.selectedDays = schedule.daysOfWeek;
+  }
+
   onDayChange(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     const day = checkbox.value;
 
-    if (checkbox.checked) {
-      if (!this.selectedDays.includes(day)) {
-        this.selectedDays.push(day);
-        this.scheduleForm.patchValue({ days: this.selectedDays });
-      }
-    } else {
-      const index = this.selectedDays.indexOf(day);
-      if (index > -1) {
-        this.selectedDays.splice(index, 1);
-        this.scheduleForm.patchValue({ days: this.selectedDays });
-      }
+    if (checkbox.checked && !this.selectedDays.includes(day)) {
+      this.selectedDays.push(day);
+    } else if (!checkbox.checked && this.selectedDays.includes(day)) {
+      this.selectedDays = this.selectedDays.filter(d => d !== day);
     }
+
+    this.scheduleForm.patchValue({ days: this.selectedDays });
   }
 
   async onSubmit(): Promise<void> {
     if (this.scheduleForm.valid && this.selectedDays.length > 0) {
-      this.isLoading = true;
+      this.isSaving = true;
       try {
         const formValue = this.scheduleForm.value;
-        const request: CreateScheduleRequest = {
+        const request: UpdateScheduleRequest = {
           trainingId: formValue.trainingId,
           defaultTrainerId: formValue.defaultTrainerId,
           startTime: formValue.startTime,
           endTime: formValue.endTime,
           daysOfWeek: this.selectedDays
         };
-        await firstValueFrom(this.scheduleService.createSchedule(this.tenantId, this.locationId, request));
+        await firstValueFrom(
+          this.scheduleService.updateSchedule(this.tenantId, this.locationId, this.scheduleId, request)
+        );
 
         const returnUrl = history.state?.returnUrl || `/tenant/${this.tenantId}/location/${this.locationId}`;
         await this.router.navigate([returnUrl]);
       } finally {
-        this.isLoading = false;
+        this.isSaving = false;
       }
     }
   }
@@ -293,4 +326,4 @@ export class CreateScheduleComponent {
     const returnUrl = history.state?.returnUrl || `/tenant/${this.tenantId}/location/${this.locationId}`;
     this.router.navigate([returnUrl]);
   }
-}
+} 

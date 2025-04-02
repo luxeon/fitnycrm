@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface CreateTrainingRequest {
@@ -33,6 +33,16 @@ export interface TrainingPageItemResponse {
   description?: string;
   durationMinutes: number;
   clientCapacity: number;
+}
+
+interface PageResponse<T> {
+  content: T[];
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
 }
 
 @Injectable({
@@ -68,28 +78,23 @@ export class TrainingService {
     );
   }
 
-  getTrainings(tenantId: string, page: number = 0, size: number = 10): Observable<{
-    content: TrainingPageItemResponse[];
-    totalElements: number;
-    totalPages: number;
-    size: number;
-    number: number;
-    first: boolean;
-    last: boolean;
-  }> {
-    return this.http.get<{
-      content: TrainingPageItemResponse[];
-      totalElements: number;
-      totalPages: number;
-      size: number;
-      number: number;
-      first: boolean;
-      last: boolean;
-    }>(`${this.apiUrl}/tenants/${tenantId}/trainings`, {
+  getTrainings(tenantId: string, page: number = 0, size: number = 10): Observable<PageResponse<TrainingPageItemResponse>> {
+    return this.http.get<PageResponse<TrainingPageItemResponse>>(`${this.apiUrl}/tenants/${tenantId}/trainings`, {
       params: {
         page: page.toString(),
         size: size.toString()
       }
     });
+  }
+
+  getAllTrainings(tenantId: string): Observable<TrainingPageItemResponse[]> {
+    return this.http.get<PageResponse<TrainingPageItemResponse>>(`${this.apiUrl}/tenants/${tenantId}/trainings`, {
+      params: {
+        page: '0',
+        size: '1000'  // Large enough to get all trainings
+      }
+    }).pipe(
+      map(response => response.content)
+    );
   }
 }
