@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -95,6 +95,11 @@ export class ConfirmationDialogComponent {
   @Input() confirmText = '';
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
+
+  @HostListener('document:keydown.escape')
+  onEscapePressed(): void {
+    this.onCancel();
+  }
 
   onConfirm(): void {
     this.confirm.emit();
