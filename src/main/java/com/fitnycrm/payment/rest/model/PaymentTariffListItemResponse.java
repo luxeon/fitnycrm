@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import com.fitnycrm.payment.model.Currency;
 
 @Schema(description = "Payment tariff list item")
 public record PaymentTariffListItemResponse(
@@ -25,7 +26,7 @@ public record PaymentTariffListItemResponse(
         BigDecimal price,
 
         @Schema(description = "Currency code (ISO 4217)")
-        String currency,
+        Currency currency,
 
         @Schema(description = "Timestamp when the tariff was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

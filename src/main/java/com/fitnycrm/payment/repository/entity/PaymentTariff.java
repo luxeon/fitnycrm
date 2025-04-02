@@ -2,6 +2,7 @@ package com.fitnycrm.payment.repository.entity;
 
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.training.repository.entity.Training;
+import com.fitnycrm.payment.model.Currency;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -47,9 +48,9 @@ public class PaymentTariff {
     private BigDecimal price;
 
     @NotNull
-    @Size(min = 3, max = 3)
-    @Column(nullable = false, length = 3)
-    private String currency;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

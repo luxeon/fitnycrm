@@ -1,9 +1,11 @@
 package com.fitnycrm.payment.rest.model;
 
+import com.fitnycrm.common.validation.EnumValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import com.fitnycrm.payment.model.Currency;
 
 @Schema(description = "Request to create a new payment tariff")
 public record CreatePaymentTariffRequest(
@@ -28,7 +30,7 @@ public record CreatePaymentTariffRequest(
 
         @Schema(description = "Currency code (ISO 4217)")
         @NotNull
-        @Size(min = 3, max = 3)
+        @EnumValue(enumClass = Currency.class)
         String currency
 ) {
 }
