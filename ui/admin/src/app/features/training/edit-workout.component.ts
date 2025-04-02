@@ -168,11 +168,12 @@ import { TrainingService } from '../../core/services/training.service';
         }
 
         input[type="number"] {
-          -moz-appearance: textfield;
+          -moz-appearance: revert;
           &::-webkit-outer-spin-button,
           &::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+            -webkit-appearance: revert;
+            margin: 0 2px;
+            opacity: 1;
           }
         }
       }
