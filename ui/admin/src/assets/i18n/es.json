@@ -262,5 +262,34 @@
     "page": "Página",
     "of": "de",
     "title": "FitNYC"
+  },
+  "schedule": {
+    "create": {
+      "pageTitle": "Añadir Horario",
+      "title": "Añadir Nuevo Horario"
+    },
+    "form": {
+      "workout": "Entrenamiento",
+      "selectWorkout": "Seleccionar entrenamiento",
+      "workoutRequired": "Por favor selecciona un entrenamiento",
+      "trainer": "Entrenador",
+      "selectTrainer": "Seleccionar entrenador",
+      "trainerRequired": "Por favor selecciona un entrenador",
+      "daysOfWeek": "Días de la Semana",
+      "daysRequired": "Por favor selecciona al menos un día",
+      "days": {
+        "monday": "Lunes",
+        "tuesday": "Martes",
+        "wednesday": "Miércoles",
+        "thursday": "Jueves",
+        "friday": "Viernes",
+        "saturday": "Sábado",
+        "sunday": "Domingo"
+      },
+      "startTime": "Hora de Inicio",
+      "startTimeRequired": "La hora de inicio es obligatoria",
+      "endTime": "Hora de Fin",
+      "endTimeRequired": "La hora de fin es obligatoria"
+    }
   }
 } 

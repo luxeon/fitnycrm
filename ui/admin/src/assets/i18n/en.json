@@ -113,7 +113,7 @@
       },
       "schedule": {
         "title": "Class Schedule",
-        "add": "Add Class",
+        "add": "Add Schedule",
         "empty": "No classes scheduled yet. Add workouts and trainers first, then create your schedule."
       }
     },
@@ -276,6 +276,35 @@
   "tenant": {
     "create": {
       "pageTitle": "Create Fitness Club"
+    }
+  },
+  "schedule": {
+    "create": {
+      "pageTitle": "Add Schedule",
+      "title": "Add New Schedule"
+    },
+    "form": {
+      "workout": "Workout",
+      "selectWorkout": "Select a workout",
+      "workoutRequired": "Please select a workout",
+      "trainer": "Trainer",
+      "selectTrainer": "Select a trainer",
+      "trainerRequired": "Please select a trainer",
+      "daysOfWeek": "Days of Week",
+      "daysRequired": "Please select at least one day",
+      "days": {
+        "monday": "Monday",
+        "tuesday": "Tuesday",
+        "wednesday": "Wednesday",
+        "thursday": "Thursday",
+        "friday": "Friday",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      },
+      "startTime": "Start Time",
+      "startTimeRequired": "Start time is required",
+      "endTime": "End Time",
+      "endTimeRequired": "End time is required"
     }
   }
 }

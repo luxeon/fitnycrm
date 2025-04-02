@@ -14,78 +14,84 @@ import { EmailConfirmationComponent } from './features/auth/email-confirmation/e
 import { EditTrainerComponent } from './features/trainer/edit-trainer.component';
 
 export const routes: Routes = [
-  { 
-    path: 'register', 
+  {
+    path: 'register',
     component: RegistrationComponent,
     data: { titleKey: 'registration.pageTitle' }
   },
-  { 
-    path: 'login', 
+  {
+    path: 'login',
     component: LoginComponent,
     data: { titleKey: 'login.pageTitle' }
   },
-  { 
-    path: 'email-confirmation', 
+  {
+    path: 'email-confirmation',
     component: EmailConfirmationComponent,
     data: { titleKey: 'emailConfirmation.pageTitle' }
   },
-  { 
-    path: 'create-tenant', 
-    component: CreateTenantComponent, 
+  {
+    path: 'create-tenant',
+    component: CreateTenantComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'tenant.create.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/location/create', 
-    component: CreateLocationComponent, 
+  {
+    path: 'tenant/:tenantId/location/create',
+    component: CreateLocationComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'location.create.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/location/:locationId/edit', 
-    component: EditLocationComponent, 
+  {
+    path: 'tenant/:tenantId/location/:locationId/edit',
+    component: EditLocationComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'location.edit.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/location/:locationId', 
-    component: ClubDetailsComponent, 
+  {
+    path: 'tenant/:tenantId/location/:locationId',
+    component: ClubDetailsComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'location.details.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/workout/create', 
-    component: CreateWorkoutComponent, 
+  {
+    path: 'tenant/:tenantId/workout/create',
+    component: CreateWorkoutComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'training.create.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/workout/:workoutId/edit', 
-    component: EditWorkoutComponent, 
+  {
+    path: 'tenant/:tenantId/workout/:workoutId/edit',
+    component: EditWorkoutComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'training.edit.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/trainer/create', 
-    loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), 
+  {
+    path: 'tenant/:tenantId/trainer/create',
+    loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent),
     canActivate: [adminGuard],
     data: { titleKey: 'trainer.create.pageTitle' }
   },
-  { 
-    path: 'tenant/:tenantId/trainer/:trainerId/edit', 
+  {
+    path: 'tenant/:tenantId/trainer/:trainerId/edit',
     component: EditTrainerComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'trainer.edit.pageTitle' }
   },
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent, 
+  {
+    path: 'tenant/:tenantId/location/:locationId/schedule/create',
+    loadComponent: () => import('./features/schedule/create-schedule.component').then(m => m.CreateScheduleComponent),
+    canActivate: [adminGuard],
+    data: { titleKey: 'schedule.create.pageTitle' }
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
     canActivate: [adminGuard, tenantCheckGuard],
     data: { titleKey: 'dashboard.pageTitle' }
   },
-  { 
-    path: '', 
-    redirectTo: '/dashboard', 
+  {
+    path: '',
+    redirectTo: '/dashboard',
     pathMatch: 'full',
     data: { titleKey: 'common.title' }
   }
