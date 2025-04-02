@@ -83,8 +83,9 @@
       "title": "Edit Location"
     },
     "details": {
-      "pageTitle": "Club Details",
+      "pageTitle": "Club Location Details",
       "title": "Club Details",
+      "club_location_title": "Club Location Details",
       "tabs": {
         "workouts": "Workouts",
         "trainers": "Trainers",

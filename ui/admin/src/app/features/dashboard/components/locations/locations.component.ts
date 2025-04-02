@@ -317,6 +317,6 @@ export class LocationsComponent implements OnInit {
   }
 
   onLocationClick(location: LocationPageItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/${location.id}/details`]);
+    this.router.navigate([`/tenant/${this.tenantId}/location/${location.id}`]);
   }
 } 

@@ -48,7 +48,7 @@ export const routes: Routes = [
     data: { titleKey: 'location.edit.pageTitle' }
   },
   { 
-    path: 'tenant/:tenantId/location/:locationId/details', 
+    path: 'tenant/:tenantId/location/:locationId', 
     component: ClubDetailsComponent, 
     canActivate: [adminGuard],
     data: { titleKey: 'location.details.pageTitle' }

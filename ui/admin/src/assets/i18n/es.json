@@ -63,16 +63,17 @@
   },
   "location": {
     "create": {
-      "pageTitle": "Añadir Ubicación",
-      "title": "Añadir Nueva Ubicación"
+      "pageTitle": "Agregar Ubicación",
+      "title": "Agregar Nueva Ubicación"
     },
     "edit": {
       "pageTitle": "Editar Ubicación",
       "title": "Editar Ubicación"
     },
     "details": {
-      "pageTitle": "Detalles de la Ubicación",
+      "pageTitle": "Detalles de Ubicación del Club",
       "title": "Detalles del Club",
+      "club_location_title": "Detalles de Ubicación del Club",
       "tabs": {
         "workouts": "Entrenamientos",
         "trainers": "Entrenadores",
