@@ -32,10 +32,11 @@ describe('EditWorkoutComponent', () => {
     url: [],
     params: {
       tenantId,
-      locationId,
       workoutId
     },
-    queryParams: {},
+    queryParams: {
+      locationId
+    },
     fragment: null,
     data: {} as Data,
     outlet: 'primary',
@@ -48,10 +49,11 @@ describe('EditWorkoutComponent', () => {
     pathFromRoot: [],
     paramMap: convertToParamMap({
       tenantId,
-      locationId,
       workoutId
     }),
-    queryParamMap: convertToParamMap({})
+    queryParamMap: convertToParamMap({
+      locationId
+    })
   };
 
   beforeEach(async () => {
@@ -60,6 +62,10 @@ describe('EditWorkoutComponent', () => {
     route = {
       snapshot: mockRouteSnapshot as ActivatedRouteSnapshot
     };
+
+    // Set default spy behavior
+    trainingService.getTraining.and.returnValue(of(mockWorkout));
+    trainingService.updateTraining.and.returnValue(of(mockWorkout));
 
     await TestBed.configureTestingModule({
       imports: [
@@ -84,8 +90,6 @@ describe('EditWorkoutComponent', () => {
   });
 
   it('should load workout data on init', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
-
     fixture.detectChanges();
     tick();
 
@@ -109,12 +113,10 @@ describe('EditWorkoutComponent', () => {
     expect(component.errorMessage).toBeTruthy();
     expect(component.isLoading).toBeFalse();
     expect(console.error).toHaveBeenCalledWith('Failed to load workout:', jasmine.any(Error));
+    expect(router.navigate).toHaveBeenCalledWith(['/dashboard'], { queryParams: { tab: 'workouts' } });
   }));
 
   it('should update workout when form is valid', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
-    trainingService.updateTraining.and.returnValue(of(mockWorkout));
-
     fixture.detectChanges();
     tick();
 
@@ -137,7 +139,6 @@ describe('EditWorkoutComponent', () => {
   }));
 
   it('should handle error when updating workout', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
     trainingService.updateTraining.and.returnValue(throwError(() => ({ status: 500 })));
 
     fixture.detectChanges();
@@ -151,7 +152,6 @@ describe('EditWorkoutComponent', () => {
   }));
 
   it('should handle unauthorized error when updating workout', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
     trainingService.updateTraining.and.returnValue(throwError(() => ({ status: 401 })));
 
     fixture.detectChanges();
@@ -165,6 +165,7 @@ describe('EditWorkoutComponent', () => {
   }));
 
   it('should navigate back on cancel', () => {
+    fixture.detectChanges();
     component.onCancel();
 
     expect(router.navigate).toHaveBeenCalledWith(
@@ -174,8 +175,6 @@ describe('EditWorkoutComponent', () => {
   });
 
   it('should validate required fields', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
-
     fixture.detectChanges();
     tick();
 
@@ -193,8 +192,6 @@ describe('EditWorkoutComponent', () => {
   }));
 
   it('should validate minimum values', fakeAsync(() => {
-    trainingService.getTraining.and.returnValue(of(mockWorkout));
-
     fixture.detectChanges();
     tick();
 

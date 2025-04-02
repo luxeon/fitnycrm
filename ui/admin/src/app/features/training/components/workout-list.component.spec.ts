@@ -51,7 +51,9 @@ describe('WorkoutListComponent', () => {
 
     expect(router.navigate).toHaveBeenCalledWith([
       `/tenant/${component.tenantId}/workout/${mockWorkout.id}/edit`
-    ]);
+    ], {
+      queryParams: { locationId: '' }
+    });
   });
 
   it('should emit page change event', () => {

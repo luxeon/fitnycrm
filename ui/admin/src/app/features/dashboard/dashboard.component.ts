@@ -143,17 +143,16 @@ export class DashboardComponent implements OnInit {
               this.tenantDetails = tenant;
               const tab = this.route.snapshot.queryParams['tab'];
               if (tab && this.tabs.some(t => t.id === tab)) {
-                this.setActiveTab(tab);
+                this.setActiveTab(tab, true);
               } else {
-                this.loadWorkouts(tenant.id);
-                this.loadTrainers(tenant.id);
+                this.setActiveTab('locations', false); // Don't update URL during initialization
               }
             });
         }
       });
   }
 
-  setActiveTab(tabId: string): void {
+  setActiveTab(tabId: string, updateUrl: boolean = true): void {
     this.activeTab = tabId;
     if (this.tenantDetails) {
       if (tabId === 'workouts' && !this.workouts.length) {
@@ -162,12 +161,14 @@ export class DashboardComponent implements OnInit {
         this.loadTrainers(this.tenantDetails.id);
       }
     }
-    // Update URL with the new tab
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { tab: tabId },
-      queryParamsHandling: 'merge'
-    });
+    // Update URL with the new tab only when requested
+    if (updateUrl) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { tab: tabId },
+        queryParamsHandling: 'merge'
+      });
+    }
   }
 
   async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {

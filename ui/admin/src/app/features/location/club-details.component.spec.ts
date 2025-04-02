@@ -8,6 +8,7 @@ import { TrainerService } from '../../core/services/trainer.service';
 import { ClubDetailsComponent } from './club-details.component';
 import { Observable, of } from 'rxjs';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 class FakeLoader implements TranslateLoader {
   getTranslation(): Observable<any> {
@@ -103,7 +104,8 @@ describe('ClubDetailsComponent', () => {
         { provide: TrainerService, useValue: trainerServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: routeSpy },
-        provideAnimations()
+        provideAnimations(),
+        provideHttpClient(withFetch())
       ]
     }).compileComponents();
 

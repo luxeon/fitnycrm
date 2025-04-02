@@ -277,44 +277,59 @@ export class EditWorkoutComponent implements OnInit {
   }
 
   private async loadWorkout(tenantId: string, workoutId: string): Promise<void> {
+    if (!this.trainingService?.getTraining) {
+      this.errorMessage = 'Training service is not available';
+      this.isLoading = false;
+      return;
+    }
+
     try {
       const workout = await firstValueFrom(this.trainingService.getTraining(tenantId, workoutId));
+      if (!workout) {
+        throw new Error('Workout not found');
+      }
       this.workoutForm.patchValue(workout);
     } catch (error) {
-      this.errorMessage = 'Failed to load workout details';
+      this.errorMessage = error instanceof Error ? error.message : 'Failed to load workout details';
       console.error('Failed to load workout:', error);
+      // Navigate back if workout cannot be loaded
+      this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
     } finally {
       this.isLoading = false;
     }
   }
 
   async onSubmit(): Promise<void> {
-    if (this.workoutForm.valid) {
-      this.isSaving = true;
-      this.errorMessage = null;
+    if (!this.workoutForm.valid || !this.trainingService?.updateTraining) {
+      return;
+    }
 
-      const { tenantId, workoutId } = this.route.snapshot.params;
+    this.isSaving = true;
+    this.errorMessage = null;
 
-      if (!tenantId || !workoutId) {
-        this.router.navigate(['/dashboard']);
-        return;
+    const { tenantId, workoutId } = this.route.snapshot.params;
+    if (!tenantId || !workoutId) {
+      this.router.navigate(['/dashboard']);
+      return;
+    }
+
+    try {
+      const result = await firstValueFrom(this.trainingService.updateTraining(tenantId, workoutId, this.workoutForm.value));
+      if (!result) {
+        throw new Error('Failed to update workout');
       }
 
-      try {
-        await firstValueFrom(this.trainingService.updateTraining(tenantId, workoutId, this.workoutForm.value));
-        if (this.locationId) {
-          this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
-        } else {
-          this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
-        }
-      } catch (error: any) {
-        this.errorMessage = error.status === 401
-          ? 'Authentication failed. Please try logging in again.'
-          : 'Failed to update workout. Please try again.';
-        console.error('Failed to update workout:', error);
-      } finally {
-        this.isSaving = false;
+      if (this.locationId) {
+        this.router.navigate([`/tenant/${tenantId}/location/${this.locationId}/details`], { queryParams: { tab: 'workouts' } });
+      } else {
+        this.router.navigate(['/dashboard'], { queryParams: { tab: 'workouts' } });
       }
+    } catch (error: any) {
+      this.errorMessage = error.status === 401
+        ? 'Authentication failed. Please try logging in again.'
+        : 'Failed to update workout. Please try again.';
+    } finally {
+      this.isSaving = false;
     }
   }
 
