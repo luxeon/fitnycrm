@@ -5,15 +5,11 @@ import { LocationService, LocationPageItemResponse } from '../../core/services/l
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { TrainingService, TrainingPageItemResponse } from '../../core/services/training.service';
-import { WorkoutListComponent } from '../training/components/workout-list.component';
-import { TrainerService, TrainerPageItemResponse } from '../../core/services/trainer.service';
-import { TrainerListComponent } from '../trainer/components/trainer-list.component';
 
 @Component({
   selector: 'app-club-details',
   standalone: true,
-  imports: [CommonModule, TranslateModule, WorkoutListComponent, TrainerListComponent],
+  imports: [CommonModule, TranslateModule],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -43,81 +39,17 @@ import { TrainerListComponent } from '../trainer/components/trainer-list.compone
           {{ 'common.loading' | translate }}
         </div>
 
-        <div class="tabs-container" *ngIf="!isLoading && location">
-          <div class="tabs">
-            <button
-              *ngFor="let tab of tabs"
-              [class.active]="activeTab === tab.id"
-              (click)="setActiveTab(tab.id)"
-              class="tab-button">
-              {{ tab.label | translate }}
+        <div class="schedule-section" *ngIf="!isLoading && location">
+          <div class="action-header">
+            <h3>{{ 'location.details.schedule.title' | translate }}</h3>
+            <button class="action-button" (click)="onAddSchedule()">
+              {{ 'location.details.schedule.add' | translate }}
             </button>
           </div>
-
-          <div class="tab-content" [ngSwitch]="activeTab">
-            <div *ngSwitchCase="'workouts'" class="tab-pane">
-              <div class="action-header">
-                <h3>{{ 'location.details.workouts.title' | translate }}</h3>
-                <button class="action-button" (click)="onAddWorkout()">
-                  {{ 'location.details.workouts.add' | translate }}
-                </button>
-              </div>
-              <div class="loading" *ngIf="isLoadingWorkouts">
-                {{ 'common.loading' | translate }}
-              </div>
-              <div class="empty-state" *ngIf="!isLoadingWorkouts && !workouts?.length">
-                {{ 'location.details.workouts.empty' | translate }}
-              </div>
-              <app-workout-list
-                *ngIf="!isLoadingWorkouts && workouts?.length"
-                [workouts]="workouts"
-                [currentPage]="currentWorkoutPage"
-                [totalPages]="totalWorkoutPages"
-                [tenantId]="tenantId"
-                [locationId]="location.id || ''"
-                (pageChange)="onWorkoutPageChange($event)"
-                (workoutDeleted)="loadWorkouts(tenantId)">
-              </app-workout-list>
-            </div>
-
-            <div *ngSwitchCase="'trainers'" class="tab-pane">
-              <div class="action-header">
-                <h3>{{ 'location.details.trainers.title' | translate }}</h3>
-                <button class="action-button" (click)="onAddTrainer()">
-                  {{ 'location.details.trainers.add' | translate }}
-                </button>
-              </div>
-              <div class="loading" *ngIf="isLoadingTrainers">
-                {{ 'common.loading' | translate }}
-              </div>
-              <div class="empty-state" *ngIf="!isLoadingTrainers && !trainers?.length">
-                {{ 'location.details.trainers.empty' | translate }}
-              </div>
-              <app-trainer-list
-                *ngIf="!isLoadingTrainers && trainers?.length"
-                [trainers]="trainers"
-                [currentPage]="currentTrainerPage"
-                [totalPages]="totalTrainerPages"
-                [tenantId]="tenantId"
-                [locationId]="location.id || ''"
-                (pageChange)="onTrainerPageChange($event)"
-                (trainerDeleted)="loadTrainers(tenantId)">
-              </app-trainer-list>
-            </div>
-
-            <div *ngSwitchCase="'schedule'" class="tab-pane">
-              <div class="action-header">
-                <h3>{{ 'location.details.schedule.title' | translate }}</h3>
-                <button class="action-button" (click)="onAddSchedule()">
-                  {{ 'location.details.schedule.add' | translate }}
-                </button>
-              </div>
-              <div class="empty-state" *ngIf="!hasSchedules">
-                {{ 'location.details.schedule.empty' | translate }}
-              </div>
-              <!-- Schedule content will be added here -->
-            </div>
+          <div class="empty-state" *ngIf="!hasSchedules">
+            {{ 'location.details.schedule.empty' | translate }}
           </div>
+          <!-- Schedule content will be added here -->
         </div>
       </div>
     </div>
@@ -198,44 +130,8 @@ import { TrainerListComponent } from '../trainer/components/trainer-list.compone
       color: #6c757d;
     }
 
-    .tabs-container {
+    .schedule-section {
       margin-top: 24px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 2px solid #eee;
-      margin-bottom: 24px;
-    }
-
-    .tab-button {
-      padding: 12px 24px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      color: #7f8c8d;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
-
-      &:hover {
-        color: #2c3e50;
-      }
-
-      &.active {
-        color: #3498db;
-        border-bottom-color: #3498db;
-      }
-    }
-
-    .tab-content {
-      min-height: 400px;
-    }
-
-    .tab-pane {
-      padding: 24px 0;
     }
 
     .action-header {
@@ -278,47 +174,20 @@ import { TrainerListComponent } from '../trainer/components/trainer-list.compone
 })
 export class ClubDetailsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
-  private readonly trainingService = inject(TrainingService);
-  private readonly trainerService = inject(TrainerService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   location: LocationPageItemResponse | null = null;
-  workouts: TrainingPageItemResponse[] = [];
-  trainers: TrainerPageItemResponse[] = [];
   isLoading = false;
-  isLoadingWorkouts = false;
-  isLoadingTrainers = false;
-  activeTab = 'workouts';
-  currentWorkoutPage = 0;
-  totalWorkoutPages = 0;
-  currentTrainerPage = 0;
-  totalTrainerPages = 0;
-  tenantId = '';
-
-  // Temporary flags for empty states
   hasSchedules = false;
-
-  tabs = [
-    { id: 'workouts', label: 'location.details.tabs.workouts' },
-    { id: 'trainers', label: 'location.details.tabs.trainers' },
-    { id: 'schedule', label: 'location.details.tabs.schedule' }
-  ];
 
   ngOnInit(): void {
     const params = this.route.snapshot.params;
     const tenantId = params['tenantId'];
     const locationId = params['locationId'];
-    const tab = this.route.snapshot.queryParams['tab']; // Keep tab as query param for better UX
 
     if (tenantId && locationId) {
-      this.tenantId = tenantId;
       this.loadLocation(tenantId, locationId);
-      this.loadWorkouts(tenantId);
-      this.loadTrainers(tenantId);
-      if (tab && this.tabs.some(t => t.id === tab)) {
-        this.activeTab = tab;
-      }
     } else {
       this.router.navigate(['/dashboard']);
     }
@@ -336,74 +205,6 @@ export class ClubDetailsComponent implements OnInit {
     }
   }
 
-  async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {
-    this.isLoadingWorkouts = true;
-    try {
-      const response = await firstValueFrom(this.trainingService.getTrainings(tenantId, page));
-      this.workouts = response.content;
-      this.currentWorkoutPage = response.number;
-      this.totalWorkoutPages = response.totalPages;
-    } catch (error) {
-      // Handle error appropriately
-      console.error('Failed to load workouts:', error);
-    } finally {
-      this.isLoadingWorkouts = false;
-    }
-  }
-
-  async loadTrainers(tenantId: string, page: number = 0): Promise<void> {
-    this.isLoadingTrainers = true;
-    try {
-      const response = await firstValueFrom(this.trainerService.getTrainers(tenantId, page));
-      this.trainers = response.content;
-      this.currentTrainerPage = response.number;
-      this.totalTrainerPages = response.totalPages;
-    } catch (error) {
-      // Handle error appropriately
-      console.error('Failed to load trainers:', error);
-    } finally {
-      this.isLoadingTrainers = false;
-    }
-  }
-
-  onWorkoutPageChange(page: number): void {
-    const { tenantId } = this.route.snapshot.params;
-    if (tenantId) {
-      this.loadWorkouts(tenantId, page);
-    }
-  }
-
-  onTrainerPageChange(page: number): void {
-    const { tenantId } = this.route.snapshot.params;
-    if (tenantId) {
-      this.loadTrainers(tenantId, page);
-    }
-  }
-
-  setActiveTab(tabId: string): void {
-    this.activeTab = tabId;
-    // Update URL with the new tab
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParams: { ...this.route.snapshot.queryParams, tab: tabId },
-      queryParamsHandling: 'merge'
-    });
-  }
-
-  onAddWorkout(): void {
-    const { tenantId, locationId } = this.route.snapshot.params;
-    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/workout/create`]);
-  }
-
-  onAddTrainer(): void {
-    const { tenantId, locationId } = this.route.snapshot.params;
-    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/trainer/create`]);
-  }
-
-  onAddSchedule(): void {
-    // To be implemented
-  }
-
   onBack(): void {
     this.router.navigate(['/dashboard']).then(() => {
       // Restore scroll position after navigation
@@ -413,5 +214,10 @@ export class ClubDetailsComponent implements OnInit {
         sessionStorage.removeItem('dashboardScrollPos'); // Clean up
       }
     });
+  }
+
+  onAddSchedule(): void {
+    const { tenantId, locationId } = this.route.snapshot.params;
+    this.router.navigate([`/tenant/${tenantId}/location/${locationId}/schedule/create`]);
   }
 }

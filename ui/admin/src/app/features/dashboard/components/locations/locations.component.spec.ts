@@ -170,7 +170,7 @@ describe('LocationsComponent', () => {
   });
 
   it('should navigate to create location page when add button is clicked', () => {
-    const addButton = fixture.debugElement.query(By.css('.add-location-btn'));
+    const addButton = fixture.debugElement.query(By.css('.action-button'));
     addButton.triggerEventHandler('click');
 
     expect(router.navigate).toHaveBeenCalledWith(['/tenant/tenant-1/location/create']);

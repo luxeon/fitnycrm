@@ -31,7 +31,12 @@
     "welcome": "¡Bienvenido, {{name}}!",
     "user": "Usuario",
     "fitnessClub": {
-      "label": "Club de Fitness:"
+      "label": "Club de Fitness"
+    },
+    "tabs": {
+      "locations": "Ubicaciones",
+      "workouts": "Entrenamientos",
+      "trainers": "Entrenadores"
     },
     "subtitle": "Tu gestión del viaje fitness comienza aquí.",
     "locations": {
@@ -44,6 +49,16 @@
         "message": "¿Estás seguro de que quieres eliminar esta ubicación? Esta acción no se puede deshacer.",
         "confirm": "Eliminar"
       }
+    },
+    "workouts": {
+      "title": "Entrenamientos Disponibles",
+      "add": "Añadir Entrenamiento",
+      "empty": "Aún no hay entrenamientos disponibles. Añade tu primer tipo de entrenamiento para comenzar."
+    },
+    "trainers": {
+      "title": "Entrenadores del Club",
+      "add": "Añadir Entrenador",
+      "empty": "Aún no hay entrenadores asignados. Añade entrenadores para comenzar a crear horarios."
     }
   },
   "location": {

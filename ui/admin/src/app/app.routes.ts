@@ -53,19 +53,19 @@ export const routes: Routes = [
     data: { titleKey: 'location.details.pageTitle' }
   },
   { 
-    path: 'tenant/:tenantId/location/:locationId/workout/create', 
+    path: 'tenant/:tenantId/workout/create', 
     component: CreateWorkoutComponent, 
     canActivate: [adminGuard],
     data: { titleKey: 'training.create.pageTitle' }
   },
   { 
-    path: 'tenant/:tenantId/location/:locationId/workout/:workoutId/edit', 
+    path: 'tenant/:tenantId/workout/:workoutId/edit', 
     component: EditWorkoutComponent, 
     canActivate: [adminGuard],
     data: { titleKey: 'training.edit.pageTitle' }
   },
   { 
-    path: 'tenant/:tenantId/location/:locationId/trainer/create', 
+    path: 'tenant/:tenantId/trainer/create', 
     loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent), 
     canActivate: [adminGuard],
     data: { titleKey: 'trainer.create.pageTitle' }

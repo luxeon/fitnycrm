@@ -24,9 +24,9 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ],
   template: `
     <div class="locations-section" @fadeInOut>
-      <div class="section-header">
+      <div class="action-header">
         <h3>{{ 'dashboard.locations.title' | translate }}</h3>
-        <button class="add-location-btn" (click)="onAddLocation()">
+        <button class="action-button" (click)="onAddLocation()">
           {{ 'dashboard.locations.addLocation' | translate }}
         </button>
       </div>
@@ -49,7 +49,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
         </div>
       </div>
 
-      <div class="no-locations" *ngIf="!isLoading && !locations?.content?.length" @fadeInOut>
+      <div class="empty-state" *ngIf="!isLoading && !locations?.content?.length" @fadeInOut>
         {{ 'dashboard.locations.noLocations' | translate }}
       </div>
 
@@ -85,37 +85,34 @@ import { animate, style, transition, trigger } from '@angular/animations';
   `,
   styles: [`
     .locations-section {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 0;
+    }
 
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
+    .action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
 
-        h3 {
-          margin: 0;
-          color: #2c3e50;
-        }
+      h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 20px;
+      }
+    }
 
-        .add-location-btn {
-          padding: 8px 16px;
-          background: #3498db;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          transition: background-color 0.2s;
+    .action-button {
+      padding: 8px 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
 
-          &:hover {
-            background: #2980b9;
-          }
-        }
+      &:hover {
+        background: #2980b9;
       }
     }
 
@@ -130,7 +127,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
       position: relative;
       padding: 1rem;
       background: #f8f9fa;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #e9ecef;
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: pointer;
@@ -208,13 +205,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
       }
     }
 
-    .no-locations {
+    .empty-state {
       text-align: center;
-      padding: 2rem;
-      color: #6c757d;
+      padding: 48px;
       background: #f8f9fa;
-      border-radius: 6px;
-      border: 1px dashed #dee2e6;
+      border-radius: 8px;
+      color: #6c757d;
+      font-size: 16px;
     }
 
     .loading {

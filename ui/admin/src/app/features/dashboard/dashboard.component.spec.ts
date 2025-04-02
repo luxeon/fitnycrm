@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DashboardComponent } from './dashboard.component';
 import { AuthService, UserDetailsResponse } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { TenantService, TenantResponse, TenantListItemResponse } from '../../core/services/tenant.service';
@@ -47,6 +47,14 @@ describe('DashboardComponent', () => {
         { provide: AuthService, useValue: authServiceSpy },
         { provide: TenantService, useValue: tenantServiceSpy },
         { provide: Router, useValue: routerSpy },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParams: {}
+            }
+          }
+        },
         provideAnimations()
       ]
     }).compileComponents();

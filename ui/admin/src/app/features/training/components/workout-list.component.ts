@@ -207,7 +207,6 @@ export class WorkoutListComponent {
   @Input() currentPage = 0;
   @Input() totalPages = 0;
   @Input() tenantId = '';
-  @Input() locationId = '';
   @Output() pageChange = new EventEmitter<number>();
   @Output() workoutDeleted = new EventEmitter<void>();
 
@@ -218,7 +217,7 @@ export class WorkoutListComponent {
   }
 
   onEditClick(workout: TrainingPageItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/${this.locationId}/workout/${workout.id}/edit`]);
+    this.router.navigate([`/tenant/${this.tenantId}/workout/${workout.id}/edit`]);
   }
 
   onDeleteClick(workout: TrainingPageItemResponse): void {

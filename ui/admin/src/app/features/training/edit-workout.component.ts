@@ -272,7 +272,7 @@ export class EditWorkoutComponent implements OnInit {
       this.isSaving = true;
       this.errorMessage = null;
 
-      const { tenantId, locationId, workoutId } = this.route.snapshot.params;
+      const { tenantId, workoutId, locationId } = this.route.snapshot.params;
 
       if (!tenantId || !workoutId) {
         this.router.navigate(['/dashboard']);

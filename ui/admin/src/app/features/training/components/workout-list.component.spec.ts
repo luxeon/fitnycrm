@@ -40,7 +40,6 @@ describe('WorkoutListComponent', () => {
     component = fixture.componentInstance;
     component.workouts = [mockWorkout];
     component.tenantId = '7a7632b1-e932-48fd-9296-001036b4ec19';
-    component.locationId = 'c35ac7f5-3e4f-462a-a76d-524bd3a5fd01';
   });
 
   it('should create', () => {
@@ -51,7 +50,7 @@ describe('WorkoutListComponent', () => {
     component.onEditClick(mockWorkout);
 
     expect(router.navigate).toHaveBeenCalledWith([
-      `/tenant/${component.tenantId}/location/${component.locationId}/workout/${mockWorkout.id}/edit`
+      `/tenant/${component.tenantId}/workout/${mockWorkout.id}/edit`
     ]);
   });
 
