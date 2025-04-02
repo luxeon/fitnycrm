@@ -1,6 +1,7 @@
 package com.fitnycrm.payment.repository.entity;
 
 import com.fitnycrm.tenant.repository.entity.Tenant;
+import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.user.repository.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -16,8 +17,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "client_payments")
-@ToString(exclude = {"tenant", "client"})
-@EqualsAndHashCode(exclude = {"tenant", "client"})
+@ToString(exclude = {"tenant", "client", "training"})
+@EqualsAndHashCode(exclude = {"tenant", "client", "training"})
 public class ClientPayment {
 
     @Id
@@ -33,6 +34,11 @@ public class ClientPayment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private User client;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "training_id", nullable = false)
+    private Training training;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

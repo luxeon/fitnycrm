@@ -11,6 +11,7 @@ public interface ClientPaymentRequestMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tenant", ignore = true)
     @Mapping(target = "client", ignore = true)
+    @Mapping(target = "training", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", constant = "COMPLETED")
     ClientPayment toEntity(CreateClientPaymentRequest request);

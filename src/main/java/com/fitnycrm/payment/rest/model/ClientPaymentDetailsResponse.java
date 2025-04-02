@@ -17,6 +17,9 @@ public record ClientPaymentDetailsResponse(
         @Schema(description = "Current status of the payment")
         PaymentStatus status,
 
+        @Schema(description = "ID of the training")
+        UUID trainingId,
+
         @Schema(description = "Number of trainings included in the payment")
         Integer trainingsCount,
 

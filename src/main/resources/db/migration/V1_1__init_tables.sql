@@ -130,6 +130,7 @@ CREATE TABLE IF NOT EXISTS client_payments
     id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id       uuid          NOT NULL,
     client_id       uuid          NOT NULL,
+    training_id     uuid          NOT NULL,
     status          VARCHAR(255)  NOT NULL,
     trainings_count integer       NOT NULL,
     valid_days      integer       NOT NULL,
@@ -137,5 +138,6 @@ CREATE TABLE IF NOT EXISTS client_payments
     currency        VARCHAR(3)    NOT NULL,
     created_at      TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id),
-    FOREIGN KEY (client_id) REFERENCES users (id)
+    FOREIGN KEY (client_id) REFERENCES users (id),
+    FOREIGN KEY (training_id) REFERENCES trainings (id)
 );

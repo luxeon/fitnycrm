@@ -7,9 +7,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Schema(description = "Request to create a new client payment")
 public record CreateClientPaymentRequest(
+        @Schema(description = "ID of the training", example = "123e4567-e89b-12d3-a456-426614174000")
+        @NotNull
+        UUID trainingId,
+
         @Schema(description = "Number of trainings included in the payment", example = "10")
         @NotNull
         @Positive
