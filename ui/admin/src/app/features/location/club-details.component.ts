@@ -306,9 +306,10 @@ export class ClubDetailsComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-    const tab = this.route.snapshot.queryParams['tab'];
+    const params = this.route.snapshot.params;
+    const tenantId = params['tenantId'];
+    const locationId = params['locationId'];
+    const tab = this.route.snapshot.queryParams['tab']; // Keep tab as query param for better UX
 
     if (tenantId && locationId) {
       this.tenantId = tenantId;
@@ -366,14 +367,14 @@ export class ClubDetailsComponent implements OnInit {
   }
 
   onWorkoutPageChange(page: number): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
+    const { tenantId } = this.route.snapshot.params;
     if (tenantId) {
       this.loadWorkouts(tenantId, page);
     }
   }
 
   onTrainerPageChange(page: number): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
+    const { tenantId } = this.route.snapshot.params;
     if (tenantId) {
       this.loadTrainers(tenantId, page);
     }
@@ -390,18 +391,14 @@ export class ClubDetailsComponent implements OnInit {
   }
 
   onAddWorkout(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-
+    const { tenantId, locationId } = this.route.snapshot.params;
     this.router.navigate(['/create-workout'], {
       queryParams: { tenantId, locationId }
     });
   }
 
   onAddTrainer(): void {
-    const tenantId = this.route.snapshot.queryParams['tenantId'];
-    const locationId = this.route.snapshot.queryParams['locationId'];
-
+    const { tenantId, locationId } = this.route.snapshot.params;
     this.router.navigate(['/create-trainer'], {
       queryParams: { tenantId, locationId }
     });

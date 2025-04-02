@@ -192,9 +192,7 @@ export class CreateLocationComponent {
       timezone: ['', Validators.required]
     });
 
-    this.route.queryParams.subscribe(params => {
-      this.tenantId = params['tenantId'];
-    });
+    this.tenantId = this.route.snapshot.params['tenantId'];
   }
 
   async onSubmit(): Promise<void> {

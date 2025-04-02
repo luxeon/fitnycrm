@@ -195,13 +195,12 @@ export class EditLocationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      this.tenantId = params['tenantId'];
-      this.locationId = params['locationId'];
-      if (this.tenantId && this.locationId) {
-        this.loadLocation();
-      }
-    });
+    const params = this.route.snapshot.params;
+    this.tenantId = params['tenantId'];
+    this.locationId = params['locationId'];
+    if (this.tenantId && this.locationId) {
+      this.loadLocation();
+    }
   }
 
   private async loadLocation(): Promise<void> {

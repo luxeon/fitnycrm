@@ -1,8 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { EmailConfirmationComponent } from './email-confirmation.component';
 import { By } from '@angular/platform-browser';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { RouterTestingModule } from '@angular/router/testing';
+import { Observable, of } from 'rxjs';
+
+class FakeLoader implements TranslateLoader {
+  getTranslation(): Observable<any> {
+    return of({
+      'emailConfirmation.title': 'Email Confirmation Required',
+      'emailConfirmation.message': 'Thank you for registering! We\'ve sent a confirmation email to your address. Please check your inbox and click the confirmation link to activate your account.',
+      'emailConfirmation.login.text': 'Already confirmed your email?',
+      'emailConfirmation.login.link': 'Log in'
+    });
+  }
+}
 
 describe('EmailConfirmationComponent', () => {
   let component: EmailConfirmationComponent;
@@ -13,7 +25,9 @@ describe('EmailConfirmationComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         EmailConfirmationComponent,
-        TranslateModule.forRoot(),
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: FakeLoader }
+        }),
         RouterTestingModule
       ]
     }).compileComponents();
@@ -21,6 +35,9 @@ describe('EmailConfirmationComponent', () => {
     fixture = TestBed.createComponent(EmailConfirmationComponent);
     component = fixture.componentInstance;
     translateService = TestBed.inject(TranslateService);
+    translateService.setDefaultLang('en');
+    translateService.use('en');
+    await fixture.whenStable();
     fixture.detectChanges();
   });
 
@@ -29,23 +46,13 @@ describe('EmailConfirmationComponent', () => {
   });
 
   it('should display translated title', () => {
-    const translatedTitle = 'Email Confirmation Required';
-    spyOn(translateService, 'instant').and.returnValue(translatedTitle);
-
-    fixture.detectChanges();
     const titleElement = fixture.debugElement.query(By.css('h2'));
-
-    expect(titleElement.nativeElement.textContent).toBe(translatedTitle);
+    expect(titleElement.nativeElement.textContent).toBe('Email Confirmation Required');
   });
 
   it('should display translated message', () => {
-    const translatedMessage = 'Thank you for registering! We\'ve sent a confirmation email to your address. Please check your inbox and click the confirmation link to activate your account.';
-    spyOn(translateService, 'instant').and.returnValue(translatedMessage);
-
-    fixture.detectChanges();
     const messageElement = fixture.debugElement.query(By.css('.message'));
-
-    expect(messageElement.nativeElement.textContent).toBe(translatedMessage);
+    expect(messageElement.nativeElement.textContent).toBe('Thank you for registering! We\'ve sent a confirmation email to your address. Please check your inbox and click the confirmation link to activate your account.');
   });
 
   it('should have login link', () => {
@@ -54,16 +61,8 @@ describe('EmailConfirmationComponent', () => {
   });
 
   it('should display translated login text', () => {
-    const translatedLoginText = 'Already confirmed your email?';
-    const translatedLoginLink = 'Log in';
-
-    const translateSpy = spyOn(translateService, 'instant');
-    translateSpy.and.returnValues(translatedLoginText, translatedLoginLink);
-
-    fixture.detectChanges();
     const loginTextElement = fixture.debugElement.query(By.css('.login-link'));
-
-    expect(loginTextElement.nativeElement.textContent).toContain(translatedLoginText);
-    expect(loginTextElement.nativeElement.textContent).toContain(translatedLoginLink);
+    expect(loginTextElement.nativeElement.textContent).toContain('Already confirmed your email?');
+    expect(loginTextElement.nativeElement.textContent).toContain('Log in');
   });
 });

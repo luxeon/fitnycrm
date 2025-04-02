@@ -54,7 +54,9 @@ describe('EditLocationComponent', () => {
     const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getLocation', 'updateLocation']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const routeSpy = jasmine.createSpyObj('ActivatedRoute', [], {
-      queryParams: of({ tenantId: 'tenant-1', locationId: '1' })
+      snapshot: {
+        params: { tenantId: 'tenant-1', locationId: '1' }
+      }
     });
 
     await TestBed.configureTestingModule({

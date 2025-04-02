@@ -292,16 +292,11 @@ export class LocationsComponent implements OnInit {
   }
 
   onAddLocation(): void {
-    this.router.navigate(['/create-location'], { queryParams: { tenantId: this.tenantId } });
+    this.router.navigate([`/tenant/${this.tenantId}/location/create`]);
   }
 
   onEditClick(location: LocationPageItemResponse): void {
-    this.router.navigate(['/edit-location'], { 
-      queryParams: { 
-        tenantId: this.tenantId,
-        locationId: location.id
-      } 
-    });
+    this.router.navigate([`/tenant/${this.tenantId}/location/${location.id}/edit`]);
   }
 
   onDeleteClick(location: LocationPageItemResponse): void {
@@ -325,14 +320,6 @@ export class LocationsComponent implements OnInit {
   }
 
   onLocationClick(location: LocationPageItemResponse): void {
-    // Save the current scroll position
-    sessionStorage.setItem('dashboardScrollPos', window.scrollY.toString());
-    
-    this.router.navigate(['/club-details'], { 
-      queryParams: { 
-        tenantId: this.tenantId,
-        locationId: location.id
-      } 
-    });
+    this.router.navigate([`/tenant/${this.tenantId}/location/${location.id}/details`]);
   }
 } 

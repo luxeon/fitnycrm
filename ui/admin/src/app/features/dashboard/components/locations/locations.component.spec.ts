@@ -173,10 +173,7 @@ describe('LocationsComponent', () => {
     const addButton = fixture.debugElement.query(By.css('.add-location-btn'));
     addButton.triggerEventHandler('click');
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/create-location'],
-      { queryParams: { tenantId: 'tenant-1' } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/tenant/tenant-1/location/create']);
   });
 
   it('should show edit button for each location', () => {
@@ -189,9 +186,6 @@ describe('LocationsComponent', () => {
     editButton.triggerEventHandler('click');
     fixture.detectChanges();
 
-    expect(router.navigate).toHaveBeenCalledWith(
-      ['/edit-location'],
-      { queryParams: { tenantId: 'tenant-1', locationId: '1' } }
-    );
+    expect(router.navigate).toHaveBeenCalledWith(['/tenant/tenant-1/location/1/edit']);
   });
 }); 
