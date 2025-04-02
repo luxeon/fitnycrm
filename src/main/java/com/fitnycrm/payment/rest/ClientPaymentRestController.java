@@ -41,4 +41,19 @@ public class ClientPaymentRestController {
                                                @RequestBody @Valid CreateClientPaymentRequest request) {
         return clientPaymentFacade.create(tenantId, clientId, request);
     }
+
+    @Operation(summary = "Cancel a client payment")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment canceled successfully",
+                    content = @Content(schema = @Schema(implementation = ClientPaymentDetailsResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Payment not found")
+    })
+    @PostMapping("/{paymentId}/cancel")
+    @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId))")
+    public ClientPaymentDetailsResponse cancel(@PathVariable UUID tenantId,
+                                             @PathVariable UUID clientId,
+                                             @PathVariable UUID paymentId) {
+        return clientPaymentFacade.cancel(tenantId, clientId, paymentId);
+    }
 } 

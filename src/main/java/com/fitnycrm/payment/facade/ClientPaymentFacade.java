@@ -21,4 +21,10 @@ public class ClientPaymentFacade {
                 clientPaymentService.create(tenantId, clientId, request)
         );
     }
+
+    public ClientPaymentDetailsResponse cancel(UUID tenantId, UUID clientId, UUID paymentId) {
+        return clientPaymentMapper.toDetailsResponse(
+                clientPaymentService.cancel(tenantId, clientId, paymentId)
+        );
+    }
 } 
