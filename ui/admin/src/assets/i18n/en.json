@@ -13,7 +13,13 @@
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
-    "joinedAt": "Joined At"
+    "joinedAt": "Joined At",
+    "create": "Create",
+    "days": "days",
+    "validation": {
+      "required": "This field is required",
+      "min": "Value must be at least {{min}}"
+    }
   },
   "login": {
     "pageTitle": "Login",
@@ -92,9 +98,16 @@
       }
     },
     "tariffs": {
-      "title": "Club Tariffs",
+      "title": "Tariffs",
       "add": "Add Tariff",
-      "empty": "No tariffs available yet. Add your first tariff plan to get started.",
+      "edit": "Edit Tariff",
+      "name": "Name",
+      "trainingsCount": "Number of Trainings",
+      "validDays": "Valid Days",
+      "price": "Price",
+      "currency": "Currency",
+      "empty": "No tariffs found. Click the 'Add Tariff' button to create one.",
+      "trainings": "trainings",
       "delete": {
         "title": "Delete Tariff",
         "message": "Are you sure you want to delete this tariff? This action cannot be undone.",

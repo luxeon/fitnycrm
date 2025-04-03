@@ -1,12 +1,25 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TariffService, TariffResponse } from '../../../../core/services/tariff.service';
+import { TariffDialogComponent } from './tariff-dialog.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-tariffs',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    ConfirmationDialogComponent
+  ],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -38,19 +51,28 @@ import { animate, style, transition, trigger } from '@angular/animations';
             <button class="edit-btn" (click)="onEditTariff(tariff)">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteTariff(tariff)">
+            <button class="delete-btn" (click)="onDeleteClick(tariff)">
               <span class="delete-icon">×</span>
             </button>
           </div>
           <div class="tariff-info">
             <h4 class="name">{{ tariff.name }}</h4>
-            <div class="price">{{ tariff.price | currency }}</div>
-            <div class="duration">{{ tariff.duration }} {{ 'common.days' | translate }}</div>
-            <div class="description">{{ tariff.description }}</div>
+            <div class="price">{{ tariff.price | currency:tariff.currency }}</div>
+            <div class="duration">{{ tariff.validDays }} {{ 'common.days' | translate }}</div>
+            <div class="trainings">{{ tariff.trainingsCount }} {{ 'dashboard.tariffs.trainings' | translate }}</div>
           </div>
         </div>
       </div>
     </div>
+
+    <app-confirmation-dialog
+      *ngIf="tariffToDelete"
+      [title]="'dashboard.tariffs.delete.title' | translate"
+      [message]="'dashboard.tariffs.delete.message' | translate"
+      [confirmText]="'dashboard.tariffs.delete.confirm' | translate"
+      (confirm)="onDeleteConfirm()"
+      (cancel)="onDeleteCancel()"
+    ></app-confirmation-dialog>
   `,
   styles: [`
     .tariffs-section {
@@ -185,16 +207,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
           margin-bottom: 0.5rem;
         }
 
-        .duration {
+        .duration, .trainings {
           color: #495057;
           font-size: 0.9rem;
           margin-bottom: 0.5rem;
-        }
-
-        .description {
-          color: #6c757d;
-          font-size: 0.9rem;
-          line-height: 1.4;
         }
       }
     }
@@ -203,8 +219,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
 export class TariffsComponent implements OnInit {
   @Input() tenantId!: string;
 
+  private dialog = inject(MatDialog);
+  private tariffService = inject(TariffService);
+  private snackBar = inject(MatSnackBar);
+
   isLoading = false;
-  tariffs: any[] = []; // TODO: Replace with proper interface
+  tariffs: TariffResponse[] = [];
+  tariffToDelete: TariffResponse | null = null;
 
   ngOnInit(): void {
     this.loadTariffs();
@@ -212,20 +233,89 @@ export class TariffsComponent implements OnInit {
 
   loadTariffs(): void {
     this.isLoading = true;
-    // TODO: Implement tariff service and load tariffs
-    this.isLoading = false;
-    this.tariffs = [];
+    this.tariffService.findAll(this.tenantId)
+      .pipe(
+        catchError(() => {
+          this.snackBar.open('Error loading tariffs', 'Close', { duration: 3000 });
+          return of([]);
+        }),
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe(tariffs => this.tariffs = tariffs);
   }
 
   onAddTariff(): void {
-    // TODO: Implement add tariff functionality
+    const dialogRef = this.dialog.open(TariffDialogComponent, {
+      width: '500px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tariffService.create(this.tenantId, result)
+          .pipe(
+            catchError(() => {
+              this.snackBar.open('Error creating tariff', 'Close', { duration: 3000 });
+              return of(null);
+            })
+          )
+          .subscribe(tariff => {
+            if (tariff) {
+              this.snackBar.open('Tariff created successfully', 'Close', { duration: 3000 });
+              this.loadTariffs();
+            }
+          });
+      }
+    });
   }
 
-  onEditTariff(tariff: any): void {
-    // TODO: Implement edit tariff functionality
+  onEditTariff(tariff: TariffResponse): void {
+    const dialogRef = this.dialog.open(TariffDialogComponent, {
+      width: '500px',
+      data: { tariff }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tariffService.update(this.tenantId, tariff.id, result)
+          .pipe(
+            catchError(() => {
+              this.snackBar.open('Error updating tariff', 'Close', { duration: 3000 });
+              return of(null);
+            })
+          )
+          .subscribe(updatedTariff => {
+            if (updatedTariff) {
+              this.snackBar.open('Tariff updated successfully', 'Close', { duration: 3000 });
+              this.loadTariffs();
+            }
+          });
+      }
+    });
   }
 
-  onDeleteTariff(tariff: any): void {
-    // TODO: Implement delete tariff functionality
+  onDeleteClick(tariff: TariffResponse): void {
+    this.tariffToDelete = tariff;
+  }
+
+  onDeleteCancel(): void {
+    this.tariffToDelete = null;
+  }
+
+  onDeleteConfirm(): void {
+    if (this.tariffToDelete) {
+      this.tariffService.delete(this.tenantId, this.tariffToDelete.id)
+        .pipe(
+          catchError(() => {
+            this.snackBar.open('Error deleting tariff', 'Close', { duration: 3000 });
+            return of(null);
+          })
+        )
+        .subscribe(() => {
+          this.snackBar.open('Tariff deleted successfully', 'Close', { duration: 3000 });
+          this.tariffToDelete = null;
+          this.loadTariffs();
+        });
+    }
   }
 }
