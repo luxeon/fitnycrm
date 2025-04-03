@@ -9,6 +9,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-tariffs',
@@ -222,6 +223,7 @@ export class TariffsComponent implements OnInit {
   private dialog = inject(MatDialog);
   private tariffService = inject(TariffService);
   private snackBar = inject(MatSnackBar);
+  private translate = inject(TranslateService);
 
   isLoading = false;
   tariffs: TariffResponse[] = [];
@@ -306,15 +308,35 @@ export class TariffsComponent implements OnInit {
     if (this.tariffToDelete) {
       this.tariffService.delete(this.tenantId, this.tariffToDelete.id)
         .pipe(
-          catchError(() => {
-            this.snackBar.open('Error deleting tariff', 'Close', { duration: 3000 });
+          catchError((error) => {
+            const params = { name: this.tariffToDelete?.name };
+            if (error?.error?.message?.includes('assigned to trainings')) {
+              this.snackBar.open(
+                this.translate.instant('dashboard.tariffs.delete.error.assigned', params),
+                this.translate.instant('common.close'),
+                { duration: 5000 }
+              );
+            } else {
+              this.snackBar.open(
+                this.translate.instant('dashboard.tariffs.delete.error.generic'),
+                this.translate.instant('common.close'),
+                { duration: 3000 }
+              );
+            }
             return of(null);
           })
         )
-        .subscribe(() => {
-          this.snackBar.open('Tariff deleted successfully', 'Close', { duration: 3000 });
-          this.tariffToDelete = null;
-          this.loadTariffs();
+        .subscribe((result) => {
+          if (result !== null) {
+            const params = { name: this.tariffToDelete?.name };
+            this.snackBar.open(
+              this.translate.instant('dashboard.tariffs.delete.success', params),
+              this.translate.instant('common.close'),
+              { duration: 3000 }
+            );
+            this.tariffToDelete = null;
+            this.loadTariffs();
+          }
         });
     }
   }

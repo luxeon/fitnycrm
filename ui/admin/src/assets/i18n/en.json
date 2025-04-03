@@ -112,7 +112,12 @@
       "delete": {
         "title": "Delete Tariff",
         "message": "Are you sure you want to delete this tariff? This action cannot be undone.",
-        "confirm": "Delete"
+        "confirm": "Delete",
+        "error": {
+          "assigned": "Cannot delete tariff '{{name}}' because it is currently assigned to one or more trainings. Please remove the tariff from all trainings first.",
+          "generic": "An error occurred while deleting the tariff. Please try again."
+        },
+        "success": "Tariff '{{name}}' has been successfully deleted"
       }
     }
   },
