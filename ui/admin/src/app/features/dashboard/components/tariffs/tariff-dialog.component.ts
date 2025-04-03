@@ -75,9 +75,9 @@ export interface TariffDialogData {
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'dashboard.tariffs.currency' | translate }}</mat-label>
             <mat-select formControlName="currency" required>
+              <mat-option value="UAH">UAH</mat-option>
               <mat-option value="USD">USD</mat-option>
               <mat-option value="EUR">EUR</mat-option>
-              <mat-option value="GBP">GBP</mat-option>
             </mat-select>
             <mat-error *ngIf="form.get('currency')?.hasError('required')">
               {{ 'common.validation.required' | translate }}
@@ -124,8 +124,8 @@ export class TariffDialogComponent {
       name: [data.tariff?.name ?? '', Validators.required],
       trainingsCount: [data.tariff?.trainingsCount ?? 1, [Validators.required, Validators.min(1)]],
       validDays: [data.tariff?.validDays ?? 30, [Validators.required, Validators.min(1)]],
-      price: [data.tariff?.price ?? 0.01, [Validators.required, Validators.min(0.01)]],
-      currency: [data.tariff?.currency ?? 'USD', Validators.required]
+      price: [data.tariff?.price ?? 10, [Validators.required, Validators.min(0.01)]],
+      currency: [data.tariff?.currency ?? 'UAH', Validators.required]
     });
   }
 
