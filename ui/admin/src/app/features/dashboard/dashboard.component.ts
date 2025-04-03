@@ -10,6 +10,7 @@ import { TrainerListComponent } from '../trainer/components/trainer-list.compone
 import { TrainingService } from '../../core/services/training.service';
 import { TrainerService } from '../../core/services/trainer.service';
 import { firstValueFrom } from 'rxjs';
+import { ClientsComponent } from './components/clients/clients.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +20,8 @@ import { firstValueFrom } from 'rxjs';
     TranslateModule,
     LocationsComponent,
     WorkoutListComponent,
-    TrainerListComponent
+    TrainerListComponent,
+    ClientsComponent
   ],
   template: `
     <div class="dashboard-container">
@@ -93,6 +95,10 @@ import { firstValueFrom } from 'rxjs';
                 (trainerDeleted)="loadTrainers(tenantDetails.id)">
               </app-trainer-list>
             </div>
+
+            <div *ngSwitchCase="'clients'" class="tab-pane">
+              <app-clients *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-clients>
+            </div>
           </div>
         </div>
       </div>
@@ -124,7 +130,8 @@ export class DashboardComponent implements OnInit {
   tabs = [
     { id: 'locations', label: 'dashboard.tabs.locations' },
     { id: 'workouts', label: 'dashboard.tabs.workouts' },
-    { id: 'trainers', label: 'dashboard.tabs.trainers' }
+    { id: 'trainers', label: 'dashboard.tabs.trainers' },
+    { id: 'clients', label: 'dashboard.tabs.clients' }
   ];
 
   ngOnInit(): void {

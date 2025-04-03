@@ -48,7 +48,8 @@
     "tabs": {
       "locations": "Locations",
       "workouts": "Workouts",
-      "trainers": "Trainers"
+      "trainers": "Trainers",
+      "clients": "Clients"
     },
     "subtitle": "Your fitness journey management starts here.",
     "locations": {
@@ -71,6 +72,19 @@
       "title": "Club Trainers",
       "add": "Add Trainer",
       "empty": "No trainers assigned yet. Add trainers to start creating schedules."
+    },
+    "clients": {
+      "title": "Club Members",
+      "empty": "No members yet. Invite your first member to get started.",
+      "invite": {
+        "button":{
+          "text": "Invite Member"
+        },
+        "title": "Invite New Member",
+        "email": "Email Address",
+        "emailPlaceholder": "Enter member's email address",
+        "send": "Send Invite"
+      }
     }
   },
   "location": {

@@ -36,7 +36,8 @@
     "tabs": {
       "locations": "Ubicaciones",
       "workouts": "Entrenamientos",
-      "trainers": "Entrenadores"
+      "trainers": "Entrenadores",
+      "clients": "Miembros"
     },
     "subtitle": "Tu gestión del viaje fitness comienza aquí.",
     "locations": {
@@ -59,6 +60,16 @@
       "title": "Entrenadores del Club",
       "add": "Añadir Entrenador",
       "empty": "Aún no hay entrenadores asignados. Añade entrenadores para comenzar a crear horarios."
+    },
+    "clients": {
+      "title": "Miembros del Club",
+      "empty": "Aún no hay miembros. Invita a tu primer miembro para comenzar.",
+      "invite": {
+        "title": "Invitar Nuevo Miembro",
+        "email": "Correo Electrónico",
+        "emailPlaceholder": "Introduce el correo electrónico del miembro",
+        "send": "Enviar Invitación"
+      }
     }
   },
   "location": {
@@ -292,4 +303,4 @@
       "endTimeRequired": "La hora de fin es obligatoria"
     }
   }
-} 
+}
