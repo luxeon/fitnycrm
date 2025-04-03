@@ -1,15 +1,16 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TrainerService, TrainerPageItemResponse } from '../../../core/services/trainer.service';
 import { ConfirmationDialogComponent } from '../../dashboard/components/confirmation-dialog/confirmation-dialog.component';
 import { firstValueFrom } from 'rxjs';
 import { Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-trainer-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent],
+  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent, MatSnackBarModule],
   template: `
     <div class="trainers-grid">
       <div class="trainer-card" *ngFor="let trainer of trainers">
@@ -39,7 +40,7 @@ import { Router } from '@angular/router';
     </div>
 
     <div class="pagination" *ngIf="totalPages > 1">
-      <button 
+      <button
         [disabled]="currentPage === 0"
         (click)="onPageChange(currentPage - 1)">
         {{ 'common.previous' | translate }}
@@ -47,7 +48,7 @@ import { Router } from '@angular/router';
       <span class="page-info">
         {{ 'common.page' | translate }} {{ currentPage + 1 }} {{ 'common.of' | translate }} {{ totalPages }}
       </span>
-      <button 
+      <button
         [disabled]="currentPage === totalPages - 1"
         (click)="onPageChange(currentPage + 1)">
         {{ 'common.next' | translate }}
@@ -56,9 +57,9 @@ import { Router } from '@angular/router';
 
     <app-confirmation-dialog
       *ngIf="trainerToDelete"
-      [title]="'location.details.trainers.delete.title' | translate"
-      [message]="'location.details.trainers.delete.message' | translate"
-      [confirmText]="'location.details.trainers.delete.confirm' | translate"
+      [title]="'trainer.delete.title' | translate"
+      [message]="'trainer.delete.message' | translate"
+      [confirmText]="'trainer.delete.confirm' | translate"
       (confirm)="onDeleteConfirm()"
       (cancel)="onDeleteCancel()"
     ></app-confirmation-dialog>
@@ -201,6 +202,8 @@ import { Router } from '@angular/router';
 export class TrainerListComponent {
   private readonly trainerService = inject(TrainerService);
   private readonly router = inject(Router);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   @Input() trainers: TrainerPageItemResponse[] = [];
   @Input() currentPage = 0;
@@ -234,12 +237,32 @@ export class TrainerListComponent {
     if (this.trainerToDelete && this.tenantId) {
       try {
         await firstValueFrom(this.trainerService.deleteTrainer(this.tenantId, this.trainerToDelete.id));
+        const trainerName = `${this.trainerToDelete.firstName} ${this.trainerToDelete.lastName}`;
+        const params = { name: trainerName };
+        this.snackBar.open(
+          this.translate.instant('trainer.delete.success', params),
+          this.translate.instant('common.close'),
+          { duration: 3000 }
+        );
         this.trainerToDelete = null;
         this.trainerDeleted.emit();
-      } catch (error) {
-        // Handle error if needed
-        console.error('Failed to delete trainer:', error);
+      } catch (error: any) {
+        const trainerName = this.trainerToDelete ? `${this.trainerToDelete.firstName} ${this.trainerToDelete.lastName}` : '';
+        const params = { name: trainerName };
+        if (error.status === 409) {
+          this.snackBar.open(
+            this.translate.instant('trainer.delete.error.hasSchedules', params),
+            this.translate.instant('common.close'),
+            { duration: 5000 }
+          );
+        } else {
+          this.snackBar.open(
+            this.translate.instant('trainer.delete.error.generic'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+        }
       }
     }
   }
-} 
+}

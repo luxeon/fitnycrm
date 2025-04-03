@@ -314,6 +314,16 @@
       "title": "Edit Trainer",
       "subtitle": "Update trainer's details"
     },
+    "delete": {
+      "title": "Delete Trainer",
+      "message": "Are you sure you want to delete this trainer? This action cannot be undone.",
+      "confirm": "Delete",
+      "error": {
+        "hasSchedules": "Cannot delete trainer '{{name}}' because they are assigned to one or more schedules. Please reassign or delete the schedules first.",
+        "generic": "An error occurred while deleting the trainer. Please try again."
+      },
+      "success": "Trainer '{{name}}' has been successfully deleted"
+    },
     "form": {
       "firstName": {
         "label": "First Name",
