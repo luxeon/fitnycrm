@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
@@ -151,6 +151,11 @@ export class InviteUserModalComponent {
   @Output() invite = new EventEmitter<string>();
 
   email: string = '';
+
+  @HostListener('document:keydown.escape')
+  onEscapePressed(): void {
+    this.onCancel();
+  }
 
   onCancel(): void {
     this.close.emit();
