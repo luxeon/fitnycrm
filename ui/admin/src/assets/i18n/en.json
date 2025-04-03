@@ -9,6 +9,7 @@
     "next": "Next",
     "page": "Page",
     "of": "of",
+    "close": "Close",
     "title": "FitnyCRM",
     "name": "Name",
     "email": "Email",
@@ -210,6 +211,25 @@
         "placeholder": "Enter maximum capacity",
         "required": "Maximum capacity is required"
       }
+    },
+    "delete": {
+      "title": "Delete Workout",
+      "message": "Are you sure you want to delete this workout? This action cannot be undone.",
+      "confirm": "Delete",
+      "success": "Workout deleted successfully",
+      "error": "Error deleting workout"
+    },
+    "minutes": "minutes",
+    "capacity": "participants",
+    "tariffs": {
+      "dialog": {
+        "title": "Manage Training Prices for {{name}}",
+        "empty": "No tariffs available for this workout",
+        "select": "Select tariff {{name}} for this workout"
+      }
+    },
+    "workout": {
+      "title": "Workout: {{name}}"
     }
   },
   "emailConfirmation": {

@@ -35,6 +35,10 @@ export interface TrainingPageItemResponse {
   clientCapacity: number;
 }
 
+export interface UpdateTrainingTariffsRequest {
+  tariffIds: string[];
+}
+
 interface PageResponse<T> {
   content: T[];
   totalElements: number;
@@ -95,6 +99,17 @@ export class TrainingService {
       }
     }).pipe(
       map(response => response.content)
+    );
+  }
+
+  getTrainingTariffs(tenantId: string, trainingId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/tenants/${tenantId}/trainings/${trainingId}/tariffs`);
+  }
+
+  updateTrainingTariffs(tenantId: string, trainingId: string, request: UpdateTrainingTariffsRequest): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/tenants/${tenantId}/trainings/${trainingId}/tariffs`,
+      request
     );
   }
 }

@@ -12,6 +12,8 @@ import { TrainerService } from '../../core/services/trainer.service';
 import { firstValueFrom } from 'rxjs';
 import { ClientsComponent } from './components/clients/clients.component';
 import { TariffsComponent } from './components/tariffs/tariffs.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +25,9 @@ import { TariffsComponent } from './components/tariffs/tariffs.component';
     WorkoutListComponent,
     TrainerListComponent,
     ClientsComponent,
-    TariffsComponent
+    TariffsComponent,
+    MatDialogModule,
+    MatSnackBarModule
   ],
   template: `
     <div class="dashboard-container">

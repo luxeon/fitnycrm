@@ -1,10 +1,13 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { TrainingService, TrainingPageItemResponse } from '../../../core/services/training.service';
 import { ConfirmationDialogComponent } from '../../dashboard/components/confirmation-dialog/confirmation-dialog.component';
+import { TrainingTariffsDialogComponent } from './training-tariffs-dialog.component';
 import { firstValueFrom } from 'rxjs';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-workout-list',
@@ -15,23 +18,26 @@ import { Router } from '@angular/router';
       <div class="workout-card" *ngFor="let workout of workouts">
         <div class="workout-info">
           <div class="card-actions">
-            <button class="edit-btn" (click)="onEditClick(workout)">
+            <button class="prices-btn" (click)="onManagePrices(workout)" title="{{ 'training.actions.managePrices' | translate }}">
+              <span class="prices-icon">💰</span>
+            </button>
+            <button class="edit-btn" (click)="onEditClick(workout)" title="{{ 'common.edit' | translate }}">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteClick(workout)">
+            <button class="delete-btn" (click)="onDeleteClick(workout)" title="{{ 'common.delete' | translate }}">
               <span class="delete-icon">×</span>
             </button>
           </div>
           <h3>{{ workout.name }}</h3>
-          <p *ngIf="workout.description" class="description">{{ workout.description }}</p>
+          <p class="description" *ngIf="workout.description">{{ workout.description }}</p>
           <div class="details">
             <span class="detail">
               <i class="duration-icon">⏱</i>
-              {{ workout.durationMinutes }} min
+              {{ workout.durationMinutes }} {{ 'training.minutes' | translate }}
             </span>
             <span class="detail">
               <i class="capacity-icon">👥</i>
-              {{ workout.clientCapacity }} people
+              {{ workout.clientCapacity }} {{ 'training.capacity' | translate }}
             </span>
           </div>
         </div>
@@ -39,7 +45,7 @@ import { Router } from '@angular/router';
     </div>
 
     <div class="pagination" *ngIf="totalPages > 1">
-      <button 
+      <button
         [disabled]="currentPage === 0"
         (click)="onPageChange(currentPage - 1)">
         {{ 'common.previous' | translate }}
@@ -47,7 +53,7 @@ import { Router } from '@angular/router';
       <span class="page-info">
         {{ 'common.page' | translate }} {{ currentPage + 1 }} {{ 'common.of' | translate }} {{ totalPages }}
       </span>
-      <button 
+      <button
         [disabled]="currentPage === totalPages - 1"
         (click)="onPageChange(currentPage + 1)">
         {{ 'common.next' | translate }}
@@ -56,9 +62,9 @@ import { Router } from '@angular/router';
 
     <app-confirmation-dialog
       *ngIf="workoutToDelete"
-      [title]="'location.details.workouts.delete.title' | translate"
-      [message]="'location.details.workouts.delete.message' | translate"
-      [confirmText]="'location.details.workouts.delete.confirm' | translate"
+      [title]="'training.delete.title' | translate"
+      [message]="'training.delete.message' | translate"
+      [confirmText]="'training.delete.confirm' | translate"
       (confirm)="onDeleteConfirm()"
       (cancel)="onDeleteCancel()"
     ></app-confirmation-dialog>
@@ -66,7 +72,7 @@ import { Router } from '@angular/router';
   styles: [`
     .workouts-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 1rem;
       margin-bottom: 1rem;
     }
@@ -98,7 +104,6 @@ import { Router } from '@angular/router';
         color: #495057;
         font-size: 0.9rem;
         margin: 0 0 1rem;
-        line-height: 1.4;
       }
 
       .details {
@@ -127,7 +132,7 @@ import { Router } from '@angular/router';
       gap: 8px;
     }
 
-    .edit-btn, .delete-btn {
+    .edit-btn, .delete-btn, .prices-btn {
       width: 24px;
       height: 24px;
       border-radius: 50%;
@@ -167,6 +172,20 @@ import { Router } from '@angular/router';
       }
     }
 
+    .prices-btn {
+      background: #f1c40f;
+      color: white;
+
+      .prices-icon {
+        font-size: 14px;
+        line-height: 1;
+      }
+
+      &:hover {
+        background: #f39c12;
+      }
+    }
+
     .pagination {
       display: flex;
       align-items: center;
@@ -202,12 +221,14 @@ import { Router } from '@angular/router';
 export class WorkoutListComponent {
   private readonly trainingService = inject(TrainingService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   @Input() workouts: TrainingPageItemResponse[] = [];
   @Input() currentPage = 0;
   @Input() totalPages = 0;
   @Input() tenantId = '';
-  @Input() locationId = '';
   @Output() pageChange = new EventEmitter<number>();
   @Output() workoutDeleted = new EventEmitter<void>();
 
@@ -218,9 +239,7 @@ export class WorkoutListComponent {
   }
 
   onEditClick(workout: TrainingPageItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/workout/${workout.id}/edit`], {
-      queryParams: { locationId: this.locationId }
-    });
+    this.router.navigate([`/tenant/${this.tenantId}/workout/${workout.id}/edit`]);
   }
 
   onDeleteClick(workout: TrainingPageItemResponse): void {
@@ -237,10 +256,34 @@ export class WorkoutListComponent {
         await firstValueFrom(this.trainingService.deleteTraining(this.tenantId, this.workoutToDelete.id));
         this.workoutToDelete = null;
         this.workoutDeleted.emit();
+        this.snackBar.open(
+          this.translate.instant('training.delete.success'),
+          this.translate.instant('common.close'),
+          { duration: 3000 }
+        );
       } catch (error) {
-        // Handle error if needed
-        console.error('Failed to delete workout:', error);
+        this.snackBar.open(
+          this.translate.instant('training.delete.error'),
+          this.translate.instant('common.close'),
+          { duration: 3000 }
+        );
       }
     }
   }
-} 
+
+  async onManagePrices(workout: TrainingPageItemResponse): Promise<void> {
+    const dialogRef = this.dialog.open(TrainingTariffsDialogComponent, {
+      width: '500px',
+      data: {
+        tenantId: this.tenantId,
+        trainingId: workout.id,
+        trainingName: workout.name
+      }
+    });
+
+    const result = await firstValueFrom(dialogRef.afterClosed());
+    if (result) {
+      this.snackBar.open('Training prices updated successfully', 'Close', { duration: 3000 });
+    }
+  }
+}
