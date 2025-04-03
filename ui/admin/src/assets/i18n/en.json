@@ -280,7 +280,24 @@
   },
   "tenant": {
     "create": {
-      "pageTitle": "Create Fitness Club"
+      "pageTitle": "Create Fitness Club",
+      "title": "Create New Fitness Club",
+      "subtitle": "Enter your fitness club details below"
+    },
+    "form": {
+      "name": {
+        "label": "Club Name",
+        "placeholder": "Enter club name",
+        "required": "Club name is required"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Enter club description (optional)"
+      },
+      "button": {
+        "create": "Create Club",
+        "creating": "Creating..."
+      }
     }
   },
   "schedule": {
