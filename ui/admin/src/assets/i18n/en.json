@@ -9,7 +9,11 @@
     "next": "Next",
     "page": "Page",
     "of": "of",
-    "title": "FitNYC"
+    "title": "FitnyCRM",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "joinedAt": "Joined At"
   },
   "login": {
     "pageTitle": "Login",

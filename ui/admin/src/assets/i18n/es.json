@@ -272,7 +272,11 @@
     "next": "Siguiente",
     "page": "Página",
     "of": "de",
-    "title": "FitNYC"
+    "title": "FitnyCRM",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "joinedAt": "Se unió el"
   },
   "schedule": {
     "create": {
