@@ -11,6 +11,7 @@ import { TrainingService } from '../../core/services/training.service';
 import { TrainerService } from '../../core/services/trainer.service';
 import { firstValueFrom } from 'rxjs';
 import { ClientsComponent } from './components/clients/clients.component';
+import { TariffsComponent } from './components/tariffs/tariffs.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +22,8 @@ import { ClientsComponent } from './components/clients/clients.component';
     LocationsComponent,
     WorkoutListComponent,
     TrainerListComponent,
-    ClientsComponent
+    ClientsComponent,
+    TariffsComponent
   ],
   template: `
     <div class="dashboard-container">
@@ -99,6 +101,10 @@ import { ClientsComponent } from './components/clients/clients.component';
             <div *ngSwitchCase="'clients'" class="tab-pane">
               <app-clients *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-clients>
             </div>
+
+            <div *ngSwitchCase="'tariffs'" class="tab-pane">
+              <app-tariffs *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-tariffs>
+            </div>
           </div>
         </div>
       </div>
@@ -131,7 +137,8 @@ export class DashboardComponent implements OnInit {
     { id: 'locations', label: 'dashboard.tabs.locations' },
     { id: 'workouts', label: 'dashboard.tabs.workouts' },
     { id: 'trainers', label: 'dashboard.tabs.trainers' },
-    { id: 'clients', label: 'dashboard.tabs.clients' }
+    { id: 'clients', label: 'dashboard.tabs.clients' },
+    { id: 'tariffs', label: 'dashboard.tabs.tariffs' }
   ];
 
   ngOnInit(): void {

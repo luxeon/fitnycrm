@@ -53,7 +53,8 @@
       "locations": "Locations",
       "workouts": "Workouts",
       "trainers": "Trainers",
-      "clients": "Clients"
+      "clients": "Clients",
+      "tariffs": "Tariffs"
     },
     "subtitle": "Your fitness journey management starts here.",
     "locations": {
@@ -88,6 +89,16 @@
         "email": "Email Address",
         "emailPlaceholder": "Enter member's email address",
         "send": "Send Invite"
+      }
+    },
+    "tariffs": {
+      "title": "Club Tariffs",
+      "add": "Add Tariff",
+      "empty": "No tariffs available yet. Add your first tariff plan to get started.",
+      "delete": {
+        "title": "Delete Tariff",
+        "message": "Are you sure you want to delete this tariff? This action cannot be undone.",
+        "confirm": "Delete"
       }
     }
   },
