@@ -1,16 +1,23 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TrainerService, TrainerPageItemResponse } from '../../../core/services/trainer.service';
-import { ConfirmationDialogComponent } from '../../dashboard/components/confirmation-dialog/confirmation-dialog.component';
+import { TrainerService, TrainerPageItemResponse } from '../../../../../core/services/trainer.service';
+import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmation-dialog.component';
 import { firstValueFrom } from 'rxjs';
-import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { TrainerDialogComponent } from './trainer-dialog.component';
 
 @Component({
   selector: 'app-trainer-list',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    ConfirmationDialogComponent,
+    MatSnackBarModule,
+    MatDialogModule
+  ],
   template: `
     <div class="trainers-grid">
       <div class="trainer-card" *ngFor="let trainer of trainers">
@@ -201,9 +208,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class TrainerListComponent {
   private readonly trainerService = inject(TrainerService);
-  private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   private readonly translate = inject(TranslateService);
+  private readonly dialog = inject(MatDialog);
 
   @Input() trainers: TrainerPageItemResponse[] = [];
   @Input() currentPage = 0;
@@ -212,6 +219,8 @@ export class TrainerListComponent {
   @Input() locationId = '';
   @Output() pageChange = new EventEmitter<number>();
   @Output() trainerDeleted = new EventEmitter<void>();
+  @Output() trainerCreated = new EventEmitter<void>();
+  @Output() trainerUpdated = new EventEmitter<void>();
 
   trainerToDelete: TrainerPageItemResponse | null = null;
 
@@ -219,9 +228,55 @@ export class TrainerListComponent {
     this.pageChange.emit(page);
   }
 
+  onAddClick(): void {
+    const dialogRef = this.dialog.open(TrainerDialogComponent, {
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        try {
+          await firstValueFrom(this.trainerService.createTrainer(this.tenantId, result));
+          this.snackBar.open(
+            this.translate.instant('trainer.create.success'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+          this.trainerCreated.emit();
+        } catch (error: any) {
+          this.snackBar.open(
+            this.translate.instant('trainer.create.error'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+        }
+      }
+    });
+  }
+
   onEditClick(trainer: TrainerPageItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/trainer/${trainer.id}/edit`], {
-      queryParams: this.locationId ? { locationId: this.locationId } : undefined
+    const dialogRef = this.dialog.open(TrainerDialogComponent, {
+      data: { trainer }
+    });
+
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        try {
+          await firstValueFrom(this.trainerService.updateTrainer(this.tenantId, trainer.id, result));
+          this.snackBar.open(
+            this.translate.instant('trainer.update.success'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+          this.trainerUpdated.emit();
+        } catch (error: any) {
+          this.snackBar.open(
+            this.translate.instant('trainer.update.error'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+        }
+      }
     });
   }
 
@@ -249,19 +304,12 @@ export class TrainerListComponent {
       } catch (error: any) {
         const trainerName = this.trainerToDelete ? `${this.trainerToDelete.firstName} ${this.trainerToDelete.lastName}` : '';
         const params = { name: trainerName };
-        if (error.status === 409) {
-          this.snackBar.open(
-            this.translate.instant('trainer.delete.error.hasSchedules', params),
-            this.translate.instant('common.close'),
-            { duration: 5000 }
-          );
-        } else {
-          this.snackBar.open(
-            this.translate.instant('trainer.delete.error.generic'),
-            this.translate.instant('common.close'),
-            { duration: 3000 }
-          );
-        }
+        this.snackBar.open(
+          this.translate.instant('trainer.delete.error', params),
+          this.translate.instant('common.close'),
+          { duration: 3000 }
+        );
+        this.trainerToDelete = null;
       }
     }
   }

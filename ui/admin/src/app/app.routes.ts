@@ -11,7 +11,6 @@ import { ClubDetailsComponent } from './features/location/club-details.component
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
-import { EditTrainerComponent } from './features/trainer/edit-trainer.component';
 import { CreateScheduleComponent } from './features/schedule/create-schedule.component';
 import { EditScheduleComponent } from './features/schedule/edit-schedule.component';
 
@@ -66,18 +65,6 @@ export const routes: Routes = [
     component: EditWorkoutComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'training.edit.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/trainer/create',
-    loadComponent: () => import('./features/trainer/create-trainer.component').then(m => m.CreateTrainerComponent),
-    canActivate: [adminGuard],
-    data: { titleKey: 'trainer.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/trainer/:trainerId/edit',
-    component: EditTrainerComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'trainer.edit.pageTitle' }
   },
   {
     path: 'tenant/:tenantId/location/:locationId/schedule/create',

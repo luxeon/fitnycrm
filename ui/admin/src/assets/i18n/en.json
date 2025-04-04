@@ -19,7 +19,8 @@
     "days": "days",
     "validation": {
       "required": "This field is required",
-      "min": "Value must be at least {{min}}"
+      "min": "Value must be at least {{min}}",
+      "email": "Please enter a valid email address"
     }
   },
   "login": {
@@ -345,9 +346,9 @@
       },
       "phoneNumber": {
         "label": "Phone Number",
-        "placeholder": "Enter phone number",
+        "placeholder": "Enter phone number (e.g., +1234567890)",
         "required": "Phone number is required",
-        "length": "Phone number must be between 10 and 15 characters"
+        "invalid": "Please enter a valid phone number starting with + followed by digits"
       },
       "specialization": {
         "label": "Specialization",

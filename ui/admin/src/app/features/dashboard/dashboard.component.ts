@@ -3,17 +3,18 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService, UserDetailsResponse } from '../../core/services/auth.service';
 import { TenantService, TenantResponse } from '../../core/services/tenant.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LocationsComponent } from './components/locations/locations.component';
 import { WorkoutListComponent } from '../training/components/workout-list.component';
-import { TrainerListComponent } from '../trainer/components/trainer-list.component';
+import { TrainerListComponent } from './components/trainer/components/trainer-list.component';
 import { TrainingService } from '../../core/services/training.service';
 import { TrainerService } from '../../core/services/trainer.service';
 import { firstValueFrom } from 'rxjs';
 import { ClientsComponent } from './components/clients/clients.component';
 import { TariffsComponent } from './components/tariffs/tariffs.component';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { TrainerDialogComponent } from './components/trainer/components/trainer-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -123,6 +124,9 @@ export class DashboardComponent implements OnInit {
   private readonly trainerService = inject(TrainerService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   userDetails: UserDetailsResponse | null = null;
   tenantDetails: TenantResponse | null = null;
@@ -237,7 +241,30 @@ export class DashboardComponent implements OnInit {
 
   onAddTrainer(): void {
     if (this.tenantDetails) {
-      this.router.navigate([`/tenant/${this.tenantDetails.id}/trainer/create`]);
+      const dialogRef = this.dialog.open(TrainerDialogComponent, {
+        data: {},
+        width: '500px'
+      });
+
+      dialogRef.afterClosed().subscribe(async result => {
+        if (result && this.tenantDetails) {
+          try {
+            await firstValueFrom(this.trainerService.createTrainer(this.tenantDetails.id, result));
+            this.snackBar.open(
+              this.translate.instant('trainer.create.success'),
+              this.translate.instant('common.close'),
+              { duration: 3000 }
+            );
+            this.loadTrainers(this.tenantDetails.id);
+          } catch (error: any) {
+            this.snackBar.open(
+              this.translate.instant('trainer.create.error'),
+              this.translate.instant('common.close'),
+              { duration: 3000 }
+            );
+          }
+        }
+      });
     }
   }
 }
