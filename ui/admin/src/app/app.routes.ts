@@ -5,8 +5,6 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { adminGuard } from './core/guards/admin.guard';
 import { tenantCheckGuard } from './core/guards/tenant-check.guard';
 import { CreateTenantComponent } from './features/tenant/create-tenant.component';
-import { CreateLocationComponent } from './features/location/create-location.component';
-import { EditLocationComponent } from './features/location/edit-location.component';
 import { ClubDetailsComponent } from './features/location/club-details.component';
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
@@ -41,18 +39,6 @@ export const routes: Routes = [
     component: CreateTenantComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'tenant.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/location/create',
-    component: CreateLocationComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'location.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/location/:locationId/edit',
-    component: EditLocationComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'location.edit.pageTitle' }
   },
   {
     path: 'tenant/:tenantId/location/:locationId',
@@ -92,8 +78,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full',
-    data: { titleKey: 'common.title' }
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
   }
 ];

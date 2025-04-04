@@ -2,15 +2,26 @@ import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LocationService, LocationPageItemResponse } from '../../../../core/services/location.service';
 import { Page } from '../../../../core/models/page.model';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { LocationDialogComponent } from './location-dialog.component';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-locations',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ConfirmationDialogComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    MatDialogModule,
+    MatSnackBarModule,
+    ConfirmationDialogComponent
+  ],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -257,25 +268,20 @@ export class LocationsComponent implements OnInit {
 
   private readonly locationService = inject(LocationService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
   locationToDelete: LocationPageItemResponse | null = null;
-  private currentPage = 0;
 
   ngOnInit(): void {
-    // Try to restore the last known page
-    const savedPage = sessionStorage.getItem('lastLocationPage');
-    this.currentPage = savedPage ? parseInt(savedPage, 10) : 0;
-    this.loadPage(this.currentPage);
+    this.loadPage(0);
   }
 
   loadPage(page: number): void {
     this.isLoading = true;
-    this.currentPage = page;
-    // Save the current page to session storage
-    sessionStorage.setItem('lastLocationPage', page.toString());
-    
     this.locationService.getLocations(this.tenantId, page)
       .subscribe({
         next: (response) => {
@@ -289,31 +295,113 @@ export class LocationsComponent implements OnInit {
   }
 
   onAddLocation(): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/create`]);
+    const dialogRef = this.dialog.open(LocationDialogComponent, {
+      width: '500px',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+        this.locationService.createLocation(this.tenantId, result)
+          .pipe(
+            catchError(() => {
+              this.snackBar.open(
+                this.translate.instant('location.create.error'),
+                this.translate.instant('common.close'),
+                { duration: 3000 }
+              );
+              return of(null);
+            }),
+            finalize(() => this.isLoading = false)
+          )
+          .subscribe(location => {
+            if (location) {
+              this.snackBar.open(
+                this.translate.instant('location.create.success'),
+                this.translate.instant('common.close'),
+                { duration: 3000 }
+              );
+              this.loadPage(this.locations?.number || 0);
+            }
+          });
+      }
+    });
   }
 
   onEditClick(location: LocationPageItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/${location.id}/edit`]);
+    this.locationService.getLocation(this.tenantId, location.id).subscribe(locationDetails => {
+      const dialogRef = this.dialog.open(LocationDialogComponent, {
+        width: '500px',
+        data: { location: locationDetails }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.isLoading = true;
+          this.locationService.updateLocation(this.tenantId, location.id, result)
+            .pipe(
+              catchError(() => {
+                this.snackBar.open(
+                  this.translate.instant('location.update.error'),
+                  this.translate.instant('common.close'),
+                  { duration: 3000 }
+                );
+                return of(null);
+              }),
+              finalize(() => this.isLoading = false)
+            )
+            .subscribe(updatedLocation => {
+              if (updatedLocation) {
+                this.snackBar.open(
+                  this.translate.instant('location.update.success'),
+                  this.translate.instant('common.close'),
+                  { duration: 3000 }
+                );
+                this.loadPage(this.locations?.number || 0);
+              }
+            });
+        }
+      });
+    });
   }
 
   onDeleteClick(location: LocationPageItemResponse): void {
     this.locationToDelete = location;
   }
 
+  onDeleteCancel(): void {
+    this.locationToDelete = null;
+  }
+
   onDeleteConfirm(): void {
     if (this.locationToDelete) {
       this.locationService.deleteLocation(this.tenantId, this.locationToDelete.id)
-        .subscribe({
-          next: () => {
+        .pipe(
+          catchError(() => {
+            this.snackBar.open(
+              this.translate.instant('location.delete.error'),
+              this.translate.instant('common.close'),
+              { duration: 3000 }
+            );
+            return of(null);
+          }),
+          finalize(() => {
             this.locationToDelete = null;
+            this.isLoading = false;
+          })
+        )
+        .subscribe(result => {
+          if (result !== null) {
+            this.snackBar.open(
+              this.translate.instant('location.delete.success'),
+              this.translate.instant('common.close'),
+              { duration: 3000 }
+            );
             this.loadPage(this.locations?.number || 0);
           }
         });
     }
-  }
-
-  onDeleteCancel(): void {
-    this.locationToDelete = null;
   }
 
   onLocationClick(location: LocationPageItemResponse): void {
