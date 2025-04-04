@@ -1,0 +1,49 @@
+{
+  "content": [
+    {
+      "id": "d35ac7f5-3e4f-462a-a76d-524bd3a5fd02",
+      "status": "COMPLETED",
+      "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+      "trainingsCount": 5,
+      "validDays": 15,
+      "price": 49.99,
+      "currency": "USD",
+      "createdAt": "2024-01-02T10:00:00Z"
+    },
+    {
+      "id": "d35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+      "status": "COMPLETED",
+      "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+      "trainingsCount": 10,
+      "validDays": 30,
+      "price": 99.99,
+      "currency": "USD",
+      "createdAt": "2024-01-01T10:00:00Z"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "sort": {
+      "sorted": true,
+      "empty": false,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 2,
+  "totalPages": 1,
+  "first": true,
+  "size": 10,
+  "number": 0,
+  "sort": {
+    "sorted": true,
+    "empty": false,
+    "unsorted": false
+  },
+  "numberOfElements": 2,
+  "empty": false
+}

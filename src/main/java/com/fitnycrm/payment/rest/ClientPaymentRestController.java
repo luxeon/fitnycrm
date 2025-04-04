@@ -52,7 +52,7 @@ public class ClientPaymentRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Payment not found")
     })
-    @PostMapping("/clients/{clientId}/payments/cancel")
+    @PostMapping("/clients/{clientId}/payments/{paymentId}/cancel")
     @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId))")
     public ClientPaymentDetailsResponse cancel(@PathVariable UUID tenantId,
                                                @PathVariable UUID clientId,

@@ -1,0 +1,21 @@
+{
+  "errors": [
+    {
+      "field": "currency",
+      "message": "Invalid values provided. Allowed values are: EUR, USD, UAH"
+    },
+    {
+      "field": "price",
+      "message": "must be greater than 0"
+    },
+    {
+      "field": "trainingsCount",
+      "message": "must be greater than 0"
+    },
+    {
+      "field": "validDays",
+      "message": "must be greater than 0"
+    }
+  ],
+  "message": "Validation failed"
+}

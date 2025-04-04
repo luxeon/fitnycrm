@@ -1,4 +1,5 @@
 DELETE FROM training_payment_tariffs;
+DELETE FROM client_payments;
 DELETE FROM payment_tariffs;
 DELETE FROM client_invitations;
 DELETE FROM user_roles;

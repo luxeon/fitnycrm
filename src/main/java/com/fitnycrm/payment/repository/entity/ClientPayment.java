@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -56,6 +57,7 @@ public class ClientPayment {
     @Column(name = "currency", nullable = false, length = 3)
     private Currency currency;
 
+    @CreationTimestamp
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 } 
