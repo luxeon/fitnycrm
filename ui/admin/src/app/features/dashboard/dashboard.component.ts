@@ -5,9 +5,7 @@ import { AuthService, UserDetailsResponse } from '../../core/services/auth.servi
 import { TenantService, TenantResponse } from '../../core/services/tenant.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LocationsComponent } from './components/locations/locations.component';
-import { WorkoutListComponent } from '../training/components/workout-list.component';
 import { TrainerListComponent } from './components/trainer/components/trainer-list.component';
-import { TrainingService } from '../../core/services/training.service';
 import { TrainerService } from '../../core/services/trainer.service';
 import { firstValueFrom } from 'rxjs';
 import { ClientsComponent } from './components/clients/clients.component';
@@ -15,6 +13,7 @@ import { TariffsComponent } from './components/tariffs/tariffs.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TrainerDialogComponent } from './components/trainer/components/trainer-dialog.component';
+import { WorkoutsComponent } from './components/workouts/workouts.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,10 +22,10 @@ import { TrainerDialogComponent } from './components/trainer/components/trainer-
     CommonModule,
     TranslateModule,
     LocationsComponent,
-    WorkoutListComponent,
     TrainerListComponent,
     ClientsComponent,
     TariffsComponent,
+    WorkoutsComponent,
     MatDialogModule,
     MatSnackBarModule
   ],
@@ -56,27 +55,7 @@ import { TrainerDialogComponent } from './components/trainer/components/trainer-
             </div>
 
             <div *ngSwitchCase="'workouts'" class="tab-pane">
-              <div class="action-header">
-                <h3>{{ 'dashboard.workouts.title' | translate }}</h3>
-                <button class="action-button" (click)="onAddWorkout()">
-                  {{ 'dashboard.workouts.add' | translate }}
-                </button>
-              </div>
-              <div class="loading" *ngIf="isLoadingWorkouts">
-                {{ 'common.loading' | translate }}
-              </div>
-              <div class="empty-state" *ngIf="!isLoadingWorkouts && !workouts?.length">
-                {{ 'dashboard.workouts.empty' | translate }}
-              </div>
-              <app-workout-list
-                *ngIf="!isLoadingWorkouts && workouts?.length"
-                [workouts]="workouts"
-                [currentPage]="currentWorkoutPage"
-                [totalPages]="totalWorkoutPages"
-                [tenantId]="tenantDetails.id"
-                (pageChange)="onWorkoutPageChange($event)"
-                (workoutDeleted)="loadWorkouts(tenantDetails.id)">
-              </app-workout-list>
+              <app-workouts *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-workouts>
             </div>
 
             <div *ngSwitchCase="'trainers'" class="tab-pane">
@@ -120,7 +99,6 @@ import { TrainerDialogComponent } from './components/trainer/components/trainer-
 export class DashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly tenantService = inject(TenantService);
-  private readonly trainingService = inject(TrainingService);
   private readonly trainerService = inject(TrainerService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -130,12 +108,8 @@ export class DashboardComponent implements OnInit {
 
   userDetails: UserDetailsResponse | null = null;
   tenantDetails: TenantResponse | null = null;
-  workouts: any[] = [];
   trainers: any[] = [];
-  isLoadingWorkouts = false;
   isLoadingTrainers = false;
-  currentWorkoutPage = 0;
-  totalWorkoutPages = 0;
   currentTrainerPage = 0;
   totalTrainerPages = 0;
 
@@ -177,9 +151,7 @@ export class DashboardComponent implements OnInit {
   setActiveTab(tabId: string, updateUrl: boolean = true): void {
     this.activeTab = tabId;
     if (this.tenantDetails) {
-      if (tabId === 'workouts' && !this.workouts.length) {
-        this.loadWorkouts(this.tenantDetails.id);
-      } else if (tabId === 'trainers' && !this.trainers.length) {
+      if (tabId === 'trainers' && !this.trainers.length) {
         this.loadTrainers(this.tenantDetails.id);
       }
     }
@@ -190,20 +162,6 @@ export class DashboardComponent implements OnInit {
         queryParams: { tab: tabId },
         queryParamsHandling: 'merge'
       });
-    }
-  }
-
-  async loadWorkouts(tenantId: string, page: number = 0): Promise<void> {
-    this.isLoadingWorkouts = true;
-    try {
-      const response = await firstValueFrom(this.trainingService.getTrainings(tenantId, page));
-      this.workouts = response.content;
-      this.currentWorkoutPage = response.number;
-      this.totalWorkoutPages = response.totalPages;
-    } catch (error) {
-      console.error('Failed to load workouts:', error);
-    } finally {
-      this.isLoadingWorkouts = false;
     }
   }
 
@@ -221,21 +179,9 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onWorkoutPageChange(page: number): void {
-    if (this.tenantDetails) {
-      this.loadWorkouts(this.tenantDetails.id, page);
-    }
-  }
-
   onTrainerPageChange(page: number): void {
     if (this.tenantDetails) {
       this.loadTrainers(this.tenantDetails.id, page);
-    }
-  }
-
-  onAddWorkout(): void {
-    if (this.tenantDetails) {
-      this.router.navigate([`/tenant/${this.tenantDetails.id}/workout/create`]);
     }
   }
 
