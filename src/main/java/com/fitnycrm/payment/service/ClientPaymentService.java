@@ -6,7 +6,8 @@ import com.fitnycrm.payment.repository.entity.PaymentStatus;
 import com.fitnycrm.payment.repository.specification.ClientPaymentSpecification;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
 import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
-import com.fitnycrm.payment.service.exception.PaymentNotFoundException;
+import com.fitnycrm.payment.rest.model.ExtendedClientPaymentFilterRequest;
+import com.fitnycrm.payment.service.exception.ClientPaymentNotFoundException;
 import com.fitnycrm.payment.service.mapper.ClientPaymentRequestMapper;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
@@ -49,10 +50,10 @@ public class ClientPaymentService {
     @Transactional(readOnly = true)
     public ClientPayment findById(UUID tenantId, UUID clientId, UUID paymentId) {
         ClientPayment payment = clientPaymentRepository.findById(paymentId)
-                .orElseThrow(() -> new PaymentNotFoundException(paymentId));
+                .orElseThrow(() -> new ClientPaymentNotFoundException(paymentId));
 
         if (!payment.getTenant().getId().equals(tenantId) || !payment.getClient().getId().equals(clientId)) {
-            throw new PaymentNotFoundException(paymentId);
+            throw new ClientPaymentNotFoundException(paymentId);
         }
 
         return payment;
@@ -69,6 +70,14 @@ public class ClientPaymentService {
     public Page<ClientPayment> findAll(UUID tenantId, UUID clientId, ClientPaymentFilterRequest filter, Pageable pageable) {
         return clientPaymentRepository.findAll(
                 ClientPaymentSpecification.withFilters(tenantId, clientId, filter),
+                pageable
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClientPayment> findAllInTenant(UUID tenantId, ExtendedClientPaymentFilterRequest filter, Pageable pageable) {
+        return clientPaymentRepository.findAll(
+                ClientPaymentSpecification.withTenantFilters(tenantId, filter),
                 pageable
         );
     }

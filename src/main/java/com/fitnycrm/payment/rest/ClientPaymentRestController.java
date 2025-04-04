@@ -1,10 +1,7 @@
 package com.fitnycrm.payment.rest;
 
 import com.fitnycrm.payment.facade.ClientPaymentFacade;
-import com.fitnycrm.payment.rest.model.ClientPaymentDetailsResponse;
-import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
-import com.fitnycrm.payment.rest.model.ClientPaymentPageItemResponse;
-import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
+import com.fitnycrm.payment.rest.model.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/tenants/{tenantId}/clients/{clientId}/payments")
+@RequestMapping("/api/tenants/{tenantId}")
 @Tag(name = "client-payment", description = "Client payment management endpoints")
 public class ClientPaymentRestController {
 
@@ -39,7 +36,7 @@ public class ClientPaymentRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Client not found")
     })
-    @PostMapping
+    @PostMapping("/clients/{clientId}/payments")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId))")
     public ClientPaymentDetailsResponse create(@PathVariable UUID tenantId,
@@ -55,7 +52,7 @@ public class ClientPaymentRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Payment not found")
     })
-    @PostMapping("/{paymentId}/cancel")
+    @PostMapping("/clients/{clientId}/payments/cancel")
     @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId))")
     public ClientPaymentDetailsResponse cancel(@PathVariable UUID tenantId,
                                                @PathVariable UUID clientId,
@@ -70,7 +67,7 @@ public class ClientPaymentRestController {
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Client not found")
     })
-    @GetMapping
+    @GetMapping("/clients/{clientId}/payments")
     @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId)")
     public Page<ClientPaymentPageItemResponse> findAll(
             @PathVariable UUID tenantId,
@@ -78,5 +75,20 @@ public class ClientPaymentRestController {
             @Valid ClientPaymentFilterRequest filter,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return clientPaymentFacade.findAll(tenantId, clientId, filter, pageable);
+    }
+
+    @Operation(summary = "Find all payments in tenant with filters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved tenant payments",
+                    content = @Content(schema = @Schema(implementation = ClientPaymentPageItemResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied")
+    })
+    @GetMapping("/payments")
+    @PreAuthorize("hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    public Page<ClientPaymentPageItemResponse> findAllInTenant(
+            @PathVariable UUID tenantId,
+            @Valid ExtendedClientPaymentFilterRequest filter,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return clientPaymentFacade.findAllInTenant(tenantId, filter, pageable);
     }
 } 

@@ -2,6 +2,7 @@ package com.fitnycrm.payment.repository.specification;
 
 import com.fitnycrm.payment.repository.entity.ClientPayment;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
+import com.fitnycrm.payment.rest.model.ExtendedClientPaymentFilterRequest;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,11 +13,23 @@ import java.util.UUID;
 public class ClientPaymentSpecification {
 
     public static Specification<ClientPayment> withFilters(UUID tenantId, UUID clientId, ClientPaymentFilterRequest filter) {
+        return withTenantFilters(tenantId,
+                new ExtendedClientPaymentFilterRequest(filter.status(),
+                        filter.trainingId(),
+                        clientId,
+                        filter.createdAtFrom(),
+                        filter.createdAtTo()));
+    }
+
+    public static Specification<ClientPayment> withTenantFilters(UUID tenantId, ExtendedClientPaymentFilterRequest filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(root.get("tenant").get("id"), tenantId));
-            predicates.add(cb.equal(root.get("client").get("id"), clientId));
+
+            if (filter.clientId() != null) {
+                predicates.add(cb.equal(root.get("client").get("id"), filter.clientId()));
+            }
 
             if (filter.status() != null) {
                 predicates.add(cb.equal(root.get("status"), filter.status()));
