@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InviteUserModalComponent } from '../invite-user-modal/invite-user-modal.component';
 import { ClientPageItemResponse } from '../../../../core/services/user.service';
 import { UserService } from '../../../../core/services/user.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
@@ -207,6 +208,8 @@ export class ClientsComponent implements OnInit {
   @Input() tenantId!: string;
 
   private readonly userService = inject(UserService);
+  private readonly notificationService = inject(NotificationService);
+  private readonly translateService = inject(TranslateService);
 
   showInviteModal = false;
   isLoading = false;
@@ -244,11 +247,16 @@ export class ClientsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.showInviteModal = false;
-          this.loadClients(this.currentPage); // Reload the current page
+          this.loadClients(this.currentPage);
+          this.notificationService.showSuccess(
+            this.translateService.instant('dashboard.clients.invite.success', { email })
+          );
         },
         error: (error) => {
           console.error('Error inviting user:', error);
-          // TODO: Show error notification
+          this.notificationService.showError(
+            this.translateService.instant('dashboard.clients.invite.error')
+          );
         }
       });
   }
