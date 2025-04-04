@@ -125,12 +125,26 @@ CREATE TABLE IF NOT EXISTS training_payment_tariffs
     UNIQUE (training_id, payment_tariff_id)
 );
 
+CREATE TABLE IF NOT EXISTS client_training_credits
+(
+    id                  uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    client_id           uuid                        NOT NULL,
+    training_id         uuid                        NOT NULL,
+    remaining_trainings integer                     NOT NULL,
+    expires_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    trigger             VARCHAR(255)                NOT NULL,
+    created_at          TIMESTAMP WITHOUT TIME ZONE,
+    FOREIGN KEY (client_id) REFERENCES users (id),
+    FOREIGN KEY (training_id) REFERENCES trainings (id)
+);
+
 CREATE TABLE IF NOT EXISTS client_payments
 (
     id              uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     tenant_id       uuid          NOT NULL,
     client_id       uuid          NOT NULL,
     training_id     uuid          NOT NULL,
+    credit_id       uuid,
     status          VARCHAR(255)  NOT NULL,
     trainings_count integer       NOT NULL,
     valid_days      integer       NOT NULL,
@@ -139,19 +153,8 @@ CREATE TABLE IF NOT EXISTS client_payments
     created_at      TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id),
     FOREIGN KEY (client_id) REFERENCES users (id),
-    FOREIGN KEY (training_id) REFERENCES trainings (id)
-);
-
-CREATE TABLE IF NOT EXISTS client_training_subscriptions
-(
-    id                  uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    client_id           uuid                        NOT NULL,
-    training_id         uuid                        NOT NULL,
-    remaining_trainings integer                     NOT NULL,
-    expires_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    created_at          TIMESTAMP WITHOUT TIME ZONE,
-    FOREIGN KEY (client_id) REFERENCES users (id),
-    FOREIGN KEY (training_id) REFERENCES trainings (id)
+    FOREIGN KEY (training_id) REFERENCES trainings (id),
+    FOREIGN KEY (credit_id) REFERENCES client_training_credits (id)
 );
 
 CREATE TABLE IF NOT EXISTS client_training_visits

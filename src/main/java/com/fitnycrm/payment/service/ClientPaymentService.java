@@ -1,15 +1,19 @@
 package com.fitnycrm.payment.service;
 
 import com.fitnycrm.payment.repository.ClientPaymentRepository;
-import com.fitnycrm.payment.repository.ClientTrainingSubscriptionRepository;
+import com.fitnycrm.payment.repository.ClientTrainingCreditRepository;
 import com.fitnycrm.payment.repository.entity.ClientPayment;
-import com.fitnycrm.payment.repository.entity.ClientTrainingSubscription;
+import com.fitnycrm.payment.repository.entity.ClientTrainingCredit;
+import com.fitnycrm.payment.repository.entity.ClientTrainingCreditTrigger;
 import com.fitnycrm.payment.repository.entity.PaymentStatus;
 import com.fitnycrm.payment.repository.specification.ClientPaymentSpecification;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
 import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
 import com.fitnycrm.payment.rest.model.ExtendedClientPaymentFilterRequest;
+import com.fitnycrm.payment.service.exception.ClientPaymentAlreadyCancelledException;
+import com.fitnycrm.payment.service.exception.ClientPaymentCannotBeCancelled;
 import com.fitnycrm.payment.service.exception.ClientPaymentNotFoundException;
+import com.fitnycrm.payment.service.exception.ClientTrainingCreditNotFoundException;
 import com.fitnycrm.payment.service.mapper.ClientPaymentRequestMapper;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -31,7 +36,7 @@ import java.util.UUID;
 public class ClientPaymentService {
 
     private final ClientPaymentRepository clientPaymentRepository;
-    private final ClientTrainingSubscriptionRepository trainingSubscriptionRepository;
+    private final ClientTrainingCreditRepository clientTrainingCreditRepository;
     private final TenantService tenantService;
     private final ClientService clientService;
     private final TrainingService trainingService;
@@ -48,30 +53,19 @@ public class ClientPaymentService {
         payment.setClient(client);
         payment.setTraining(training);
 
-        payment = clientPaymentRepository.save(payment);
+        ClientTrainingCredit credit = createCredit(request, client, training);
+        payment.setCredit(credit);
 
-        trainingSubscriptionRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(client, training).ifPresentOrElse(subscription -> {
-            if (isExpired(subscription)) {
-                createSubscription(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays()));
-            } else {
-                createSubscription(client, training, subscription.getRemainingTrainings() + request.trainingsCount(), subscription.getExpiresAt().plusDays(request.validDays()));
-            }
-        }, () -> createSubscription(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays())));
-
-        return payment;
+        return clientPaymentRepository.save(payment);
     }
 
-    private void createSubscription(User client, Training training, int remainingTrainings, OffsetDateTime expiresAt) {
-        ClientTrainingSubscription subscription = new ClientTrainingSubscription();
-        subscription.setClient(client);
-        subscription.setTraining(training);
-        subscription.setRemainingTrainings(remainingTrainings);
-        subscription.setExpiresAt(expiresAt);
-        trainingSubscriptionRepository.save(subscription);
-    }
+    @Transactional(readOnly = true)
+    public ClientTrainingCredit getCreditsSummary(UUID tenantId, UUID clientId, UUID trainingId) {
+        User client = clientService.findById(tenantId, clientId);
+        Training training = trainingService.findById(tenantId, trainingId);
 
-    private static boolean isExpired(ClientTrainingSubscription subscription) {
-        return subscription.getExpiresAt().isBefore(OffsetDateTime.now());
+        return clientTrainingCreditRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(client, training)
+                .orElseThrow(() -> new ClientTrainingCreditNotFoundException(clientId, trainingId));
     }
 
     @Transactional(readOnly = true)
@@ -89,13 +83,18 @@ public class ClientPaymentService {
     @Transactional
     public ClientPayment cancel(UUID tenantId, UUID clientId, UUID paymentId) {
         ClientPayment payment = findById(tenantId, clientId, paymentId);
+        if (PaymentStatus.CANCELED.equals(payment.getStatus())) {
+            throw new ClientPaymentAlreadyCancelledException(paymentId);
+        }
         payment.setStatus(PaymentStatus.CANCELED);
-        payment = clientPaymentRepository.save(payment);
-
-        trainingSubscriptionRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(payment.getClient(), payment.getTraining())
-                .ifPresent(trainingSubscriptionRepository::delete);
-
-        return payment;
+        ClientTrainingCredit credit = payment.getCredit();
+        clientTrainingCreditRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(payment.getClient(), payment.getTraining()).ifPresent(lastCredit -> {
+            if (!lastCredit.equals(credit)) {
+                throw new ClientPaymentCannotBeCancelled("Payment can be cancelled only when it's connected to the latest training credit record.");
+            }
+        });
+        clientTrainingCreditRepository.delete(credit);
+        return clientPaymentRepository.save(payment);
     }
 
     @Transactional(readOnly = true)
@@ -112,5 +111,33 @@ public class ClientPaymentService {
                 ClientPaymentSpecification.withTenantFilters(tenantId, filter),
                 pageable
         );
+    }
+
+    private ClientTrainingCredit createCredit(CreateClientPaymentRequest request, User client, Training training) {
+        Optional<ClientTrainingCredit> optionalLastCredit = clientTrainingCreditRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(client, training);
+        if (optionalLastCredit.isPresent()) {
+            ClientTrainingCredit lastCredit = optionalLastCredit.get();
+            if (isExpired(lastCredit)) {
+                return addCredit(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays()));
+            } else {
+                return addCredit(client, training, lastCredit.getRemainingTrainings() + request.trainingsCount(), lastCredit.getExpiresAt().plusDays(request.validDays()));
+            }
+        } else {
+            return addCredit(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays()));
+        }
+    }
+
+    private ClientTrainingCredit addCredit(User client, Training training, int remainingTrainings, OffsetDateTime expiresAt) {
+        ClientTrainingCredit subscription = new ClientTrainingCredit();
+        subscription.setClient(client);
+        subscription.setTraining(training);
+        subscription.setRemainingTrainings(remainingTrainings);
+        subscription.setExpiresAt(expiresAt);
+        subscription.setTrigger(ClientTrainingCreditTrigger.ADD_PAYMENT);
+        return clientTrainingCreditRepository.save(subscription);
+    }
+
+    private static boolean isExpired(ClientTrainingCredit credit) {
+        return credit.getExpiresAt().isBefore(OffsetDateTime.now());
     }
 } 

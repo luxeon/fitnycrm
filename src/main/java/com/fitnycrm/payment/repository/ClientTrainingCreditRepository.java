@@ -1,6 +1,6 @@
 package com.fitnycrm.payment.repository;
 
-import com.fitnycrm.payment.repository.entity.ClientTrainingSubscription;
+import com.fitnycrm.payment.repository.entity.ClientTrainingCredit;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.user.repository.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +10,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface ClientTrainingSubscriptionRepository extends JpaRepository<ClientTrainingSubscription, UUID> {
-    Optional<ClientTrainingSubscription> findFirstByClientAndTrainingOrderByCreatedAtDesc(User client, Training training);
+public interface ClientTrainingCreditRepository extends JpaRepository<ClientTrainingCredit, UUID> {
+    Optional<ClientTrainingCredit> findFirstByClientAndTrainingOrderByCreatedAtDesc(User client, Training training);
 }

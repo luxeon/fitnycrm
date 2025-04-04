@@ -41,6 +41,9 @@ public class ClientPayment {
     @JoinColumn(name = "training_id", nullable = false)
     private Training training;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private ClientTrainingCredit credit;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private PaymentStatus status;

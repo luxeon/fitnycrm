@@ -1,8 +1,10 @@
 package com.fitnycrm.payment.facade;
 
 import com.fitnycrm.payment.facade.mapper.ClientPaymentMapper;
+import com.fitnycrm.payment.facade.mapper.ClientTrainingCreditMapper;
 import com.fitnycrm.payment.rest.model.*;
 import com.fitnycrm.payment.service.ClientPaymentService;
+import com.fitnycrm.payment.service.exception.ClientTrainingCreditNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ public class ClientPaymentFacade {
 
     private final ClientPaymentService clientPaymentService;
     private final ClientPaymentMapper clientPaymentMapper;
+    private final ClientTrainingCreditMapper creditsResponseMapper;
 
     public ClientPaymentDetailsResponse create(UUID tenantId, UUID clientId, CreateClientPaymentRequest request) {
         return clientPaymentMapper.toDetailsResponse(
@@ -37,5 +40,15 @@ public class ClientPaymentFacade {
     public Page<ClientPaymentPageItemResponse> findAllInTenant(UUID tenantId, ExtendedClientPaymentFilterRequest filter, Pageable pageable) {
         return clientPaymentService.findAllInTenant(tenantId, filter, pageable)
                 .map(clientPaymentMapper::toPageItemResponse);
+    }
+
+    public ClientTrainingCreditsSummaryResponse getCreditsSummary(UUID tenantId, UUID clientId, UUID trainingId) {
+        try {
+            return creditsResponseMapper.toSummaryResponse(
+                    clientPaymentService.getCreditsSummary(tenantId, clientId, trainingId)
+            );
+        } catch (ClientTrainingCreditNotFoundException e) {
+            return new ClientTrainingCreditsSummaryResponse(0, null);
+        }
     }
 } 

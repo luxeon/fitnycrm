@@ -91,4 +91,20 @@ public class ClientPaymentRestController {
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return clientPaymentFacade.findAllInTenant(tenantId, filter, pageable);
     }
+
+    @Operation(summary = "Get client training credits summary")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved client training credits summary",
+                    content = @Content(schema = @Schema(implementation = ClientTrainingCreditsSummaryResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Client or training not found")
+    })
+    @GetMapping("/clients/{clientId}/trainings/{trainingId}/credits/summary")
+    @PreAuthorize("(hasAnyRole('ROLE_TRAINER', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)) or @permissionEvaluator.check(#tenantId, #clientId)")
+    public ClientTrainingCreditsSummaryResponse getLatestSubscription(
+            @PathVariable UUID tenantId,
+            @PathVariable UUID clientId,
+            @PathVariable UUID trainingId) {
+        return clientPaymentFacade.getCreditsSummary(tenantId, clientId, trainingId);
+    }
 } 

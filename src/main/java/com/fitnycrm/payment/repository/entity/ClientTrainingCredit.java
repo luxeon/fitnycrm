@@ -14,10 +14,10 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "client_training_subscriptions")
+@Table(name = "client_training_credits")
 @ToString(exclude = {"client", "training"})
 @EqualsAndHashCode(exclude = {"client", "training"})
-public class ClientTrainingSubscription {
+public class ClientTrainingCredit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +38,10 @@ public class ClientTrainingSubscription {
 
     @Column(nullable = false)
     private OffsetDateTime expiresAt;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ClientTrainingCreditTrigger trigger;
 
     @CreationTimestamp
     @Column(name = "created_at")
