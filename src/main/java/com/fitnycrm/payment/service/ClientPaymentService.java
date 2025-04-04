@@ -3,6 +3,8 @@ package com.fitnycrm.payment.service;
 import com.fitnycrm.payment.repository.ClientPaymentRepository;
 import com.fitnycrm.payment.repository.entity.ClientPayment;
 import com.fitnycrm.payment.repository.entity.PaymentStatus;
+import com.fitnycrm.payment.repository.specification.ClientPaymentSpecification;
+import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
 import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
 import com.fitnycrm.payment.service.exception.PaymentNotFoundException;
 import com.fitnycrm.payment.service.mapper.ClientPaymentRequestMapper;
@@ -13,6 +15,8 @@ import com.fitnycrm.training.service.TrainingService;
 import com.fitnycrm.user.repository.entity.User;
 import com.fitnycrm.user.service.client.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +63,13 @@ public class ClientPaymentService {
         ClientPayment payment = findById(tenantId, clientId, paymentId);
         payment.setStatus(PaymentStatus.CANCELED);
         return clientPaymentRepository.save(payment);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ClientPayment> findAll(UUID tenantId, UUID clientId, ClientPaymentFilterRequest filter, Pageable pageable) {
+        return clientPaymentRepository.findAll(
+                ClientPaymentSpecification.withFilters(tenantId, clientId, filter),
+                pageable
+        );
     }
 } 
