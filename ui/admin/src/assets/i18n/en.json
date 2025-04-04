@@ -210,6 +210,7 @@
       "stateRequired": "State is required",
       "postalCode": "Postal Code",
       "postalCodeRequired": "Postal code is required",
+      "postalCodeInvalid": "Please enter a valid postal/ZIP code",
       "country": "Country",
       "countryRequired": "Country is required",
       "timezone": "Timezone",

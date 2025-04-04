@@ -62,6 +62,9 @@ export interface LocationDialogData {
             <mat-error *ngIf="form.get('postalCode')?.hasError('required')">
               {{ 'location.form.postalCodeRequired' | translate }}
             </mat-error>
+            <mat-error *ngIf="form.get('postalCode')?.hasError('pattern')">
+              {{ 'location.form.postalCodeInvalid' | translate }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
@@ -126,7 +129,10 @@ export class LocationDialogComponent {
       address: [data.location?.address ?? '', Validators.required],
       city: [data.location?.city ?? '', Validators.required],
       state: [data.location?.state ?? '', Validators.required],
-      postalCode: [data.location?.postalCode ?? '', Validators.required],
+      postalCode: [data.location?.postalCode ?? '', [
+        Validators.required,
+        Validators.pattern('^[A-Z0-9]{3,10}(?:[-\s]?[A-Z0-9]+)*$')
+      ]],
       country: [data.location?.country ?? '', Validators.required],
       timezone: [data.location?.timezone ?? this.timezoneService.getUserTimezone(), Validators.required]
     });
