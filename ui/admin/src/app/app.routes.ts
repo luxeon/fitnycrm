@@ -13,6 +13,7 @@ import { EditWorkoutComponent } from './features/training/edit-workout.component
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
 import { CreateScheduleComponent } from './features/schedule/create-schedule.component';
 import { EditScheduleComponent } from './features/schedule/edit-schedule.component';
+import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
 
 export const routes: Routes = [
   {
@@ -29,6 +30,11 @@ export const routes: Routes = [
     path: 'email-confirmation',
     component: EmailConfirmationComponent,
     data: { titleKey: 'emailConfirmation.pageTitle' }
+  },
+  {
+    path: 'auth/confirm-email',
+    component: ConfirmEmailComponent,
+    data: { titleKey: 'confirmEmail.pageTitle' }
   },
   {
     path: 'create-tenant',

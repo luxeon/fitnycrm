@@ -247,6 +247,30 @@
       "link": "Log in"
     }
   },
+  "confirmEmail": {
+    "pageTitle": "Confirm Email",
+    "loading": {
+      "title": "Confirming Email",
+      "message": "Please wait while we confirm your email address..."
+    },
+    "success": {
+      "title": "Email Confirmed",
+      "message": "Your email has been successfully confirmed. You can now access your account.",
+      "login": {
+        "text": "You can now",
+        "link": "log in"
+      }
+    },
+    "error": {
+      "title": "Confirmation Failed",
+      "noToken": "No confirmation token provided. Please use the link from your confirmation email.",
+      "generic": "An error occurred while confirming your email. Please try again or contact support.",
+      "retry": {
+        "text": "Please try again or",
+        "link": "log in"
+      }
+    }
+  },
   "registration": {
     "pageTitle": "Register",
     "title": "Create Account",

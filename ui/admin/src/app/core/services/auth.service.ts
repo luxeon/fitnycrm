@@ -117,4 +117,8 @@ export class AuthService {
     if (!token) return null;
     return decodeJwtToken(token);
   }
+
+  confirmEmail(token: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/confirm-email?token=${token}`, {});
+  }
 }
