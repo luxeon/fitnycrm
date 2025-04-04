@@ -1,12 +1,14 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { LocationPageItemResponse } from '../../../../core/services/location.service';
+import { TimezoneService } from '../../../../core/services/timezone.service';
 
 export interface LocationDialogData {
   location?: LocationPageItemResponse;
@@ -22,6 +24,7 @@ export interface LocationDialogData {
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatSelectModule,
     TranslateModule
   ],
   template: `
@@ -71,7 +74,11 @@ export interface LocationDialogData {
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'location.form.timezone' | translate }}</mat-label>
-            <input matInput formControlName="timezone" required>
+            <mat-select formControlName="timezone" required>
+              <mat-option *ngFor="let timezone of timezones" [value]="timezone.value">
+                {{ timezone.label }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="form.get('timezone')?.hasError('required')">
               {{ 'location.form.timezoneRequired' | translate }}
             </mat-error>
@@ -106,10 +113,12 @@ export interface LocationDialogData {
   `]
 })
 export class LocationDialogComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly timezoneService = inject(TimezoneService);
   form: FormGroup;
+  timezones = this.timezoneService.getTimezones();
 
   constructor(
-    private fb: FormBuilder,
     private dialogRef: MatDialogRef<LocationDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: LocationDialogData
   ) {
@@ -119,7 +128,7 @@ export class LocationDialogComponent {
       state: [data.location?.state ?? '', Validators.required],
       postalCode: [data.location?.postalCode ?? '', Validators.required],
       country: [data.location?.country ?? '', Validators.required],
-      timezone: [data.location?.timezone ?? '', Validators.required]
+      timezone: [data.location?.timezone ?? this.timezoneService.getUserTimezone(), Validators.required]
     });
   }
 
