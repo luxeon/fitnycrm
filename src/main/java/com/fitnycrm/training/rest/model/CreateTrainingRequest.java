@@ -19,11 +19,6 @@ public record CreateTrainingRequest(
         @Schema(description = "Duration in minutes", example = "60")
         @NotNull
         @Min(1)
-        Integer durationMinutes,
-
-        @Schema(description = "Maximum number of clients", example = "20")
-        @NotNull
-        @Min(1)
-        Integer clientCapacity
+        Integer durationMinutes
 ) {
 }

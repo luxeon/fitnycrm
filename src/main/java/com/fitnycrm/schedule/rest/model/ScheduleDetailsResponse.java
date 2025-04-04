@@ -2,6 +2,8 @@ package com.fitnycrm.schedule.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -27,6 +29,9 @@ public record ScheduleDetailsResponse(
 
         @Schema(description = "ID of the default trainer for this training")
         UUID defaultTrainerId,
+
+        @Schema(description = "Maximum number of clients", example = "20")
+        Integer clientCapacity,
 
         @Schema(description = "Timestamp when the schedule was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

@@ -2,10 +2,6 @@
   "message": "Validation failed",
   "errors": [
     {
-      "field": "clientCapacity",
-      "message": "must not be null"
-    },
-    {
       "field": "durationMinutes",
       "message": "must be greater than or equal to 1"
     },

@@ -1,6 +1,5 @@
 {
   "id": "${json-unit.any-string}",
-  "clientCapacity": 10,
   "description": "A new training session",
   "durationMinutes": 75,
   "name": "New Training",

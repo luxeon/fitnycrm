@@ -1,9 +1,13 @@
 {
+  "message": "Validation failed",
   "errors": [
+    {
+      "field": "clientCapacity",
+      "message": "must not be null"
+    },
     {
       "field": "daysOfWeek",
       "message": "Invalid values provided. Allowed values are: WEDNESDAY, MONDAY, THURSDAY, SUNDAY, TUESDAY, FRIDAY, SATURDAY"
     }
-  ],
-  "message": "Validation failed"
+  ]
 }

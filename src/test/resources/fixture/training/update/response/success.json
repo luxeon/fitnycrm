@@ -3,7 +3,6 @@
   "name": "Updated Training",
   "description": "An updated training session",
   "durationMinutes": 120,
-  "clientCapacity": 40,
   "createdAt": "${json-unit.any-string}",
   "updatedAt": "${json-unit.any-string}"
 }

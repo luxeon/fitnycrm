@@ -4,6 +4,7 @@ import com.fitnycrm.location.repository.entity.Location;
 import com.fitnycrm.training.repository.entity.Training;
 import com.fitnycrm.user.repository.entity.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,8 +22,8 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "schedules")
-@ToString(exclude = {"training", "location", "defaultInstructor"})
-@EqualsAndHashCode(exclude = {"training", "location", "defaultInstructor"})
+@ToString(exclude = {"training", "location", "defaultTrainer"})
+@EqualsAndHashCode(exclude = {"training", "location", "defaultTrainer"})
 public class Schedule {
 
     @Id
@@ -51,6 +52,10 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_trainer_id", nullable = false)
     private User defaultTrainer;
+
+    @Min(1)
+    @Column(nullable = false)
+    private Integer clientCapacity;
 
     @CreationTimestamp
     @Column(name = "created_at")

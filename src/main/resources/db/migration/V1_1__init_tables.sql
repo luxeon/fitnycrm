@@ -80,7 +80,6 @@ CREATE TABLE IF NOT EXISTS trainings
     name             VARCHAR(255) NOT NULL,
     description      TEXT,
     duration_minutes INTEGER      NOT NULL,
-    client_capacity  INTEGER      NOT NULL,
     created_at       TIMESTAMP WITHOUT TIME ZONE,
     updated_at       TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id)
@@ -95,6 +94,7 @@ CREATE TABLE IF NOT EXISTS schedules
     start_time         TIME      NOT NULL,
     end_time           TIME      NOT NULL,
     default_trainer_id uuid      NOT NULL,
+    client_capacity    INTEGER   NOT NULL,
     created_at         TIMESTAMP WITHOUT TIME ZONE,
     updated_at         TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (training_id) REFERENCES trainings (id),
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS client_training_credits
     remaining_trainings integer                     NOT NULL,
     expires_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     trigger             VARCHAR(255)                NOT NULL,
-    created_at          TIMESTAMP WITHOUT TIME ZONE,
+    created_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     FOREIGN KEY (client_id) REFERENCES users (id),
     FOREIGN KEY (training_id) REFERENCES trainings (id)
 );
@@ -151,6 +151,7 @@ CREATE TABLE IF NOT EXISTS client_payments
     price           numeric(5, 2) NOT NULL,
     currency        VARCHAR(3)    NOT NULL,
     created_at      TIMESTAMP WITHOUT TIME ZONE,
+    updated_at      TIMESTAMP WITHOUT TIME ZONE,
     FOREIGN KEY (tenant_id) REFERENCES tenants (id),
     FOREIGN KEY (client_id) REFERENCES users (id),
     FOREIGN KEY (training_id) REFERENCES trainings (id),
@@ -160,10 +161,14 @@ CREATE TABLE IF NOT EXISTS client_payments
 CREATE TABLE IF NOT EXISTS client_training_visits
 (
     id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    tenant_id   uuid         NOT NULL,
     schedule_id uuid         NOT NULL,
     client_id   uuid         NOT NULL,
     date        DATE         NOT NULL,
     status      VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE,
+    updated_at  TIMESTAMP WITH TIME ZONE,
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id),
     FOREIGN KEY (schedule_id) REFERENCES schedules (id),
     FOREIGN KEY (client_id) REFERENCES users (id)
 )

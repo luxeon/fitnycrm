@@ -24,6 +24,9 @@ public record ScheduleListItemResponse(
         LocalTime endTime,
 
         @Schema(description = "ID of the default trainer for this training")
-        UUID defaultTrainerId
+        UUID defaultTrainerId,
+
+        @Schema(description = "Maximum number of clients", example = "20")
+        Integer clientCapacity
 ) {
 }

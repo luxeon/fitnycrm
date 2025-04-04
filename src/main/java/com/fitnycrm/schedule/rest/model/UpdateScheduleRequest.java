@@ -2,6 +2,7 @@ package com.fitnycrm.schedule.rest.model;
 
 import com.fitnycrm.common.validation.EnumSetValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.DayOfWeek;
@@ -27,6 +28,11 @@ public record UpdateScheduleRequest(
 
         @Schema(description = "ID of the default trainer for this training")
         @NotNull
-        UUID defaultTrainerId
+        UUID defaultTrainerId,
+
+        @Schema(description = "Maximum number of clients", example = "20")
+        @NotNull
+        @Min(1)
+        Integer clientCapacity
 ) {
 }

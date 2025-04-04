@@ -20,9 +20,6 @@ public record TrainingDetailsResponse(
         @Schema(description = "Duration in minutes")
         Integer durationMinutes,
 
-        @Schema(description = "Maximum number of clients")
-        Integer clientCapacity,
-
         @Schema(description = "Timestamp when the training was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime createdAt,

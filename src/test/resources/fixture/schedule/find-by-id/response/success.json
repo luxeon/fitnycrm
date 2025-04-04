@@ -8,6 +8,7 @@
     "MONDAY",
     "SUNDAY"
   ],
+  "clientCapacity": 10,
   "createdAt": "${json-unit.any-string}",
   "updatedAt": "${json-unit.any-string}"
 } 

@@ -5,7 +5,6 @@
       "name": "Basic Training",
       "description": "Basic training session",
       "durationMinutes": 60,
-      "clientCapacity": 10,
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     },
@@ -14,7 +13,6 @@
       "name": "Advanced Training",
       "description": "Advanced training session",
       "durationMinutes": 90,
-      "clientCapacity": 20,
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     }

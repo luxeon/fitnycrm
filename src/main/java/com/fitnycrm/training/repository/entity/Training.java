@@ -43,10 +43,6 @@ public class Training {
     @Column(nullable = false)
     private Integer durationMinutes;
 
-    @Min(1)
-    @Column(nullable = false)
-    private Integer clientCapacity;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "Training_Payment_Tariffs",
