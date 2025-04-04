@@ -1,7 +1,9 @@
 package com.fitnycrm.payment.service;
 
 import com.fitnycrm.payment.repository.ClientPaymentRepository;
+import com.fitnycrm.payment.repository.ClientTrainingSubscriptionRepository;
 import com.fitnycrm.payment.repository.entity.ClientPayment;
+import com.fitnycrm.payment.repository.entity.ClientTrainingSubscription;
 import com.fitnycrm.payment.repository.entity.PaymentStatus;
 import com.fitnycrm.payment.repository.specification.ClientPaymentSpecification;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
@@ -21,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -28,6 +31,7 @@ import java.util.UUID;
 public class ClientPaymentService {
 
     private final ClientPaymentRepository clientPaymentRepository;
+    private final ClientTrainingSubscriptionRepository trainingSubscriptionRepository;
     private final TenantService tenantService;
     private final ClientService clientService;
     private final TrainingService trainingService;
@@ -44,7 +48,30 @@ public class ClientPaymentService {
         payment.setClient(client);
         payment.setTraining(training);
 
-        return clientPaymentRepository.save(payment);
+        payment = clientPaymentRepository.save(payment);
+
+        trainingSubscriptionRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(client, training).ifPresentOrElse(subscription -> {
+            if (isExpired(subscription)) {
+                createSubscription(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays()));
+            } else {
+                createSubscription(client, training, subscription.getRemainingTrainings() + request.trainingsCount(), subscription.getExpiresAt().plusDays(request.validDays()));
+            }
+        }, () -> createSubscription(client, training, request.trainingsCount(), OffsetDateTime.now().plusDays(request.validDays())));
+
+        return payment;
+    }
+
+    private void createSubscription(User client, Training training, int remainingTrainings, OffsetDateTime expiresAt) {
+        ClientTrainingSubscription subscription = new ClientTrainingSubscription();
+        subscription.setClient(client);
+        subscription.setTraining(training);
+        subscription.setRemainingTrainings(remainingTrainings);
+        subscription.setExpiresAt(expiresAt);
+        trainingSubscriptionRepository.save(subscription);
+    }
+
+    private static boolean isExpired(ClientTrainingSubscription subscription) {
+        return subscription.getExpiresAt().isBefore(OffsetDateTime.now());
     }
 
     @Transactional(readOnly = true)
@@ -63,7 +90,12 @@ public class ClientPaymentService {
     public ClientPayment cancel(UUID tenantId, UUID clientId, UUID paymentId) {
         ClientPayment payment = findById(tenantId, clientId, paymentId);
         payment.setStatus(PaymentStatus.CANCELED);
-        return clientPaymentRepository.save(payment);
+        payment = clientPaymentRepository.save(payment);
+
+        trainingSubscriptionRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(payment.getClient(), payment.getTraining())
+                .ifPresent(trainingSubscriptionRepository::delete);
+
+        return payment;
     }
 
     @Transactional(readOnly = true)

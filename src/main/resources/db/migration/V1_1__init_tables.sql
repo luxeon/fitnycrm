@@ -141,3 +141,26 @@ CREATE TABLE IF NOT EXISTS client_payments
     FOREIGN KEY (client_id) REFERENCES users (id),
     FOREIGN KEY (training_id) REFERENCES trainings (id)
 );
+
+CREATE TABLE IF NOT EXISTS client_training_subscriptions
+(
+    id                  uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    client_id           uuid                        NOT NULL,
+    training_id         uuid                        NOT NULL,
+    remaining_trainings integer                     NOT NULL,
+    expires_at          TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    created_at          TIMESTAMP WITHOUT TIME ZONE,
+    FOREIGN KEY (client_id) REFERENCES users (id),
+    FOREIGN KEY (training_id) REFERENCES trainings (id)
+);
+
+CREATE TABLE IF NOT EXISTS client_training_visits
+(
+    id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    schedule_id uuid         NOT NULL,
+    client_id   uuid         NOT NULL,
+    date        DATE         NOT NULL,
+    status      VARCHAR(255) NOT NULL,
+    FOREIGN KEY (schedule_id) REFERENCES schedules (id),
+    FOREIGN KEY (client_id) REFERENCES users (id)
+)
