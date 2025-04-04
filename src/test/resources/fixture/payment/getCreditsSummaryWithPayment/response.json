@@ -1,0 +1,6 @@
+{
+  "totalCredits": 10,
+  "usedCredits": 0,
+  "remainingCredits": 10,
+  "lastPaymentDate": "${json-unit.any-string}"
+} 

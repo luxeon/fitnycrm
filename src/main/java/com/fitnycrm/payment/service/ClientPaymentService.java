@@ -93,8 +93,10 @@ public class ClientPaymentService {
                 throw new ClientPaymentCannotBeCancelled("Payment can be cancelled only when it's connected to the latest training credit record.");
             }
         });
+        payment.setCredit(null);
+        payment = clientPaymentRepository.save(payment);
         clientTrainingCreditRepository.delete(credit);
-        return clientPaymentRepository.save(payment);
+        return payment;
     }
 
     @Transactional(readOnly = true)
@@ -133,7 +135,7 @@ public class ClientPaymentService {
         subscription.setTraining(training);
         subscription.setRemainingTrainings(remainingTrainings);
         subscription.setExpiresAt(expiresAt);
-        subscription.setTrigger(ClientTrainingCreditTrigger.ADD_PAYMENT);
+        subscription.setTrigger(ClientTrainingCreditTrigger.PAYMENT);
         return clientTrainingCreditRepository.save(subscription);
     }
 

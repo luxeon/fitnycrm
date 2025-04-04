@@ -1,8 +1,11 @@
 package com.fitnycrm.payment.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fitnycrm.common.annotation.IntegrationTest;
+import com.fitnycrm.payment.rest.model.ClientTrainingCreditsSummaryResponse;
 import com.fitnycrm.user.repository.entity.UserRole;
 import com.fitnycrm.user.util.JwtTokenCreator;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -12,12 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @IntegrationTest
 @Sql({"/db/tenant/insert.sql", "/db/user/insert.sql", "/db/training/insert.sql", "/db/client/insert.sql"})
@@ -26,14 +32,17 @@ class ClientPaymentRestControllerTest {
     private static final String BASE_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19";
     private static final UUID DIFFERENT_TENANT_ID = UUID.fromString("b35ac7f5-3e4f-462a-a76d-524bd3a5fd03");
     private static final UUID EXISTING_CLIENT_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
-    private static final UUID EXISTING_PAYMENT_ID = UUID.fromString("d35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
+    private static final UUID EXISTING_PAYMENT_ID = UUID.fromString("d35ac7f5-3e4f-462a-a76d-524bd3a5fd02");
     private static final UUID NON_EXISTING_PAYMENT_ID = UUID.fromString("d35ac7f5-3e4f-462a-a76d-524bd3a5fd99");
+    private static final UUID EXISTING_TRAINING_ID = UUID.fromString("ae4d661a-ed70-4e36-9caf-048ee8060290");
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private JwtTokenCreator jwtTokenCreator;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void create_whenValidRequest_thenCreatePayment() throws Exception {
@@ -127,7 +136,7 @@ class ClientPaymentRestControllerTest {
     void cancel_whenUserHasDifferentTenant_thenReturn403() throws Exception {
         var expectedResponse = readFile("fixture/payment/cancel/response/access-denied.json");
 
-        mockMvc.perform(post("/api/tenants/{tenantId}/clients/{clientId}/payments/{paymentId}/cancel", 
+        mockMvc.perform(post("/api/tenants/{tenantId}/clients/{clientId}/payments/{paymentId}/cancel",
                         DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID, EXISTING_PAYMENT_ID)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
@@ -214,5 +223,87 @@ class ClientPaymentRestControllerTest {
                         .param("size", "10")
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getCreditsSummary_whenNoPayments_returnsEmptySummary() throws Exception {
+        var expectedResponse = readFile("fixture/payment/getCreditsSummary/response/no-payments.json");
+
+        mockMvc.perform(get(BASE_URL + "/clients/{clientId}/trainings/{trainingId}/credits/summary", EXISTING_CLIENT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getCreditsSummary_withPayment_returnsCorrectSummary() throws Exception {
+        var request = readFile("fixture/payment/create/request/valid-request.json");
+
+        mockMvc.perform(post(BASE_URL + "/clients/{clientId}/payments", EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post(BASE_URL + "/clients/{clientId}/payments", EXISTING_CLIENT_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isCreated());
+
+        String response = mockMvc.perform(get(BASE_URL + "/clients/{clientId}/trainings/{trainingId}/credits/summary", EXISTING_CLIENT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        ClientTrainingCreditsSummaryResponse summary = objectMapper.readValue(response, ClientTrainingCreditsSummaryResponse.class);
+        Assertions.assertThat(summary.remainingTrainings()).isEqualTo(20);
+        Assertions.assertThat(summary.expiresAt().toLocalDate()).isEqualTo(LocalDate.now().plusDays(60));
+    }
+
+    @Test
+    @Sql("/db/payment/insert.sql")
+    void getCreditsSummary_afterPaymentCancellation_returnsUpdatedSummary() throws Exception {
+        mockMvc.perform(post(BASE_URL + "/clients/{clientId}/payments/{paymentId}/cancel", EXISTING_CLIENT_ID, "d35ac7f5-3e4f-462a-a76d-524bd3a5fd02")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk());
+
+        var expectedResponse = readFile("fixture/payment/getCreditsSummary/response/after-cancellation.json");
+
+        mockMvc.perform(get(BASE_URL + "/clients/{clientId}/trainings/{trainingId}/credits/summary", EXISTING_CLIENT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/payment/insert.sql")
+    void getCreditsSummary_asClient_returnsCorrectSummary() throws Exception {
+        var expectedResponse = readFile("fixture/payment/getCreditsSummary/response/as-client.json");
+
+        mockMvc.perform(get(BASE_URL + "/clients/{clientId}/trainings/{trainingId}/credits/summary", EXISTING_CLIENT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("james.bond@example.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getCreditsSummary_asUnauthorizedClient_returnsForbidden() throws Exception {
+        UUID unauthorizedClientId = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd02");
+
+        mockMvc.perform(get(BASE_URL + "/clients/{clientId}/trainings/{trainingId}/credits/summary", unauthorizedClientId, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getCreditsSummary_withInvalidTenant_returnsForbidden() throws Exception {
+        var expectedResponse = readFile("fixture/payment/getCreditsSummary/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/clients/{clientId}/trainings/{trainingId}/credits/summary",
+                        DIFFERENT_TENANT_ID, EXISTING_CLIENT_ID, EXISTING_TRAINING_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 } 
