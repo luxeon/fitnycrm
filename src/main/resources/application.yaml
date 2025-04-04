@@ -28,8 +28,3 @@ mail:
   from: noreply@fitnycrm.com
   confirmationUrl: ${fitny.base-url}/auth/confirm-email
   clientRegistrationUrl: ${fitny.base-url}/tenants/%s/clients/signup/%s
-
-cors:
-  allowed-origins:
-    - http://localhost:4200
-    - http://127.0.0.1:4200
