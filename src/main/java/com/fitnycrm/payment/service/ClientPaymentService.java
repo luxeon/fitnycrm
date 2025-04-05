@@ -10,10 +10,7 @@ import com.fitnycrm.payment.repository.specification.ClientPaymentSpecification;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
 import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
 import com.fitnycrm.payment.rest.model.ExtendedClientPaymentFilterRequest;
-import com.fitnycrm.payment.service.exception.ClientPaymentAlreadyCancelledException;
-import com.fitnycrm.payment.service.exception.ClientPaymentCannotBeCancelled;
-import com.fitnycrm.payment.service.exception.ClientPaymentNotFoundException;
-import com.fitnycrm.payment.service.exception.ClientTrainingCreditNotFoundException;
+import com.fitnycrm.payment.service.exception.*;
 import com.fitnycrm.payment.service.mapper.ClientPaymentRequestMapper;
 import com.fitnycrm.tenant.repository.entity.Tenant;
 import com.fitnycrm.tenant.service.TenantService;
@@ -66,6 +63,16 @@ public class ClientPaymentService {
 
         return clientTrainingCreditRepository.findFirstByClientAndTrainingOrderByCreatedAtDesc(client, training)
                 .orElseThrow(() -> new ClientTrainingCreditNotFoundException(clientId, trainingId));
+    }
+
+    @Transactional
+    public void countVisit(UUID tenantId, UUID clientId, UUID trainingId) {
+        ClientTrainingCredit creditsSummary = getCreditsSummary(tenantId, clientId, trainingId);
+        if (creditsSummary.getRemainingTrainings() <= 0 || creditsSummary.getExpiresAt().isBefore(OffsetDateTime.now())) {
+            throw new ClientVisitCannotBeCountedException("Unable to book visit: you should pay for the training first.");
+        }
+        ClientTrainingCredit nextCredit = mapper.countVisit(creditsSummary);
+        clientTrainingCreditRepository.save(nextCredit);
     }
 
     @Transactional(readOnly = true)
@@ -142,4 +149,4 @@ public class ClientPaymentService {
     private static boolean isExpired(ClientTrainingCredit credit) {
         return credit.getExpiresAt().isBefore(OffsetDateTime.now());
     }
-} 
+}

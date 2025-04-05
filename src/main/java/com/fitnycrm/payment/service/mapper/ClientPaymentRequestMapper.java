@@ -1,6 +1,7 @@
 package com.fitnycrm.payment.service.mapper;
 
 import com.fitnycrm.payment.repository.entity.ClientPayment;
+import com.fitnycrm.payment.repository.entity.ClientTrainingCredit;
 import com.fitnycrm.payment.rest.model.CreateClientPaymentRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,4 +16,10 @@ public interface ClientPaymentRequestMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "status", constant = "COMPLETED")
     ClientPayment toEntity(CreateClientPaymentRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "trigger", constant = "VISIT")
+    @Mapping(target = "remainingTrainings", expression = "java(creditsSummary.getRemainingTrainings() - 1)")
+    ClientTrainingCredit countVisit(ClientTrainingCredit creditsSummary);
 }
