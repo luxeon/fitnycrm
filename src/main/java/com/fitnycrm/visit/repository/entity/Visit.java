@@ -31,10 +31,6 @@ public class Visit {
     private User client;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private VisitStatus status;
-
-    @NotNull
     @FutureOrPresent
     private LocalDate date;
 

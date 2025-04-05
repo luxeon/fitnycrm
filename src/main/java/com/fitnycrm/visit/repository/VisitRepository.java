@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface VisitRepository extends JpaRepository<Visit, UUID> {
 
     long countByScheduleAndDate(Schedule schedule, LocalDate date);
+
 }

@@ -161,12 +161,12 @@ CREATE TABLE IF NOT EXISTS client_payments
 CREATE TABLE IF NOT EXISTS client_training_visits
 (
     id          uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-    schedule_id uuid         NOT NULL,
-    client_id   uuid         NOT NULL,
-    date        DATE         NOT NULL,
-    status      VARCHAR(255) NOT NULL,
+    schedule_id uuid NOT NULL,
+    client_id   uuid NOT NULL,
+    date        DATE NOT NULL,
     created_at  TIMESTAMP WITH TIME ZONE,
     updated_at  TIMESTAMP WITH TIME ZONE,
     FOREIGN KEY (schedule_id) REFERENCES schedules (id),
-    FOREIGN KEY (client_id) REFERENCES users (id)
+    FOREIGN KEY (client_id) REFERENCES users (id),
+    UNIQUE (schedule_id, client_id, date)
 )
