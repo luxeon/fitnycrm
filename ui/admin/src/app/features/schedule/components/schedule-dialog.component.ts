@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTimepickerModule, MAT_TIMEPICKER_CONFIG } from '@angular/material/timepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { ScheduleDetailsResponse } from '../../../core/services/schedule.service';
@@ -31,7 +33,15 @@ export interface ScheduleDialogData {
     MatButtonModule,
     MatSelectModule,
     MatCheckboxModule,
+    MatTimepickerModule,
     TranslateModule
+  ],
+  providers: [
+    provideNativeDateAdapter(),
+    {
+      provide: MAT_TIMEPICKER_CONFIG,
+      useValue: { interval: '15 minutes' }
+    }
   ],
   template: `
     <h2 mat-dialog-title>{{ (data.schedule ? 'schedule.edit.title' : 'schedule.create.title') | translate }}</h2>
@@ -70,9 +80,9 @@ export interface ScheduleDialogData {
           <div class="days-section">
             <p class="section-label">{{ 'schedule.form.daysOfWeek' | translate }}</p>
             <div class="days-of-week">
-              <mat-checkbox 
-                *ngFor="let day of daysOfWeek" 
-                [checked]="selectedDays.includes(day)" 
+              <mat-checkbox
+                *ngFor="let day of daysOfWeek"
+                [checked]="selectedDays.includes(day)"
                 (change)="onDayChange($event, day)"
                 class="day-checkbox">
                 {{ 'schedule.form.days.' + day.toLowerCase() | translate }}
@@ -86,17 +96,37 @@ export interface ScheduleDialogData {
           <div class="time-container">
             <mat-form-field appearance="outline">
               <mat-label>{{ 'schedule.form.startTime' | translate }}</mat-label>
-              <input matInput type="time" formControlName="startTime" required>
+              <input matInput
+                [matTimepicker]="startTimePicker"
+                formControlName="startTime"
+                required>
+              <mat-timepicker-toggle matSuffix [for]="startTimePicker"></mat-timepicker-toggle>
+              <mat-timepicker #startTimePicker></mat-timepicker>
               <mat-error *ngIf="scheduleForm.get('startTime')?.hasError('required')">
                 {{ 'schedule.form.startTimeRequired' | translate }}
+              </mat-error>
+              <mat-error *ngIf="scheduleForm.get('startTime')?.hasError('matTimepickerParse')">
+                {{ 'schedule.form.invalidTimeFormat' | translate }}
               </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>{{ 'schedule.form.endTime' | translate }}</mat-label>
-              <input matInput type="time" formControlName="endTime" required>
+              <input matInput
+                [matTimepicker]="endTimePicker"
+                formControlName="endTime"
+                [matTimepickerMin]="calculateMinEndTime(scheduleForm.get('startTime')?.value)"
+                required>
+              <mat-timepicker-toggle matSuffix [for]="endTimePicker"></mat-timepicker-toggle>
+              <mat-timepicker #endTimePicker></mat-timepicker>
               <mat-error *ngIf="scheduleForm.get('endTime')?.hasError('required')">
                 {{ 'schedule.form.endTimeRequired' | translate }}
+              </mat-error>
+              <mat-error *ngIf="scheduleForm.get('endTime')?.hasError('matTimepickerParse')">
+                {{ 'schedule.form.invalidTimeFormat' | translate }}
+              </mat-error>
+              <mat-error *ngIf="scheduleForm.get('endTime')?.hasError('matTimepickerMin')">
+                {{ 'schedule.form.minimumDuration' | translate }}
               </mat-error>
             </mat-form-field>
           </div>
@@ -204,6 +234,17 @@ export class ScheduleDialogComponent implements OnInit {
       days: [[], Validators.required],
       clientCapacity: [10, [Validators.required, Validators.min(1)]]
     });
+
+    // Modify start time subscription to prevent infinite loop
+    this.scheduleForm.get('startTime')?.valueChanges.subscribe(startTime => {
+      if (startTime && !this.scheduleForm.get('endTime')?.dirty) {
+        const endTime = this.calculateEndTime(startTime);
+        // Use setTimeout to break the change detection cycle
+        setTimeout(() => {
+          this.scheduleForm.patchValue({ endTime }, { emitEvent: false });
+        });
+      }
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -229,17 +270,66 @@ export class ScheduleDialogComponent implements OnInit {
     this.trainers = await firstValueFrom(this.trainerService.getAllTrainers(this.data.tenantId));
   }
 
+  // Make this method return a memoized value to prevent unnecessary recalculations
+  private _lastStartTime: Date | null = null;
+  private _lastMinEndTime: Date | null = null;
+
+  calculateMinEndTime(startTime: Date | null): Date | null {
+    // Return cached value if start time hasn't changed
+    if (startTime === this._lastStartTime && this._lastMinEndTime) {
+      return this._lastMinEndTime;
+    }
+
+    if (!startTime) {
+      this._lastStartTime = null;
+      this._lastMinEndTime = null;
+      return null;
+    }
+
+    this._lastStartTime = startTime;
+    const minEndTime = new Date(startTime);
+    minEndTime.setMinutes(minEndTime.getMinutes() + 15);
+    this._lastMinEndTime = minEndTime;
+    return minEndTime;
+  }
+
+  private calculateEndTime(startTime: Date): Date {
+    const endTime = new Date(startTime);
+    endTime.setHours(endTime.getHours() + 1);
+    return endTime;
+  }
+
+  private formatTimeToLocalTime(time: Date | string): string {
+    if (!time) return '';
+    if (typeof time === 'string') return time;
+    return time.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+  }
+
   private patchFormWithScheduleData(): void {
     if (this.data.schedule) {
+      // Convert string times to Date objects for the timepicker
+      const startTime = this.parseTimeString(this.data.schedule.startTime);
+      const endTime = this.parseTimeString(this.data.schedule.endTime);
+
       this.scheduleForm.patchValue({
         trainingId: this.data.schedule.trainingId,
         defaultTrainerId: this.data.schedule.defaultTrainerId,
-        startTime: this.data.schedule.startTime,
-        endTime: this.data.schedule.endTime,
+        startTime,
+        endTime,
         clientCapacity: this.data.schedule.clientCapacity
       });
       this.selectedDays = this.data.schedule.daysOfWeek;
     }
+  }
+
+  private parseTimeString(timeStr: string | any): Date {
+    if (!timeStr) return new Date();
+    if (timeStr instanceof Date) return timeStr;
+
+    const today = new Date();
+    const [hours, minutes] = timeStr.split(':');
+    today.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+    return today;
   }
 
   onDayChange(event: any, day: string): void {
@@ -255,12 +345,15 @@ export class ScheduleDialogComponent implements OnInit {
   onSubmit(): void {
     if (this.scheduleForm.valid && this.selectedDays.length > 0) {
       this.isSaving = true;
-      
+
+      const formValue = this.scheduleForm.value;
       const result = {
-        ...this.scheduleForm.value,
+        ...formValue,
+        startTime: this.formatTimeToLocalTime(formValue.startTime),
+        endTime: this.formatTimeToLocalTime(formValue.endTime),
         daysOfWeek: this.selectedDays
       };
-      
+
       this.dialogRef.close(result);
     }
   }
@@ -268,4 +361,4 @@ export class ScheduleDialogComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
-} 
+}
