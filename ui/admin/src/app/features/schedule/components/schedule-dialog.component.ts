@@ -311,14 +311,18 @@ export class ScheduleDialogComponent implements OnInit {
       const startTime = this.parseTimeString(this.data.schedule.startTime);
       const endTime = this.parseTimeString(this.data.schedule.endTime);
 
+      this.selectedDays = this.data.schedule.daysOfWeek;
       this.scheduleForm.patchValue({
         trainingId: this.data.schedule.trainingId,
         defaultTrainerId: this.data.schedule.defaultTrainerId,
         startTime,
         endTime,
-        clientCapacity: this.data.schedule.clientCapacity
+        clientCapacity: this.data.schedule.clientCapacity,
+        days: this.selectedDays
       });
-      this.selectedDays = this.data.schedule.daysOfWeek;
+      
+      // Mark the days control as touched to avoid validation issues
+      this.scheduleForm.get('days')?.markAsTouched();
     }
   }
 
