@@ -76,6 +76,17 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="clientCapacity">{{ 'schedule.form.capacity' | translate }}</label>
+            <input id="clientCapacity" type="number" min="1" formControlName="clientCapacity" class="form-control">
+            <div *ngIf="scheduleForm.get('clientCapacity')?.errors?.['required'] && scheduleForm.get('clientCapacity')?.touched" class="error-message">
+              {{ 'schedule.form.capacityRequired' | translate }}
+            </div>
+            <div *ngIf="scheduleForm.get('clientCapacity')?.errors?.['min'] && scheduleForm.get('clientCapacity')?.touched" class="error-message">
+              {{ 'schedule.form.capacityMin' | translate }}
+            </div>
+          </div>
+
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="onCancel()">
               {{ 'common.cancel' | translate }}
@@ -234,7 +245,8 @@ export class CreateScheduleComponent {
       defaultTrainerId: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      days: [[], Validators.required]
+      days: [[], Validators.required],
+      clientCapacity: [10, [Validators.required, Validators.min(1)]]
     });
 
     this.loadWorkouts();
@@ -270,19 +282,22 @@ export class CreateScheduleComponent {
   async onSubmit(): Promise<void> {
     if (this.scheduleForm.valid && this.selectedDays.length > 0) {
       this.isLoading = true;
-      try {
-        const formValue = this.scheduleForm.value;
-        const request: CreateScheduleRequest = {
-          trainingId: formValue.trainingId,
-          defaultTrainerId: formValue.defaultTrainerId,
-          startTime: formValue.startTime,
-          endTime: formValue.endTime,
-          daysOfWeek: this.selectedDays
-        };
-        await firstValueFrom(this.scheduleService.createSchedule(this.tenantId, this.locationId, request));
+      const { tenantId, locationId } = this.route.snapshot.params;
 
-        const returnUrl = history.state?.returnUrl || `/tenant/${this.tenantId}/location/${this.locationId}`;
-        await this.router.navigate([returnUrl]);
+      try {
+        const request: CreateScheduleRequest = {
+          trainingId: this.scheduleForm.get('trainingId')?.value,
+          defaultTrainerId: this.scheduleForm.get('defaultTrainerId')?.value,
+          startTime: this.scheduleForm.get('startTime')?.value,
+          endTime: this.scheduleForm.get('endTime')?.value,
+          daysOfWeek: this.selectedDays,
+          clientCapacity: this.scheduleForm.get('clientCapacity')?.value
+        };
+
+        await firstValueFrom(this.scheduleService.createSchedule(tenantId, locationId, request));
+        this.router.navigate([`/tenant/${tenantId}/location/${locationId}`], { queryParams: { tab: 'schedule' } });
+      } catch (error) {
+        console.error('Error creating schedule:', error);
       } finally {
         this.isLoading = false;
       }

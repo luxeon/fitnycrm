@@ -7,14 +7,12 @@ export interface CreateTrainingRequest {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
 }
 
 export interface UpdateTrainingRequest {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
 }
 
 export interface TrainingDetailsResponse {
@@ -22,7 +20,6 @@ export interface TrainingDetailsResponse {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +29,6 @@ export interface TrainingPageItemResponse {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
 }
 
 export interface UpdateTrainingTariffsRequest {
