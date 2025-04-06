@@ -9,8 +9,6 @@ import { ClubDetailsComponent } from './features/location/club-details.component
 import { CreateWorkoutComponent } from './features/training/create-workout.component';
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
-import { CreateScheduleComponent } from './features/schedule/create-schedule.component';
-import { EditScheduleComponent } from './features/schedule/edit-schedule.component';
 import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
 
 export const routes: Routes = [
@@ -57,18 +55,6 @@ export const routes: Routes = [
     component: EditWorkoutComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'training.edit.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/location/:locationId/schedule/create',
-    component: CreateScheduleComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'schedule.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/location/:locationId/schedule/:scheduleId/edit',
-    component: EditScheduleComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'schedule.edit.pageTitle' }
   },
   {
     path: 'dashboard',

@@ -2,17 +2,27 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LocationService, LocationPageItemResponse } from '../../core/services/location.service';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { ScheduleService, ScheduleListItemResponse } from '../../core/services/schedule.service';
+import { ScheduleService, ScheduleListItemResponse, CreateScheduleRequest, UpdateScheduleRequest } from '../../core/services/schedule.service';
 import { ScheduleListComponent } from '../schedule/components/schedule-list.component';
 import { ConfirmationDialogComponent } from '../dashboard/components/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.component';
 
 @Component({
   selector: 'app-club-details',
   standalone: true,
-  imports: [CommonModule, TranslateModule, ScheduleListComponent, ConfirmationDialogComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    ScheduleListComponent,
+    ConfirmationDialogComponent,
+    MatDialogModule,
+    MatSnackBarModule
+  ],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -197,6 +207,9 @@ export class ClubDetailsComponent implements OnInit {
   private readonly scheduleService = inject(ScheduleService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly translate = inject(TranslateService);
 
   location: LocationPageItemResponse | null = null;
   isLoading = false;
@@ -243,30 +256,86 @@ export class ClubDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/dashboard']).then(() => {
-      // Restore scroll position after navigation
-      const savedScrollPos = sessionStorage.getItem('dashboardScrollPos');
-      if (savedScrollPos) {
-        window.scrollTo(0, parseInt(savedScrollPos, 10));
-        sessionStorage.removeItem('dashboardScrollPos'); // Clean up
+    this.router.navigate(['/dashboard']);
+  }
+
+  onAddSchedule(): void {
+    const dialogRef = this.dialog.open(ScheduleDialogComponent, {
+      width: '600px',
+      data: {
+        tenantId: this.tenantId,
+        locationId: this.locationId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        try {
+          const request: CreateScheduleRequest = {
+            trainingId: result.trainingId,
+            defaultTrainerId: result.defaultTrainerId,
+            startTime: result.startTime,
+            endTime: result.endTime,
+            daysOfWeek: result.daysOfWeek,
+            clientCapacity: result.clientCapacity
+          };
+
+          await firstValueFrom(this.scheduleService.createSchedule(this.tenantId, this.locationId, request));
+          this.loadSchedules();
+          this.showSuccessMessage('schedule.create.success');
+        } catch (error) {
+          console.error('Error creating schedule:', error);
+          this.showErrorMessage('schedule.create.error');
+        }
       }
     });
   }
 
-  onAddSchedule(): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/${this.locationId}/schedule/create`], {
-      state: { returnUrl: this.router.url }
-    });
+  onScheduleEdit(schedule: ScheduleListItemResponse): void {
+    // First get the full schedule details
+    firstValueFrom(this.scheduleService.getSchedule(this.tenantId, this.locationId, schedule.id))
+      .then((scheduleDetails) => {
+        const dialogRef = this.dialog.open(ScheduleDialogComponent, {
+          width: '600px',
+          data: {
+            tenantId: this.tenantId,
+            locationId: this.locationId,
+            schedule: scheduleDetails
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(async (result) => {
+          if (result) {
+            try {
+              const request: UpdateScheduleRequest = {
+                defaultTrainerId: result.defaultTrainerId,
+                startTime: result.startTime,
+                endTime: result.endTime,
+                daysOfWeek: result.daysOfWeek,
+                clientCapacity: result.clientCapacity
+              };
+
+              await firstValueFrom(this.scheduleService.updateSchedule(this.tenantId, this.locationId, schedule.id, request));
+              this.loadSchedules();
+              this.showSuccessMessage('schedule.edit.success');
+            } catch (error) {
+              console.error('Error updating schedule:', error);
+              this.showErrorMessage('schedule.edit.error');
+            }
+          }
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching schedule details:', error);
+        this.showErrorMessage('schedule.load.error');
+      });
   }
 
   onScheduleDelete(scheduleId: string): void {
-    this.scheduleToDelete = this.schedules.find(s => s.id === scheduleId) || null;
-  }
-
-  onScheduleEdit(schedule: ScheduleListItemResponse): void {
-    this.router.navigate([`/tenant/${this.tenantId}/location/${this.locationId}/schedule/${schedule.id}/edit`], {
-      state: { returnUrl: this.router.url }
-    });
+    const schedule = this.schedules.find(s => s.id === scheduleId);
+    if (schedule) {
+      this.scheduleToDelete = schedule;
+    }
   }
 
   async onScheduleDeleteConfirm(): Promise<void> {
@@ -275,13 +344,31 @@ export class ClubDetailsComponent implements OnInit {
         await firstValueFrom(this.scheduleService.deleteSchedule(this.tenantId, this.locationId, this.scheduleToDelete.id));
         this.scheduleToDelete = null;
         this.loadSchedules();
+        this.showSuccessMessage('location.details.schedule.delete.success');
       } catch (error) {
-        // Handle error appropriately
+        console.error('Error deleting schedule:', error);
+        this.showErrorMessage('location.details.schedule.delete.error');
       }
     }
   }
 
   onScheduleDeleteCancel(): void {
     this.scheduleToDelete = null;
+  }
+
+  private showSuccessMessage(key: string): void {
+    this.snackBar.open(
+      this.translate.instant(key),
+      this.translate.instant('common.close'),
+      { duration: 3000, panelClass: ['success-snackbar'] }
+    );
+  }
+
+  private showErrorMessage(key: string): void {
+    this.snackBar.open(
+      this.translate.instant(key),
+      this.translate.instant('common.close'),
+      { duration: 5000, panelClass: ['error-snackbar'] }
+    );
   }
 }

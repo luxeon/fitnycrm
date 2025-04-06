@@ -199,7 +199,8 @@
         "delete": {
           "title": "Delete Schedule",
           "message": "Are you sure you want to delete this class schedule? This action cannot be undone.",
-          "confirm": "Delete"
+          "confirm": "Delete",
+          "success": "Schedule deleted successfully"
         }
       }
     },
@@ -305,53 +306,44 @@
     }
   },
   "registration": {
-    "pageTitle": "Register",
-    "title": "Create Account",
+    "pageTitle": "Sign Up",
+    "title": "Create Your Account",
     "subtitle": "Join us to start your fitness journey",
     "form": {
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter your first name",
-        "required": "Please enter your first name",
-        "minLength": "First name must be at least {{length}} characters long",
-        "maxLength": "First name cannot be longer than {{length}} characters"
+        "required": "First name is required"
       },
       "lastName": {
         "label": "Last Name",
         "placeholder": "Enter your last name",
-        "required": "Please enter your last name",
-        "minLength": "Last name must be at least {{length}} characters long",
-        "maxLength": "Last name cannot be longer than {{length}} characters"
+        "required": "Last name is required"
       },
       "email": {
-        "label": "Email",
-        "placeholder": "Enter your email",
-        "required": "Please enter your email address",
+        "label": "Email Address",
+        "placeholder": "Enter your email address",
+        "required": "Email is required",
         "invalid": "Please enter a valid email address"
-      },
-      "phoneNumber": {
-        "label": "Phone Number (Optional)",
-        "placeholder": "Enter your phone number (e.g., +1234567890)",
-        "invalid": "Please enter a valid phone number starting with + followed by country code and number (e.g., +12125551234)"
       },
       "password": {
         "label": "Password",
         "placeholder": "Enter your password",
-        "required": "Please enter your password",
-        "pattern": "Your password must include at least one number, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=)"
+        "required": "Password is required",
+        "minLength": "Password must be at least 8 characters",
+        "complexity": "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character"
       },
       "confirmPassword": {
         "label": "Confirm Password",
-        "placeholder": "Confirm your password",
+        "placeholder": "Re-enter your password",
         "required": "Please confirm your password",
-        "mismatch": "The passwords you entered do not match"
+        "mismatch": "Passwords do not match"
       },
-      "submit": {
-        "label": "Create Account",
-        "loading": "Creating Account..."
+      "button": {
+        "register": "Sign Up",
+        "loading": "Signing up..."
       }
     },
-    "success": "Registration successful! Please check your email to confirm your account.",
     "error": {
       "emailExists": "An account with this email already exists.",
       "generic": "An error occurred during registration. Please try again."
@@ -438,11 +430,18 @@
   "schedule": {
     "create": {
       "pageTitle": "Create Schedule",
-      "title": "Create New Schedule"
+      "title": "Create New Schedule",
+      "success": "Schedule created successfully",
+      "error": "Failed to create schedule"
     },
     "edit": {
       "pageTitle": "Edit Schedule",
-      "title": "Edit Schedule"
+      "title": "Edit Schedule",
+      "success": "Schedule updated successfully",
+      "error": "Failed to update schedule"
+    },
+    "load": {
+      "error": "Failed to load schedule details"
     },
     "form": {
       "workout": "Workout",
