@@ -16,25 +16,25 @@ import { AuthService } from '../../../core/services/auth.service';
     <div class="confirmation-container">
       <div class="confirmation-card">
         <div *ngIf="isLoading">
-          <h2>{{ 'emailConfirmation.verification.loading.title' | translate }}</h2>
-          <p class="message">{{ 'emailConfirmation.verification.loading.message' | translate }}</p>
+          <h2>{{ 'confirmEmail.loading.title' | translate }}</h2>
+          <p class="message">{{ 'confirmEmail.loading.message' | translate }}</p>
         </div>
 
         <div *ngIf="!isLoading && !error">
-          <h2>{{ 'emailConfirmation.verification.success.title' | translate }}</h2>
-          <p class="message">{{ 'emailConfirmation.verification.success.message' | translate }}</p>
+          <h2>{{ 'confirmEmail.success.title' | translate }}</h2>
+          <p class="message">{{ 'confirmEmail.success.message' | translate }}</p>
           <p class="login-link">
-            {{ 'emailConfirmation.verification.success.login.text' | translate }}
-            <a routerLink="/login">{{ 'emailConfirmation.verification.success.login.link' | translate }}</a>
+            {{ 'confirmEmail.success.login.text' | translate }}
+            <a routerLink="/login">{{ 'confirmEmail.success.login.link' | translate }}</a>
           </p>
         </div>
 
         <div *ngIf="!isLoading && error">
-          <h2>{{ 'emailConfirmation.verification.error.title' | translate }}</h2>
+          <h2>{{ 'confirmEmail.error.title' | translate }}</h2>
           <p class="message">{{ error | translate }}</p>
           <p class="login-link">
-            {{ 'emailConfirmation.verification.error.retry.text' | translate }}
-            <a routerLink="/login">{{ 'emailConfirmation.verification.error.retry.link' | translate }}</a>
+            {{ 'confirmEmail.error.retry.text' | translate }}
+            <a routerLink="/login">{{ 'confirmEmail.error.retry.link' | translate }}</a>
           </p>
         </div>
       </div>
@@ -103,7 +103,7 @@ export class ConfirmEmailComponent implements OnInit {
 
     if (!token) {
       this.isLoading = false;
-      this.error = 'emailConfirmation.verification.error.noToken';
+      this.error = 'confirmEmail.error.noToken';
       return;
     }
 
@@ -115,9 +115,9 @@ export class ConfirmEmailComponent implements OnInit {
         this.isLoading = false;
         // Map backend error messages to translation keys
         if (error.error?.message) {
-          this.error = `emailConfirmation.verification.error.${error.error.message}`;
+          this.error = error.error.message;
         } else {
-          this.error = 'emailConfirmation.verification.error.generic';
+          this.error = 'confirmEmail.error.generic';
         }
       }
     });
