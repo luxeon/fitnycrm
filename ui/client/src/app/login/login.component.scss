@@ -82,4 +82,21 @@ h2 {
   margin: 8px 0;
   font-size: 14px;
   text-align: center;
+}
+
+.signup-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  
+  a {
+    color: #764ba2;
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 } 

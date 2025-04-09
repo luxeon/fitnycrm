@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,6 +15,7 @@ import { AuthService } from '../core/services/auth.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule,
