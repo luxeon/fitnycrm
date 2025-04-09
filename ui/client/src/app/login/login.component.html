@@ -10,7 +10,11 @@
       <mat-card-content>
         <h2>Welcome Back</h2>
         <p class="subtitle">Sign in to your account</p>
-
+        
+        <div *ngIf="hasPendingInvitation" class="info-message">
+          Sign in to join the sport club you were invited to
+        </div>
+        
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Email</mat-label>

@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ClientSignupService, SignupClientRequest } from '../core/services/client-signup.service';
+import { InvitationStorageService } from '../core/services/invitation-storage.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,11 +28,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   templateUrl: './client-signup.component.html',
   styleUrls: ['./client-signup.component.scss']
 })
-export class ClientSignupComponent {
+export class ClientSignupComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private clientSignupService = inject(ClientSignupService);
+  private invitationStorage = inject(InvitationStorageService);
   
   tenantId: string = '11111111-1111-1111-1111-111111111111'; // Default value for now
   inviteId: string = '22222222-2222-2222-2222-222222222222'; // Default value for now
@@ -44,8 +46,8 @@ export class ClientSignupComponent {
   hidePassword = true;
   hideConfirmPassword = true;
   
-  constructor() {
-    // Parse route parameters if available
+  ngOnInit(): void {
+    // First check URL parameters
     this.route.paramMap.subscribe(params => {
       const tenantIdParam = params.get('tenantId');
       const inviteIdParam = params.get('inviteId');
@@ -54,6 +56,17 @@ export class ClientSignupComponent {
       if (inviteIdParam) this.inviteId = inviteIdParam;
     });
     
+    // Then check if we have stored invitation data (in case the user clicked the signup link from login)
+    if (!this.route.snapshot.paramMap.has('tenantId') && this.invitationStorage.hasPendingInvitation()) {
+      const invitation = this.invitationStorage.getStoredInvitation();
+      if (invitation) {
+        this.tenantId = invitation.tenantId;
+        this.inviteId = invitation.inviteId;
+      }
+    }
+  }
+  
+  constructor() {
     this.signupForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
@@ -99,6 +112,9 @@ export class ClientSignupComponent {
         next: (response) => {
           this.isSubmitting = false;
           this.submitSuccess = true;
+          
+          // Clear any stored invitation data
+          this.invitationStorage.clearStoredInvitation();
           
           // Redirect to login page after 3 seconds
           setTimeout(() => {

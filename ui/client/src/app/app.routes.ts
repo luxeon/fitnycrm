@@ -3,6 +3,7 @@ import { ClientSignupComponent } from './client-signup/client-signup.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
+import { ClientInvitationComponent } from './client-invitation/client-invitation.component';
 
 export const routes: Routes = [
   {
@@ -20,7 +21,12 @@ export const routes: Routes = [
   },
   {
     path: 'tenants/:tenantId/clients/signup/:inviteId',
-    component: ClientSignupComponent
+    component: ClientInvitationComponent
+  },
+  {
+    path: 'tenants/:tenantId/clients/join/:inviteId',
+    component: ClientInvitationComponent,
+    canActivate: [authGuard]
   },
   {
     path: '',

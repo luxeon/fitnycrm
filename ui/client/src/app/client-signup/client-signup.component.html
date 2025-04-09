@@ -16,7 +16,7 @@
         <div *ngIf="submitSuccess" class="success-message">
           <div class="icon">✓</div>
           <h2>Registration Successful!</h2>
-          <p>Your account has been created successfully. Redirecting to login page...</p>
+          <p>Your account has been created and you've been added to the sport club. Redirecting to login page...</p>
         </div>
 
         <form *ngIf="!submitSuccess" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">

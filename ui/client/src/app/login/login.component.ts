@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../core/services/auth.service';
+import { InvitationStorageService } from '../core/services/invitation-storage.service';
 
 @Component({
   selector: 'app-login',
@@ -29,32 +30,36 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  
+  private invitationStorage = inject(InvitationStorageService);
+
   loginForm: FormGroup;
   isLoading = false;
   hidePassword = true;
   errorMessage = '';
-  
+  hasPendingInvitation = false;
+
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
+    // Check if there's a pending invitation
+    this.hasPendingInvitation = this.invitationStorage.hasPendingInvitation();
   }
-  
+
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
-    
+
     this.isLoading = true;
     this.errorMessage = '';
-    
+
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
         this.isLoading = false;
-        // Navigate to home or dashboard page after successful login
-        this.router.navigate(['/dashboard']);
+        this.handleSuccessfulLogin();
       },
       error: (error) => {
         this.isLoading = false;
@@ -67,4 +72,22 @@ export class LoginComponent {
       }
     });
   }
-} 
+
+  private handleSuccessfulLogin(): void {
+    // Check if there's a pending invitation
+    if (this.invitationStorage.hasPendingInvitation()) {
+      const invitation = this.invitationStorage.getStoredInvitation();
+      if (invitation) {
+        // Navigate to the invitation handler component
+        this.router.navigate([
+          '/tenants', invitation.tenantId,
+          'clients', 'signup', invitation.inviteId
+        ]);
+        return;
+      }
+    }
+
+    // If no pending invitation, navigate to dashboard
+    this.router.navigate(['/dashboard']);
+  }
+}
