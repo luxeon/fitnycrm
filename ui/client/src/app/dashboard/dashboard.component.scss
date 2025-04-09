@@ -1,0 +1,31 @@
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content {
+  margin-top: 64px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  flex: 1;
+}
+
+.welcome-card {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+} 
