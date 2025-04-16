@@ -1,20 +1,46 @@
 <div class="dashboard-container">
   <mat-toolbar color="primary" class="toolbar">
-    <span>FITNYAPP</span>
+    <span>{{ 'dashboard.appName' | translate }}</span>
     <span class="spacer"></span>
-    <button mat-icon-button (click)="logout()">
+    <button mat-icon-button (click)="logout()" [attr.aria-label]="'dashboard.actions.logout' | translate">
       <mat-icon>logout</mat-icon>
     </button>
   </mat-toolbar>
 
   <div class="content">
-    <mat-card class="welcome-card">
-      <mat-card-header>
-        <mat-card-title>Welcome to FitnyAPP</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>You have successfully logged in. This is your dashboard.</p>
-      </mat-card-content>
-    </mat-card>
+    @if (userClaims()) {
+      <mat-card class="welcome-card">
+        <mat-card-content>
+          <h1 class="welcome-message">
+            {{ 'dashboard.welcome' | translate:{ firstName: userClaims()?.firstName, lastName: userClaims()?.lastName } }}
+          </h1>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <div class="club-section">
+      @if (isLoading()) {
+        <div class="loading-spinner">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p class="loading-text">{{ 'dashboard.club.loading' | translate }}</p>
+        </div>
+      } @else if (tenants().length) {
+        <mat-card class="club-card">
+          <mat-card-content>
+            <div class="club-icon">
+              <mat-icon>fitness_center</mat-icon>
+            </div>
+            <h2 class="club-name">{{ tenants()[0].name }}</h2>
+            <p class="club-status">{{ 'dashboard.club.status' | translate }}</p>
+          </mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-card class="no-data-card">
+          <mat-card-content>
+            <p>{{ 'dashboard.club.noClub' | translate }}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
   </div>
 </div>

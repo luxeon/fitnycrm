@@ -12,6 +12,14 @@ export interface AuthResponse {
   accessToken: string;
 }
 
+export interface UserClaims {
+  sub: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  exp: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -36,6 +44,20 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  getUserClaims(): UserClaims | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(window.atob(base64));
+    } catch (e) {
+      console.error('Error decoding token:', e);
+      return null;
+    }
   }
 
   private storeToken(token: string): void {

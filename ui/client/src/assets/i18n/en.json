@@ -70,5 +70,17 @@
       "text": "Already have an account?",
       "link": "Sign in"
     }
+  },
+  "dashboard": {
+    "appName": "FITNYAPP",
+    "welcome": "Welcome back, {{firstName}} {{lastName}}!",
+    "club": {
+      "loading": "Loading your sport club...",
+      "noClub": "No sport club assigned yet.",
+      "status": "Active"
+    },
+    "actions": {
+      "logout": "Logout"
+    }
   }
 }
