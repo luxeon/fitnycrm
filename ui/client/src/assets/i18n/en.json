@@ -1,20 +1,30 @@
 {
-  "common": {
-    "welcome": "Welcome",
-    "save": "Save",
-    "cancel": "Cancel",
-    "delete": "Delete",
-    "edit": "Edit",
-    "loading": "Loading..."
-  },
-  "auth": {
-    "login": "Login",
-    "logout": "Logout",
-    "email": "Email",
-    "password": "Password"
-  },
-  "errors": {
-    "requiredField": "This field is required",
-    "invalidEmail": "Please enter a valid email address"
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "invitationMessage": "Sign in to join the sport club you were invited to",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "required": "Password is required",
+        "minLength": "Password must be at least 6 characters"
+      },
+      "submit": "Sign In"
+    },
+    "signup": {
+      "text": "Don't have an account?",
+      "link": "Sign up"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "general": "An error occurred. Please try again later"
+    }
   }
 }

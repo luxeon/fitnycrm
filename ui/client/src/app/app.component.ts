@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -10,11 +10,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'client';
+  private translate = inject(TranslateService);
 
-  constructor(private translate: TranslateService) {
+  constructor() {
     // Set default language
-    translate.setDefaultLang('en');
-    translate.use('en');
+    this.translate.setDefaultLang('en');
+    this.translate.use('en');
+
+    // Add languages
+    this.translate.addLangs(['en']);
   }
 }
