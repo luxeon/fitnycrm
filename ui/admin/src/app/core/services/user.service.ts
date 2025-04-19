@@ -20,6 +20,16 @@ export interface Page<T> {
   number: number;
 }
 
+export interface ClientDetailsResponse {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,5 +44,9 @@ export class UserService {
     return this.http.get<Page<ClientPageItemResponse>>(`/api/tenants/${tenantId}/clients`, {
       params: { page: page.toString(), size: size.toString() }
     });
+  }
+
+  getClientById(tenantId: string, clientId: string): Observable<ClientDetailsResponse> {
+    return this.http.get<ClientDetailsResponse>(`/api/tenants/${tenantId}/clients/${clientId}`);
   }
 }

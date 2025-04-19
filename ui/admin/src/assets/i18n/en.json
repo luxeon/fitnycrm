@@ -117,18 +117,17 @@
       "empty": "No trainers assigned yet. Add trainers to start creating schedules."
     },
     "clients": {
-      "title": "Club Members",
-      "empty": "No members yet. Invite your first member to get started.",
+      "title": "Clients",
+      "empty": "No clients found",
       "invite": {
         "button": {
-          "text": "Invite Member"
+          "text": "Invite Client"
         },
-        "title": "Invite New Member",
-        "email": "Email Address",
-        "emailPlaceholder": "Enter member's email address",
-        "send": "Send Invite",
-        "success": "Invitation sent successfully to {{email}}",
-        "error": "Failed to send invitation. Please try again."
+        "success": "Invitation sent to {{email}}",
+        "error": "Failed to send invitation"
+      },
+      "details": {
+        "title": "Information about {{name}}"
       }
     },
     "tariffs": {

@@ -10,6 +10,7 @@ import { CreateWorkoutComponent } from './features/training/create-workout.compo
 import { EditWorkoutComponent } from './features/training/edit-workout.component';
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
 import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
+import { ClientDetailsComponent } from './features/dashboard/components/clients/client-details/client-details.component';
 
 export const routes: Routes = [
   {
@@ -61,6 +62,11 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [adminGuard, tenantCheckGuard],
     data: { titleKey: 'dashboard.pageTitle' }
+  },
+  {
+    path: 'tenants/:tenantId/clients/:clientId',
+    component: ClientDetailsComponent,
+    canActivate: [adminGuard]
   },
   {
     path: '',
