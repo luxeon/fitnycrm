@@ -23,7 +23,13 @@
       "required": "This field is required",
       "min": "Value must be at least {{min}}",
       "email": "Please enter a valid email address"
-    }
+    },
+    "status": "Status",
+    "trainingsCount": "Trainings Count",
+    "validDays": "Valid Days",
+    "price": "Price",
+    "createdAt": "Created At",
+    "actions": "Actions"
   },
   "login": {
     "pageTitle": "Login",
@@ -123,11 +129,19 @@
         "button": {
           "text": "Invite Client"
         },
-        "success": "Invitation sent to {{email}}",
-        "error": "Failed to send invitation"
+        "success": "Successfully invited {{email}}",
+        "error": "Failed to invite client"
       },
       "details": {
-        "title": "Information about {{name}}"
+        "title": "Client Details: {{name}}",
+        "payments": {
+          "title": "Payment History",
+          "empty": "No payments found",
+          "cancel": {
+            "success": "Payment successfully canceled",
+            "error": "Failed to cancel payment"
+          }
+        }
       }
     },
     "tariffs": {
@@ -467,6 +481,12 @@
         "saturday": "Saturday",
         "sunday": "Sunday"
       }
+    }
+  },
+  "payment": {
+    "status": {
+      "active": "Active",
+      "canceled": "Canceled"
     }
   }
 }

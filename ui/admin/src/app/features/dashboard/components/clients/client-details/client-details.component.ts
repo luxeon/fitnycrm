@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { UserService, ClientDetailsResponse } from '../../../../../core/services/user.service';
+import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 
 @Component({
   selector: 'app-client-details',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, PaymentHistoryComponent],
   template: `
     <div class="client-details" *ngIf="client">
       <div class="header">
@@ -29,6 +30,11 @@ import { UserService, ClientDetailsResponse } from '../../../../../core/services
             <span class="value">{{ client.createdAt | date }}</span>
           </div>
         </div>
+
+        <app-payment-history
+          [tenantId]="tenantId"
+          [clientId]="client.id">
+        </app-payment-history>
       </div>
     </div>
   `,
@@ -82,12 +88,14 @@ export class ClientDetailsComponent implements OnInit {
   private userService = inject(UserService);
 
   client: ClientDetailsResponse | null = null;
+  tenantId: string = '';
 
   ngOnInit(): void {
     const tenantId = this.route.snapshot.params['tenantId'];
     const clientId = this.route.snapshot.params['clientId'];
     
     if (tenantId && clientId) {
+      this.tenantId = tenantId;
       this.userService.getClientById(tenantId, clientId).subscribe({
         next: (response: ClientDetailsResponse) => {
           this.client = response;
