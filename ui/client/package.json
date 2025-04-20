@@ -39,6 +39,7 @@
     "typescript": "~5.7.2"
   },
   "overrides": {
-    "vite": "^6.2.5"
+    "vite": "^6.2.6",
+    "http-proxy-middleware": "^3.0.4"
   }
 }
