@@ -140,6 +140,17 @@
           "cancel": {
             "success": "Payment successfully canceled",
             "error": "Failed to cancel payment"
+          },
+          "add": {
+            "button": "Add Payment",
+            "title": "Add New Payment",
+            "training": "Training",
+            "trainingsCount": "Number of Trainings",
+            "validDays": "Valid for (days)",
+            "price": "Price",
+            "currency": "Currency",
+            "success": "Payment added successfully",
+            "error": "Failed to add payment"
           }
         }
       }
@@ -485,7 +496,7 @@
   },
   "payment": {
     "status": {
-      "active": "Active",
+      "completed": "Completed",
       "canceled": "Canceled"
     }
   }

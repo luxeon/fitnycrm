@@ -3,15 +3,20 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PaymentService, PaymentPageItemResponse } from '../../../../../../core/services/payment.service';
 import { NotificationService } from '../../../../../../core/services/notification.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PaymentDialogComponent } from '../payment-dialog.component';
 
 @Component({
   selector: 'app-payment-history',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, MatDialogModule],
   template: `
     <div class="payment-history">
       <div class="header">
         <h3>{{ 'dashboard.clients.details.payments.title' | translate }}</h3>
+        <button class="action-button" (click)="onAddPayment()">
+          {{ 'dashboard.clients.details.payments.add.button' | translate }}
+        </button>
       </div>
 
       <div class="loading" *ngIf="isLoading">
@@ -88,11 +93,29 @@ import { NotificationService } from '../../../../../../core/services/notificatio
 
     .header {
       margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
 
       h3 {
         margin: 0;
         color: #2c3e50;
         font-size: 20px;
+      }
+    }
+
+    .action-button {
+      padding: 8px 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: #2980b9;
       }
     }
 
@@ -147,7 +170,7 @@ import { NotificationService } from '../../../../../../core/services/notificatio
       font-weight: 500;
       text-transform: uppercase;
 
-      &.active {
+      &.completed {
         background: #e8f5e9;
         color: #2e7d32;
       }
@@ -212,6 +235,7 @@ export class PaymentHistoryComponent implements OnInit {
 
   private paymentService = inject(PaymentService);
   private notificationService = inject(NotificationService);
+  private dialog = inject(MatDialog);
 
   isLoading = false;
   payments: PaymentPageItemResponse[] = [];
@@ -255,5 +279,31 @@ export class PaymentHistoryComponent implements OnInit {
           this.notificationService.showError('dashboard.clients.details.payments.cancel.error');
         }
       });
+  }
+
+  onAddPayment(): void {
+    const dialogRef = this.dialog.open(PaymentDialogComponent, {
+      width: '500px',
+      data: {
+        tenantId: this.tenantId,
+        clientId: this.clientId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.paymentService.createPayment(this.tenantId, this.clientId, result)
+          .subscribe({
+            next: () => {
+              this.loadPayments(this.currentPage);
+              this.notificationService.showSuccess('dashboard.clients.details.payments.add.success');
+            },
+            error: (error) => {
+              console.error('Error creating payment:', error);
+              this.notificationService.showError('dashboard.clients.details.payments.add.error');
+            }
+          });
+      }
+    });
   }
 }

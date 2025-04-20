@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PaymentStatus } from '../models/payment-status.enum';
 
 export interface PaymentPageItemResponse {
   id: string;
-  status: string;
+  status: PaymentStatus;
   trainingId: string;
   trainingsCount: number;
   validDays: number;
@@ -20,6 +21,16 @@ export interface PaymentFilterRequest {
   createdAtTo?: string;
 }
 
+export interface CreatePaymentRequest {
+  trainingId: string;
+  trainingsCount: number;
+  validDays: number;
+  price: number;
+  currency: string;
+}
+
+export interface PaymentDetailsResponse extends PaymentPageItemResponse {}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -34,6 +45,10 @@ export class PaymentService {
     };
 
     return this.http.get<any>(`/api/tenants/${tenantId}/clients/${clientId}/payments`, { params });
+  }
+
+  createPayment(tenantId: string, clientId: string, request: CreatePaymentRequest): Observable<PaymentDetailsResponse> {
+    return this.http.post<PaymentDetailsResponse>(`/api/tenants/${tenantId}/clients/${clientId}/payments`, request);
   }
 
   cancelPayment(tenantId: string, clientId: string, paymentId: string): Observable<any> {
