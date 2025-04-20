@@ -299,7 +299,6 @@ export class PaymentHistoryComponent implements OnInit {
               this.notificationService.showSuccess('dashboard.clients.details.payments.add.success');
             },
             error: (error) => {
-              console.error('Error creating payment:', error);
               this.notificationService.showError('dashboard.clients.details.payments.add.error');
             }
           });
