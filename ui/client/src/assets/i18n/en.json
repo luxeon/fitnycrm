@@ -1,0 +1,86 @@
+{
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your account",
+    "invitationMessage": "Sign in to join the sport club you were invited to",
+    "form": {
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter your email",
+        "required": "Email is required",
+        "invalid": "Please enter a valid email address"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "required": "Password is required",
+        "minLength": "Password must be at least 6 characters"
+      },
+      "submit": "Sign In"
+    },
+    "signup": {
+      "text": "Don't have an account?",
+      "link": "Sign up"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "general": "An error occurred. Please try again later"
+    }
+  },
+  "signup": {
+    "title": "Create Your Account",
+    "subtitle": "Complete your registration to get started",
+    "success": {
+      "title": "Registration Successful!",
+      "message": "Your account has been created and you've been added to the sport club. Redirecting to login page..."
+    },
+    "form": {
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter your first name",
+        "required": "First name is required",
+        "minLength": "First name must be at least 2 characters"
+      },
+      "lastName": {
+        "label": "Last Name",
+        "placeholder": "Enter your last name",
+        "required": "Last name is required",
+        "minLength": "Last name must be at least 2 characters"
+      },
+      "phoneNumber": {
+        "label": "Phone Number",
+        "placeholder": "E.g. +12345678901",
+        "pattern": "Please enter a valid phone number in E.164 format"
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "required": "Password is required",
+        "minLength": "Password must be at least 8 characters"
+      },
+      "confirmPassword": {
+        "label": "Confirm Password",
+        "placeholder": "Confirm your password",
+        "required": "Please confirm your password",
+        "mismatch": "Passwords do not match"
+      },
+      "submit": "Create Account"
+    },
+    "login": {
+      "text": "Already have an account?",
+      "link": "Sign in"
+    }
+  },
+  "dashboard": {
+    "appName": "FITNYAPP",
+    "welcome": "Welcome back, {{firstName}} {{lastName}}!",
+    "club": {
+      "loading": "Loading your sport club...",
+      "noClub": "No sport club assigned yet.",
+      "status": "Active"
+    },
+    "actions": {
+      "logout": "Logout"
+    }
+  }
+}

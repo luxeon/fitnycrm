@@ -107,6 +107,7 @@ public class ClientService {
 
         user.getRoles().add(role);
         user.getTenants().add(tenant);
+        tenant.getUsers().add(user);
         user = repository.save(user);
 
         invitationRepository.delete(invitation);
@@ -138,6 +139,7 @@ public class ClientService {
         }
 
         user.getTenants().add(tenant);
+        tenant.getUsers().add(user);
         repository.save(user);
 
         invitationRepository.delete(invitation);

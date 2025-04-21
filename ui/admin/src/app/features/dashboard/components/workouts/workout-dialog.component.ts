@@ -53,17 +53,6 @@ export interface WorkoutDialogData {
                 {{ 'common.validation.min' | translate:{ min: 1 } }}
               </mat-error>
             </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>{{ 'dashboard.workouts.capacity' | translate }}</mat-label>
-              <input matInput type="number" formControlName="clientCapacity" required min="1">
-              <mat-error *ngIf="form.get('clientCapacity')?.hasError('required')">
-                {{ 'common.validation.required' | translate }}
-              </mat-error>
-              <mat-error *ngIf="form.get('clientCapacity')?.hasError('min')">
-                {{ 'common.validation.min' | translate:{ min: 1 } }}
-              </mat-error>
-            </mat-form-field>
           </div>
         </div>
       </mat-dialog-content>
@@ -112,7 +101,6 @@ export class WorkoutDialogComponent {
       name: [data.workout?.name ?? '', Validators.required],
       description: [data.workout?.description ?? ''],
       durationMinutes: [data.workout?.durationMinutes ?? 60, [Validators.required, Validators.min(1)]],
-      clientCapacity: [data.workout?.clientCapacity ?? 10, [Validators.required, Validators.min(1)]],
     });
   }
 

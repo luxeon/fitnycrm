@@ -6,6 +6,7 @@ import { ClientPageItemResponse } from '../../../../core/services/user.service';
 import { UserService } from '../../../../core/services/user.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-clients',
@@ -50,7 +51,9 @@ import { animate, style, transition, trigger } from '@angular/animations';
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let client of clients">
+            <tr *ngFor="let client of clients" 
+                (click)="onClientClick(client.id)"
+                class="clickable-row">
               <td>{{ client.firstName }} {{ client.lastName }}</td>
               <td>{{ client.email }}</td>
               <td>{{ client.phoneNumber || '-' }}</td>
@@ -165,8 +168,13 @@ import { animate, style, transition, trigger } from '@angular/animations';
           border-bottom: none;
         }
 
-        tr:hover td {
-          background: #f8f9fa;
+        .clickable-row {
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background: #f8f9fa;
+          }
         }
       }
     }
@@ -210,6 +218,7 @@ export class ClientsComponent implements OnInit {
   private readonly userService = inject(UserService);
   private readonly notificationService = inject(NotificationService);
   private readonly translateService = inject(TranslateService);
+  private readonly router = inject(Router);
 
   showInviteModal = false;
   isLoading = false;
@@ -219,6 +228,10 @@ export class ClientsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClients();
+  }
+
+  onClientClick(clientId: string): void {
+    this.router.navigate(['/tenants', this.tenantId, 'clients', clientId]);
   }
 
   loadClients(page: number = 0): void {

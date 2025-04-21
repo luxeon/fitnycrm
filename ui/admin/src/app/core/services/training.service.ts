@@ -7,14 +7,12 @@ export interface CreateTrainingRequest {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
 }
 
 export interface UpdateTrainingRequest {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
 }
 
 export interface TrainingDetailsResponse {
@@ -22,7 +20,6 @@ export interface TrainingDetailsResponse {
   name: string;
   description?: string;
   durationMinutes: number;
-  clientCapacity: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,9 +27,9 @@ export interface TrainingDetailsResponse {
 export interface TrainingPageItemResponse {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   durationMinutes: number;
-  clientCapacity: number;
+  createdAt: string;
 }
 
 export interface UpdateTrainingTariffsRequest {
@@ -110,6 +107,17 @@ export class TrainingService {
     return this.http.put<void>(
       `${this.apiUrl}/tenants/${tenantId}/trainings/${trainingId}/tariffs`,
       request
+    );
+  }
+
+  findAll(tenantId: string): Observable<TrainingPageItemResponse[]> {
+    return this.http.get<PageResponse<TrainingPageItemResponse>>(`${this.apiUrl}/tenants/${tenantId}/trainings`, {
+      params: {
+        page: '0',
+        size: '1000'  // Large enough to get all trainings
+      }
+    }).pipe(
+      map(response => response.content)
     );
   }
 }

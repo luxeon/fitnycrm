@@ -1,0 +1,61 @@
+<div class="login-container">
+  <div class="login-card-wrapper">
+    <mat-card class="login-card">
+      <mat-card-header>
+        <div class="logo-container">
+          <div class="logo">FITNY<span>APP</span></div>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <h2>{{ 'login.title' | translate }}</h2>
+        <p class="subtitle">{{ 'login.subtitle' | translate }}</p>
+        
+        <div *ngIf="hasPendingInvitation" class="info-message">
+          {{ 'login.invitationMessage' | translate }}
+        </div>
+        
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'login.form.email.label' | translate }}</mat-label>
+            <input matInput formControlName="email" type="email" [placeholder]="'login.form.email.placeholder' | translate">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              {{ 'login.form.email.required' | translate }}
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+              {{ 'login.form.email.invalid' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'login.form.password.label' | translate }}</mat-label>
+            <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" [placeholder]="'login.form.password.placeholder' | translate">
+            <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              {{ 'login.form.password.required' | translate }}
+            </mat-error>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+              {{ 'login.form.password.minLength' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <div *ngIf="errorMessage" class="error-message">
+            {{errorMessage}}
+          </div>
+
+          <button mat-flat-button color="primary" type="submit" class="login-button" [disabled]="loginForm.invalid || isLoading">
+            <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+            <span *ngIf="!isLoading">{{ 'login.form.submit' | translate }}</span>
+          </button>
+
+          <div class="signup-link">
+            {{ 'login.signup.text' | translate }} <a routerLink="/signup">{{ 'login.signup.link' | translate }}</a>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

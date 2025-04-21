@@ -9,11 +9,19 @@ export interface ScheduleListItemResponse {
   startTime: string;
   endTime: string;
   defaultTrainerId: string;
+  clientCapacity: number;
 }
 
-export interface ScheduleDetailsResponse extends ScheduleListItemResponse {
-  trainingName: string;
-  defaultTrainerName: string;
+export interface ScheduleDetailsResponse {
+  id: string;
+  trainingId: string;
+  daysOfWeek: string[];
+  startTime: string;
+  endTime: string;
+  defaultTrainerId: string;
+  clientCapacity: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateScheduleRequest {
@@ -22,9 +30,16 @@ export interface CreateScheduleRequest {
   startTime: string;
   endTime: string;
   defaultTrainerId: string;
+  clientCapacity: number;
 }
 
-export interface UpdateScheduleRequest extends CreateScheduleRequest {}
+export interface UpdateScheduleRequest {
+  daysOfWeek: string[];
+  startTime: string;
+  endTime: string;
+  defaultTrainerId: string;
+  clientCapacity: number;
+}
 
 @Injectable({
   providedIn: 'root'

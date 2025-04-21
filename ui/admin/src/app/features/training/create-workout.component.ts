@@ -62,20 +62,6 @@ import { TrainingService } from '../../core/services/training.service';
                 {{ 'training.form.duration.required' | translate }}
               </div>
             </div>
-
-            <div class="form-group">
-              <label for="clientCapacity">{{ 'training.form.capacity.label' | translate }}</label>
-              <input
-                id="clientCapacity"
-                type="number"
-                min="1"
-                formControlName="clientCapacity"
-                [class.error]="workoutForm.get('clientCapacity')?.invalid && workoutForm.get('clientCapacity')?.touched"
-                [placeholder]="'training.form.capacity.placeholder' | translate">
-              <div class="error-message" *ngIf="workoutForm.get('clientCapacity')?.invalid && workoutForm.get('clientCapacity')?.touched">
-                {{ 'training.form.capacity.required' | translate }}
-              </div>
-            </div>
           </div>
 
           <div class="form-actions">
@@ -245,8 +231,7 @@ export class CreateWorkoutComponent {
   workoutForm: FormGroup = this.fb.group({
     name: ['', [Validators.required]],
     description: [''],
-    durationMinutes: ['', [Validators.required, Validators.min(1)]],
-    clientCapacity: ['', [Validators.required, Validators.min(1)]]
+    durationMinutes: [60, [Validators.required, Validators.min(1)]],
   });
 
   errorMessage: string | null = null;

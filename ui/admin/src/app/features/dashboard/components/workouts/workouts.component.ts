@@ -67,10 +67,6 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
                 <span class="icon">⏱</span>
                 {{ workout.durationMinutes }} {{ 'dashboard.workouts.minutes' | translate }}
               </div>
-              <div class="capacity">
-                <span class="icon">👥</span>
-                {{ workout.clientCapacity }} {{ 'dashboard.workouts.clients' | translate }}
-              </div>
             </div>
           </div>
         </div>
@@ -243,7 +239,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
           gap: 1rem;
           margin-top: 1rem;
           
-          .duration, .capacity {
+          .duration {
             display: flex;
             align-items: center;
             color: #34495e;

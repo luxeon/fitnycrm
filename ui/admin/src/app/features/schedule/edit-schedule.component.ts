@@ -79,6 +79,17 @@ import { TrainerService, TrainerPageItemResponse } from '../../core/services/tra
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="clientCapacity">{{ 'schedule.form.capacity' | translate }}</label>
+            <input id="clientCapacity" type="number" min="1" formControlName="clientCapacity" class="form-control">
+            <div *ngIf="scheduleForm.get('clientCapacity')?.errors?.['required'] && scheduleForm.get('clientCapacity')?.touched" class="error-message">
+              {{ 'schedule.form.capacityRequired' | translate }}
+            </div>
+            <div *ngIf="scheduleForm.get('clientCapacity')?.errors?.['min'] && scheduleForm.get('clientCapacity')?.touched" class="error-message">
+              {{ 'schedule.form.capacityMin' | translate }}
+            </div>
+          </div>
+
           <div class="form-actions">
             <button type="button" class="btn btn-secondary" (click)="onCancel()">
               {{ 'common.cancel' | translate }}
@@ -246,7 +257,8 @@ export class EditScheduleComponent implements OnInit {
       defaultTrainerId: ['', Validators.required],
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
-      days: [[], Validators.required]
+      days: [[], Validators.required],
+      clientCapacity: [10, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -275,14 +287,16 @@ export class EditScheduleComponent implements OnInit {
       this.scheduleService.getSchedule(this.tenantId, this.locationId, this.scheduleId)
     );
 
-    this.scheduleForm.patchValue({
-      trainingId: schedule.trainingId,
-      defaultTrainerId: schedule.defaultTrainerId,
-      startTime: schedule.startTime,
-      endTime: schedule.endTime
-    });
-
-    this.selectedDays = schedule.daysOfWeek;
+    if (schedule) {
+      this.scheduleForm.patchValue({
+        trainingId: schedule.trainingId,
+        defaultTrainerId: schedule.defaultTrainerId,
+        startTime: schedule.startTime,
+        endTime: schedule.endTime,
+        clientCapacity: schedule.clientCapacity
+      });
+      this.selectedDays = schedule.daysOfWeek;
+    }
   }
 
   onDayChange(event: Event): void {
@@ -301,21 +315,21 @@ export class EditScheduleComponent implements OnInit {
   async onSubmit(): Promise<void> {
     if (this.scheduleForm.valid && this.selectedDays.length > 0) {
       this.isSaving = true;
-      try {
-        const formValue = this.scheduleForm.value;
-        const request: UpdateScheduleRequest = {
-          trainingId: formValue.trainingId,
-          defaultTrainerId: formValue.defaultTrainerId,
-          startTime: formValue.startTime,
-          endTime: formValue.endTime,
-          daysOfWeek: this.selectedDays
-        };
-        await firstValueFrom(
-          this.scheduleService.updateSchedule(this.tenantId, this.locationId, this.scheduleId, request)
-        );
+      const { tenantId, locationId, scheduleId } = this.route.snapshot.params;
 
-        const returnUrl = history.state?.returnUrl || `/tenant/${this.tenantId}/location/${this.locationId}`;
-        await this.router.navigate([returnUrl]);
+      try {
+        const request: UpdateScheduleRequest = {
+          defaultTrainerId: this.scheduleForm.get('defaultTrainerId')?.value,
+          startTime: this.scheduleForm.get('startTime')?.value,
+          endTime: this.scheduleForm.get('endTime')?.value,
+          daysOfWeek: this.selectedDays,
+          clientCapacity: this.scheduleForm.get('clientCapacity')?.value
+        };
+
+        await firstValueFrom(this.scheduleService.updateSchedule(tenantId, locationId, scheduleId, request));
+        this.router.navigate([`/tenant/${tenantId}/location/${locationId}`], { queryParams: { tab: 'schedule' } });
+      } catch (error) {
+        console.error('Error updating schedule:', error);
       } finally {
         this.isSaving = false;
       }

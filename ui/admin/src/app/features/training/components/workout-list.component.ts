@@ -35,10 +35,6 @@ import { firstValueFrom } from 'rxjs';
               <i class="duration-icon">⏱</i>
               {{ workout.durationMinutes }} {{ 'training.minutes' | translate }}
             </span>
-            <span class="detail">
-              <i class="capacity-icon">👥</i>
-              {{ workout.clientCapacity }} {{ 'training.capacity' | translate }}
-            </span>
           </div>
         </div>
       </div>

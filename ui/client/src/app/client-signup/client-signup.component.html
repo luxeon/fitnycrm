@@ -1,0 +1,123 @@
+<div class="signup-container">
+  <div class="signup-card-wrapper">
+    <mat-card class="signup-card">
+      <mat-card-header>
+        <div class="logo-container">
+          <div class="logo">FITNY<span>APP</span></div>
+        </div>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="header">
+          <h2>{{ 'signup.title' | translate }}</h2>
+          <p class="subtitle">{{ 'signup.subtitle' | translate }}</p>
+        </div>
+
+        <div *ngIf="submitSuccess" class="success-message">
+          <div class="icon">✓</div>
+          <h2>{{ 'signup.success.title' | translate }}</h2>
+          <p>{{ 'signup.success.message' | translate }}</p>
+        </div>
+
+        <form *ngIf="!submitSuccess" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'signup.form.firstName.label' | translate }}</mat-label>
+              <input matInput formControlName="firstName" [placeholder]="'signup.form.firstName.placeholder' | translate">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="firstNameControl?.hasError('required')">
+                {{ 'signup.form.firstName.required' | translate }}
+              </mat-error>
+              <mat-error *ngIf="firstNameControl?.hasError('minlength')">
+                {{ 'signup.form.firstName.minLength' | translate }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'signup.form.lastName.label' | translate }}</mat-label>
+              <input matInput formControlName="lastName" [placeholder]="'signup.form.lastName.placeholder' | translate">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="lastNameControl?.hasError('required')">
+                {{ 'signup.form.lastName.required' | translate }}
+              </mat-error>
+              <mat-error *ngIf="lastNameControl?.hasError('minlength')">
+                {{ 'signup.form.lastName.minLength' | translate }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'signup.form.phoneNumber.label' | translate }}</mat-label>
+            <input matInput formControlName="phoneNumber" [placeholder]="'signup.form.phoneNumber.placeholder' | translate">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error *ngIf="phoneNumberControl?.hasError('pattern')">
+              {{ 'signup.form.phoneNumber.pattern' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'signup.form.password.label' | translate }}</mat-label>
+            <input 
+              matInput 
+              formControlName="password" 
+              [type]="hidePassword ? 'password' : 'text'"
+              [placeholder]="'signup.form.password.placeholder' | translate">
+            <button 
+              type="button" 
+              mat-icon-button 
+              matSuffix 
+              (click)="hidePassword = !hidePassword">
+              <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="passwordControl?.hasError('required')">
+              {{ 'signup.form.password.required' | translate }}
+            </mat-error>
+            <mat-error *ngIf="passwordControl?.hasError('minlength')">
+              {{ 'signup.form.password.minLength' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'signup.form.confirmPassword.label' | translate }}</mat-label>
+            <input 
+              matInput 
+              formControlName="confirmPassword" 
+              [type]="hideConfirmPassword ? 'password' : 'text'"
+              [placeholder]="'signup.form.confirmPassword.placeholder' | translate">
+            <button 
+              type="button" 
+              mat-icon-button 
+              matSuffix 
+              (click)="hideConfirmPassword = !hideConfirmPassword">
+              <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="confirmPasswordControl?.hasError('required')">
+              {{ 'signup.form.confirmPassword.required' | translate }}
+            </mat-error>
+            <mat-error *ngIf="confirmPasswordControl?.hasError('passwordMismatch')">
+              {{ 'signup.form.confirmPassword.mismatch' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <div *ngIf="submitError" class="alert-error">
+            {{ submitError }}
+          </div>
+
+          <button 
+            mat-flat-button 
+            color="primary" 
+            type="submit" 
+            class="signup-button" 
+            [disabled]="signupForm.invalid || isSubmitting">
+            <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+            <span *ngIf="!isSubmitting">{{ 'signup.form.submit' | translate }}</span>
+          </button>
+
+          <div class="login-link">
+            {{ 'signup.login.text' | translate }} <a [routerLink]="['/login']">{{ 'signup.login.link' | translate }}</a>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> 
