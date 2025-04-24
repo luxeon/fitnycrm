@@ -1,12 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserService, ClientDetailsResponse } from '../../../../../core/services/user.service';
 import { TrainingService, TrainingCreditsSummaryResponse } from '../../../../../core/services/training.service';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { PaymentDialogComponent } from './payment-dialog.component';
 import { catchError, switchMap } from 'rxjs/operators';
 import { EMPTY, of } from 'rxjs';
@@ -19,13 +20,20 @@ import { EMPTY, of } from 'rxjs';
     TranslateModule,
     PaymentHistoryComponent,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ],
   template: `
     <div class="client-details" *ngIf="client">
       <div class="client-info">
         <div class="header">
-          <h2>{{ 'dashboard.clients.details.title' | translate:{ name: client.firstName + ' ' + client.lastName } }}</h2>
+          <div class="header-content">
+            <button class="return-button" (click)="onReturn()">
+              <mat-icon>arrow_back</mat-icon>
+              <span>{{ 'common.back' | translate }}</span>
+            </button>
+            <h2>{{ 'dashboard.clients.details.title' | translate:{ name: client.firstName + ' ' + client.lastName } }}</h2>
+          </div>
         </div>
 
         <div class="content">
@@ -71,10 +79,45 @@ import { EMPTY, of } from 'rxjs';
     .header {
       margin-bottom: 24px;
 
+      .header-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
       h2 {
         margin: 0;
         color: #2c3e50;
         font-size: 24px;
+      }
+    }
+
+    .return-button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: transparent;
+      color: #3498db;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        background: rgba(52, 152, 219, 0.1);
+        
+        mat-icon {
+          transform: translateX(-4px);
+        }
       }
     }
 
@@ -123,6 +166,7 @@ import { EMPTY, of } from 'rxjs';
 })
 export class ClientDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private userService = inject(UserService);
   private trainingService = inject(TrainingService);
   private snackBar = inject(MatSnackBar);
@@ -144,6 +188,12 @@ export class ClientDetailsComponent implements OnInit {
       this.loadClientDetails();
       this.loadTrainingCredits();
     }
+  }
+
+  onReturn(): void {
+    this.router.navigate(['/dashboard'], {
+      queryParams: { tab: 'clients' }
+    });
   }
 
   private loadClientDetails(): void {

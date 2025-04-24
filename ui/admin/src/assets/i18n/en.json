@@ -31,7 +31,8 @@
     "createdAt": "Created At",
     "actions": "Actions",
     "remainingTrainings": "Remaining Trainings",
-    "subscriptionExpiration": "Subscription Expires On"
+    "subscriptionExpiration": "Subscription Expires On",
+    "return": "Return"
   },
   "login": {
     "pageTitle": "Login",

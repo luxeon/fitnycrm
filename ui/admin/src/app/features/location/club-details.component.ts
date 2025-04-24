@@ -10,6 +10,7 @@ import { ScheduleListComponent } from '../schedule/components/schedule-list.comp
 import { ConfirmationDialogComponent } from '../dashboard/components/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
 import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.component';
 
 @Component({
@@ -21,7 +22,8 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
     ScheduleListComponent,
     ConfirmationDialogComponent,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ],
   animations: [
     trigger('fadeInOut', [
@@ -35,9 +37,9 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
     <div class="club-details-container">
       <div class="club-details-content" @fadeInOut>
         <div class="header-section">
-          <button class="back-button" (click)="onBack()">
-            <span class="back-icon">←</span>
-            {{ 'common.back' | translate }}
+          <button class="return-button" (click)="onBack()">
+            <mat-icon>arrow_back</mat-icon>
+            <span>{{ 'common.back' | translate }}</span>
           </button>
           <h2>{{ 'location.details.club_location_title' | translate }}</h2>
         </div>
@@ -116,25 +118,32 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
       }
     }
 
-    .back-button {
+    .return-button {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 0;
-      background: none;
-      border: none;
+      padding: 8px 16px;
+      background: transparent;
       color: #3498db;
+      border: none;
+      border-radius: 4px;
       cursor: pointer;
       font-size: 14px;
-      transition: color 0.2s;
+      transition: all 0.2s ease;
 
-      .back-icon {
-        font-size: 18px;
-        line-height: 1;
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        transition: transform 0.2s ease;
       }
 
       &:hover {
-        color: #2980b9;
+        background: rgba(52, 152, 219, 0.1);
+        
+        mat-icon {
+          transform: translateX(-4px);
+        }
       }
     }
 
@@ -256,7 +265,9 @@ export class ClubDetailsComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/dashboard'], {
+      queryParams: { tab: 'locations' }
+    });
   }
 
   onAddSchedule(): void {
