@@ -36,6 +36,11 @@ export interface UpdateTrainingTariffsRequest {
   tariffIds: string[];
 }
 
+export interface TrainingCreditsSummaryResponse {
+  remainingTrainings: number;
+  expiresAt: string | null;
+}
+
 interface PageResponse<T> {
   content: T[];
   totalElements: number;
@@ -118,6 +123,12 @@ export class TrainingService {
       }
     }).pipe(
       map(response => response.content)
+    );
+  }
+
+  getTrainingCreditsSummary(tenantId: string, clientId: string, trainingId: string): Observable<TrainingCreditsSummaryResponse> {
+    return this.http.get<TrainingCreditsSummaryResponse>(
+      `/api/tenants/${tenantId}/clients/${clientId}/trainings/${trainingId}/credits/summary`
     );
   }
 }

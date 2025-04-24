@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserService, ClientDetailsResponse } from '../../../../../core/services/user.service';
+import { TrainingService, TrainingCreditsSummaryResponse } from '../../../../../core/services/training.service';
 import { PaymentHistoryComponent } from './payment-history/payment-history.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { PaymentDialogComponent } from './payment-dialog.component';
-import { catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { EMPTY, of } from 'rxjs';
 
 @Component({
   selector: 'app-client-details',
@@ -40,6 +41,14 @@ import { of } from 'rxjs';
             <div class="info-item">
               <span class="label">{{ 'common.joinedAt' | translate }}</span>
               <span class="value">{{ client.createdAt | date }}</span>
+            </div>
+            <div class="info-item" *ngIf="trainingCredits?.remainingTrainings !== undefined">
+              <span class="label">{{ 'common.remainingTrainings' | translate }}</span>
+              <span class="value">{{ trainingCredits?.remainingTrainings }}</span>
+            </div>
+            <div class="info-item" *ngIf="trainingCredits?.expiresAt">
+              <span class="label">{{ 'common.subscriptionExpiration' | translate }}</span>
+              <span class="value">{{ trainingCredits?.expiresAt | date }}</span>
             </div>
           </div>
         </div>
@@ -78,7 +87,7 @@ import { of } from 'rxjs';
 
       .info-item {
         display: grid;
-        grid-template-columns: 120px 1fr;
+        grid-template-columns: 180px 1fr;
         gap: 16px;
         align-items: center;
         padding: 12px;
@@ -115,11 +124,13 @@ import { of } from 'rxjs';
 export class ClientDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private userService = inject(UserService);
+  private trainingService = inject(TrainingService);
   private snackBar = inject(MatSnackBar);
   private translate = inject(TranslateService);
   private dialog = inject(MatDialog);
 
   client: ClientDetailsResponse | null = null;
+  trainingCredits: TrainingCreditsSummaryResponse | null = null;
   tenantId: string = '';
   clientId: string = '';
 
@@ -131,6 +142,7 @@ export class ClientDetailsComponent implements OnInit {
       this.tenantId = tenantId;
       this.clientId = clientId;
       this.loadClientDetails();
+      this.loadTrainingCredits();
     }
   }
 
@@ -148,6 +160,28 @@ export class ClientDetailsComponent implements OnInit {
     ).subscribe(response => {
       if (response) {
         this.client = response;
+      }
+    });
+  }
+
+  private loadTrainingCredits(): void {
+    this.trainingService.getAllTrainings(this.tenantId).pipe(
+      catchError(error => {
+        return EMPTY;
+      }),
+      switchMap(trainings => {
+        if (trainings && trainings.length > 0) {
+          // Use the first training's ID to get credits summary
+          return this.trainingService.getTrainingCreditsSummary(this.tenantId, this.clientId, trainings[0].id);
+        }
+        return EMPTY;
+      }),
+      catchError(error => {
+        return of(null);
+      })
+    ).subscribe(response => {
+      if (response) {
+        this.trainingCredits = response;
       }
     });
   }

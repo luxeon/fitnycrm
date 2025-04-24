@@ -29,7 +29,9 @@
     "validDays": "Valid Days",
     "price": "Price",
     "createdAt": "Created At",
-    "actions": "Actions"
+    "actions": "Actions",
+    "remainingTrainings": "Remaining Trainings",
+    "subscriptionExpiration": "Subscription Expires On"
   },
   "login": {
     "pageTitle": "Login",
