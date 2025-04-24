@@ -129,6 +129,10 @@
         "button": {
           "text": "Invite Client"
         },
+        "title": "Invite Client",
+        "email": "Email",
+        "emailPlaceholder": "Please enter a client email",
+        "send": "Invite",
         "success": "Successfully invited {{email}}",
         "error": "Failed to invite client"
       },
@@ -350,6 +354,11 @@
         "required": "Email is required",
         "invalid": "Please enter a valid email address"
       },
+      "phoneNumber": {
+        "label": "Phone number",
+        "placeholder": "Enter your phone number",
+        "pattern": "Please enter a valid phone number"
+      },
       "password": {
         "label": "Password",
         "placeholder": "Enter your password",
@@ -366,6 +375,9 @@
       "button": {
         "register": "Sign Up",
         "loading": "Signing up..."
+      },
+      "submit": {
+        "label": "Sign Up"
       }
     },
     "error": {
