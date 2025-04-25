@@ -12,6 +12,7 @@ import { ClientsComponent } from './components/clients/clients.component';
 import { TariffsComponent } from './components/tariffs/tariffs.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TrainerDialogComponent } from './components/trainer/components/trainer-dialog.component';
 import { WorkoutsComponent } from './components/workouts/workouts.component';
 
@@ -27,7 +28,8 @@ import { WorkoutsComponent } from './components/workouts/workouts.component';
     TariffsComponent,
     WorkoutsComponent,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatTabsModule
   ],
   template: `
     <div class="dashboard-container">
@@ -38,27 +40,21 @@ import { WorkoutsComponent } from './components/workouts/workouts.component';
           <h2>{{ tenantDetails.name }}</h2>
         </div>
 
-        <div class="tabs-container" *ngIf="tenantDetails">
-          <div class="tabs">
-            <button
-              *ngFor="let tab of tabs"
-              [class.active]="activeTab === tab.id"
-              (click)="setActiveTab(tab.id)"
-              class="tab-button">
-              {{ tab.label | translate }}
-            </button>
-          </div>
-
-          <div class="tab-content" [ngSwitch]="activeTab">
-            <div *ngSwitchCase="'locations'" class="tab-pane">
-              <app-locations *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-locations>
+        <mat-tab-group *ngIf="tenantDetails" [selectedIndex]="getSelectedTabIndex()" (selectedIndexChange)="onTabChange($event)">
+          <mat-tab [label]="'dashboard.tabs.locations' | translate">
+            <div class="tab-content">
+              <app-locations [tenantId]="tenantDetails.id"></app-locations>
             </div>
+          </mat-tab>
 
-            <div *ngSwitchCase="'workouts'" class="tab-pane">
-              <app-workouts *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-workouts>
+          <mat-tab [label]="'dashboard.tabs.workouts' | translate">
+            <div class="tab-content">
+              <app-workouts [tenantId]="tenantDetails.id"></app-workouts>
             </div>
+          </mat-tab>
 
-            <div *ngSwitchCase="'trainers'" class="tab-pane">
+          <mat-tab [label]="'dashboard.tabs.trainers' | translate">
+            <div class="tab-content">
               <div class="action-header">
                 <h3>{{ 'dashboard.trainers.title' | translate }}</h3>
                 <button class="action-button" (click)="onAddTrainer()">
@@ -81,20 +77,115 @@ import { WorkoutsComponent } from './components/workouts/workouts.component';
                 (trainerDeleted)="loadTrainers(tenantDetails.id)">
               </app-trainer-list>
             </div>
+          </mat-tab>
 
-            <div *ngSwitchCase="'clients'" class="tab-pane">
-              <app-clients *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-clients>
+          <mat-tab [label]="'dashboard.tabs.clients' | translate">
+            <div class="tab-content">
+              <app-clients [tenantId]="tenantDetails.id"></app-clients>
             </div>
+          </mat-tab>
 
-            <div *ngSwitchCase="'tariffs'" class="tab-pane">
-              <app-tariffs *ngIf="tenantDetails" [tenantId]="tenantDetails.id"></app-tariffs>
+          <mat-tab [label]="'dashboard.tabs.tariffs' | translate">
+            <div class="tab-content">
+              <app-tariffs [tenantId]="tenantDetails.id"></app-tariffs>
             </div>
-          </div>
-        </div>
+          </mat-tab>
+        </mat-tab-group>
       </div>
     </div>
   `,
-  styleUrls: ['./dashboard.component.scss']
+  styles: [`
+    .dashboard-container {
+      min-height: 100vh;
+      padding: 40px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .dashboard-content {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      max-width: 1200px;
+      margin: 0 auto;
+
+      h1 {
+        color: #2c3e50;
+        margin: 0 0 16px;
+        font-size: 32px;
+      }
+
+      p {
+        color: #7f8c8d;
+        font-size: 18px;
+        margin: 0;
+      }
+    }
+
+    .fitness-club {
+      margin: 1rem 0 2rem;
+
+      .label {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+        display: block;
+      }
+
+      h2 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.5rem;
+      }
+    }
+
+    .tab-content {
+      padding: 24px 0;
+    }
+
+    .action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+
+      h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 20px;
+      }
+    }
+
+    .action-button {
+      padding: 8px 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: #2980b9;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      color: #6c757d;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      color: #6c757d;
+      font-size: 16px;
+    }
+  `]
 })
 export class DashboardComponent implements OnInit {
   private readonly authService = inject(AuthService);
@@ -146,6 +237,17 @@ export class DashboardComponent implements OnInit {
             });
         }
       });
+  }
+
+  getSelectedTabIndex(): number {
+    const tab = this.route.snapshot.queryParams['tab'];
+    const index = this.tabs.findIndex(t => t.id === tab);
+    return index >= 0 ? index : 0;
+  }
+
+  onTabChange(index: number): void {
+    const tabId = this.tabs[index].id;
+    this.setActiveTab(tabId, true);
   }
 
   setActiveTab(tabId: string, updateUrl: boolean = true): void {
