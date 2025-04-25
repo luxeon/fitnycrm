@@ -12,6 +12,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.component';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 @Component({
   selector: 'app-club-details',
@@ -23,7 +24,8 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
     ConfirmationDialogComponent,
     MatDialogModule,
     MatSnackBarModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonToggleModule
   ],
   animations: [
     trigger('fadeInOut', [
@@ -56,7 +58,20 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
 
         <div class="schedule-section" *ngIf="!isLoading && location">
           <div class="action-header">
-            <h3>{{ 'location.details.schedule.title' | translate }}</h3>
+            <div class="title-section">
+              <h3>{{ 'location.details.schedule.title' | translate }}</h3>
+              <mat-button-toggle-group 
+                class="view-toggle" 
+                [value]="scheduleViewMode"
+                (change)="onViewModeChange($event.value)">
+                <mat-button-toggle value="weekly">
+                  {{ 'schedule.weekly_view' | translate }}
+                </mat-button-toggle>
+                <mat-button-toggle value="daily">
+                  {{ 'schedule.daily_view' | translate }}
+                </mat-button-toggle>
+              </mat-button-toggle-group>
+            </div>
             <button class="action-button" (click)="onAddSchedule()">
               {{ 'location.details.schedule.add' | translate }}
             </button>
@@ -64,12 +79,14 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
           <div class="loading" *ngIf="isLoadingSchedules">
             {{ 'common.loading' | translate }}
           </div>
-          <div class="empty-state" *ngIf="!isLoadingSchedules && !schedules?.length">
+          <div class="empty-state" *ngIf="!isLoadingSchedules && (!schedules || schedules.length === 0)">
             {{ 'location.details.schedule.empty' | translate }}
           </div>
           <app-schedule-list
-            *ngIf="!isLoadingSchedules && schedules?.length"
+            *ngIf="!isLoadingSchedules && schedules && schedules.length > 0"
             [schedules]="schedules"
+            [viewMode]="scheduleViewMode"
+            (viewModeChange)="onViewModeChange($event)"
             (scheduleDeleted)="onScheduleDelete($event)"
             (scheduleEdit)="onScheduleEdit($event)">
           </app-schedule-list>
@@ -140,7 +157,7 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
 
       &:hover {
         background: rgba(52, 152, 219, 0.1);
-        
+
         mat-icon {
           transform: translateX(-4px);
         }
@@ -178,6 +195,49 @@ import { ScheduleDialogComponent } from '../schedule/components/schedule-dialog.
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
+
+      .title-section {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        h3 {
+          margin: 0;
+          color: #2c3e50;
+          font-size: 20px;
+        }
+
+        .view-toggle {
+          height: 32px;
+          background: #f8f9fa;
+          border-radius: 4px;
+          overflow: hidden;
+
+          ::ng-deep {
+            .mat-button-toggle-group {
+              border: none;
+            }
+
+            .mat-button-toggle {
+              background: transparent;
+              border: none;
+              color: #6c757d;
+              line-height: 32px;
+              height: 32px;
+
+              .mat-button-toggle-label-content {
+                line-height: 32px;
+                padding: 0 16px;
+              }
+
+              &.mat-button-toggle-checked {
+                background: #3498db;
+                color: white;
+              }
+            }
+          }
+        }
+      }
 
       h3 {
         margin: 0;
@@ -229,6 +289,7 @@ export class ClubDetailsComponent implements OnInit {
   schedules: ScheduleListItemResponse[] = [];
   isLoadingSchedules = false;
   scheduleToDelete: ScheduleListItemResponse | null = null;
+  scheduleViewMode: 'weekly' | 'daily' = 'weekly';
 
   ngOnInit(): void {
     const params = this.route.snapshot.params;
@@ -259,6 +320,19 @@ export class ClubDetailsComponent implements OnInit {
     this.isLoadingSchedules = true;
     try {
       this.schedules = await firstValueFrom(this.scheduleService.getSchedules(this.tenantId, this.locationId));
+      console.log('Loaded schedules:', this.schedules);
+
+      // Check if schedules have the expected structure
+      if (this.schedules && this.schedules.length > 0) {
+        this.schedules.forEach(schedule => {
+          console.log('Schedule:', schedule);
+          console.log('Days of week:', schedule.daysOfWeek);
+        });
+      } else {
+        console.log('No schedules loaded or schedules array is empty');
+      }
+    } catch (error) {
+      console.error('Error loading schedules:', error);
     } finally {
       this.isLoadingSchedules = false;
     }
@@ -365,6 +439,10 @@ export class ClubDetailsComponent implements OnInit {
 
   onScheduleDeleteCancel(): void {
     this.scheduleToDelete = null;
+  }
+
+  onViewModeChange(mode: 'weekly' | 'daily'): void {
+    this.scheduleViewMode = mode;
   }
 
   private showSuccessMessage(key: string): void {
