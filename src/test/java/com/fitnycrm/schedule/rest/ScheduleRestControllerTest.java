@@ -293,13 +293,12 @@ class ScheduleRestControllerTest {
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void findAll_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
+    @Test
+    void findAll_whenUserHasUnauthorizedRole_thenReturn403() throws Exception {
         mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
                         .param("size", "10")
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("bob.trainer@example.com", UserRole.Name.TRAINER)))
                 .andExpect(status().isForbidden());
     }
 } 

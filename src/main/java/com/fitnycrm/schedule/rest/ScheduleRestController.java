@@ -85,7 +85,7 @@ public class ScheduleRestController {
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_ADMIN') && @permissionEvaluator.check(#tenantId)")
     public List<ScheduleListItemResponse> findAll(@PathVariable UUID tenantId,
                                                   @PathVariable UUID locationId) {
         return scheduleFacade.findAll(tenantId, locationId);
