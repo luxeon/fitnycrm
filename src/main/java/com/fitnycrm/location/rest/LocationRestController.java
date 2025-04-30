@@ -36,7 +36,7 @@ public class LocationRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("hasAnyRole('ROLE_CLIENT', 'ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
     public Page<LocationPageItemResponse> getAll(@PathVariable UUID tenantId,
                                                  Pageable pageable) {
         return locationFacade.findAll(tenantId, pageable);
