@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LocationService } from '../../core/services/location.service';
 import { Page } from '../../core/models/page.model';
 import { LocationPageItemResponse } from '../../core/models/location.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-location-list',
@@ -18,7 +18,11 @@ import { ActivatedRoute } from '@angular/router';
       <h2 class="locations-title">{{ 'locations.title' | translate }}</h2>
       
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
-        <div class="location-card" *ngFor="let location of locations?.content">
+        <div 
+          class="location-card" 
+          *ngFor="let location of locations?.content"
+          (click)="viewSchedules(location.id)"
+        >
           <div class="location-info">
             <div class="address">{{ location.address }}</div>
             <div class="city-state">{{ location.city }}, {{ location.state }} {{ location.postalCode }}</div>
@@ -77,6 +81,7 @@ import { ActivatedRoute } from '@angular/router';
       padding: 20px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
 
       &:hover {
         transform: translateY(-2px);
@@ -157,6 +162,7 @@ import { ActivatedRoute } from '@angular/router';
 export class LocationListComponent implements OnInit {
   private locationService = inject(LocationService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
@@ -179,5 +185,9 @@ export class LocationListComponent implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  viewSchedules(locationId: string): void {
+    this.router.navigate(['/tenant', this.tenantId, 'locations', locationId, 'schedules']);
   }
 } 

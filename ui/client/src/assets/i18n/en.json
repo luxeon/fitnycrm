@@ -93,5 +93,14 @@
     "title": "Locations",
     "noLocations": "No locations available",
     "loading": "Loading locations..."
+  },
+  "schedules": {
+    "title": "Club schedules",
+    "capacity": "Capacity",
+    "noSchedules": "No schedules available for this location",
+    "loading": "Loading schedules...",
+    "weekly_view": "Weekly View",
+    "daily_view": "Daily View",
+    "no_schedules_for_day": "No schedules for this day"
   }
 }
