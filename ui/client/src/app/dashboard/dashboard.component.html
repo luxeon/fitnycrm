@@ -25,7 +25,7 @@
           <p class="loading-text">{{ 'dashboard.club.loading' | translate }}</p>
         </div>
       } @else if (tenants().length) {
-        <mat-card class="club-card">
+        <mat-card class="club-card" (click)="onTenantClick(tenants()[0])">
           <mat-card-content>
             <div class="club-icon">
               <mat-icon>fitness_center</mat-icon>

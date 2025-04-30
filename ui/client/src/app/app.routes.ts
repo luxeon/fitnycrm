@@ -4,6 +4,7 @@ import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 import { ClientInvitationComponent } from './client-invitation/client-invitation.component';
+import { LocationListComponent } from './features/locations/location-list.component';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,11 @@ export const routes: Routes = [
   {
     path: 'tenants/:tenantId/clients/join/:inviteId',
     component: ClientInvitationComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'tenant/:tenantId/locations',
+    component: LocationListComponent,
     canActivate: [authGuard]
   },
   {

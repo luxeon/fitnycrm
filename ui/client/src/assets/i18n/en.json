@@ -82,5 +82,16 @@
     "actions": {
       "logout": "Logout"
     }
+  },
+  "common": {
+    "page": "Page",
+    "of": "of",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "locations": {
+    "title": "Locations",
+    "noLocations": "No locations available",
+    "loading": "Loading locations..."
   }
 }

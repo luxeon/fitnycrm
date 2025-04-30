@@ -62,10 +62,42 @@
     cursor: pointer;
     padding: 32px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(25, 118, 210, 0.05);
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
 
     &:hover {
       transform: translateY(-4px);
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+      &::after {
+        opacity: 1;
+      }
+
+      .club-icon {
+        transform: scale(1.05);
+        background: #e3f2fd;
+
+        mat-icon {
+          color: #1565c0;
+        }
+      }
+    }
+
+    &:active {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .club-icon {
@@ -77,12 +109,14 @@
       align-items: center;
       justify-content: center;
       margin: 0 auto 16px;
+      transition: all 0.2s ease-in-out;
 
       mat-icon {
         font-size: 32px;
         width: 32px;
         height: 32px;
         color: #1976d2;
+        transition: color 0.2s ease-in-out;
       }
     }
 
