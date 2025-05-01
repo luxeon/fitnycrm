@@ -7,6 +7,7 @@ import com.fitnycrm.visit.service.VisitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,5 +23,11 @@ public class VisitFacade {
 
     public void cancel(UUID tenantId, UUID locationId, UUID scheduleId, UUID visitId, UUID clientId) {
         service.cancel(scheduleId, visitId, clientId);
+    }
+
+    public List<VisitDetailsResponse> findAllByClientId(UUID tenantId, UUID clientId) {
+        return service.findAllByClientId(tenantId, clientId).stream()
+                .map(responseMapper::toDetailsResponse)
+                .toList();
     }
 }

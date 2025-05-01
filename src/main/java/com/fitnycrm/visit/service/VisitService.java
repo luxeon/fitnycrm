@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -83,5 +84,11 @@ public class VisitService {
             throw new VisitRegistrationException("Client id mismatch");
         }
         return visit;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Visit> findAllByClientId(UUID tenantId, UUID clientId) {
+        clientService.findById(tenantId, clientId);
+        return visitRepository.findAllByClientId(clientId);
     }
 }
