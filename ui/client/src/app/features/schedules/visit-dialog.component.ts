@@ -7,7 +7,7 @@ import { DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SchedulePageItemResponse, VisitResponse } from '../../core/models/schedule.model';
 import { VisitService } from '../../core/services/visit.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -60,6 +60,10 @@ export interface VisitDialogData {
             {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
           </p>
         </div>
+
+        @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+        }
 
         <!-- If there are no existing visits, show date picker -->
         @if (!hasVisits()) {
@@ -191,6 +195,15 @@ export interface VisitDialogData {
       }
     }
 
+    .error-message {
+      background-color: #fdecea;
+      color: #d32f2f;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
     mat-divider {
       margin: 0;
     }
@@ -219,6 +232,7 @@ export class VisitDialogComponent {
   private visitService = inject(VisitService);
   private dialogRef = inject(MatDialogRef<VisitDialogComponent>);
   private dateAdapter = inject(DateAdapter<Date>);
+  private translate = inject(TranslateService);
 
   schedule: SchedulePageItemResponse;
   visits: VisitResponse[] = [];
@@ -230,6 +244,7 @@ export class VisitDialogComponent {
   isCreating = false;
   cancellingVisitId: string | null = null;
   showDatePicker = false;
+  errorMessage: string | null = null;
 
   // Allow visits for next 4 weeks
   minDate = new Date();
@@ -263,7 +278,7 @@ export class VisitDialogComponent {
   }
 
   hasVisits(): boolean {
-    return this.visits && this.visits.length > 0;
+    return this.visits.length > 0;
   }
 
   // Filter to only allow selection of days that match the selected day
@@ -296,6 +311,7 @@ export class VisitDialogComponent {
   createVisit(): void {
     if (!this.selectedDate) return;
 
+    this.errorMessage = null;
     // Format date for backend and ensure it's in UTC
     const date = new Date(this.selectedDate);
     // Ensure we're working with the local date to match the schedule's day
@@ -321,10 +337,19 @@ export class VisitDialogComponent {
       next: (visit) => {
         this.visits.push(visit);
         this.selectedDate = null;
+        this.errorMessage = null;
       },
       error: (error) => {
         console.error('Visit creation error:', error);
-        // Handle error - you might want to show a snackbar/toast here
+        if (error.error?.message?.includes('you should pay for the training first')) {
+          this.errorMessage = this.translate.instant('schedules.errors.noCredits');
+        } else if (error.error?.message?.includes('Client capacity exceeded')) {
+          this.errorMessage = this.translate.instant('schedules.errors.capacityExceeded');
+        } else if (error.error?.message?.includes('Date of week doesn\'t match')) {
+          this.errorMessage = this.translate.instant('schedules.errors.invalidDate');
+        } else {
+          this.errorMessage = this.translate.instant('schedules.errors.generic');
+        }
       }
     });
   }
@@ -332,6 +357,7 @@ export class VisitDialogComponent {
   cancelVisit(visitId: string): void {
     if (!visitId) return;
 
+    this.errorMessage = null;
     this.cancellingVisitId = visitId;
     const visitToCancel = this.visits.find(v => v.id === visitId);
     
@@ -359,7 +385,7 @@ export class VisitDialogComponent {
       },
       error: (error) => {
         console.error('Visit cancellation error:', error);
-        // Handle error - you might want to show a snackbar/toast here
+        this.errorMessage = this.translate.instant('schedules.errors.generic');
       }
     });
   }
@@ -367,5 +393,6 @@ export class VisitDialogComponent {
   onBookMoreDates(): void {
     this.showDatePicker = true;
     this.selectedDate = this.findClosestAvailableDate();
+    this.errorMessage = null;
   }
 } 

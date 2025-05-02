@@ -112,6 +112,12 @@
     "cancel_visit": "Cancel Visit",
     "your_visits": "Your visits",
     "book_more_dates": "Register more visits",
-    "calendar_coming_soon": "Calendar view is coming soon!"
+    "calendar_coming_soon": "Calendar view is coming soon!",
+    "errors": {
+      "noCredits": "You need to purchase training credits first before booking this visit",
+      "capacityExceeded": "This class is already full",
+      "invalidDate": "Selected date is not available for this schedule",
+      "generic": "An error occurred while booking your visit. Please try again."
+    }
   }
 }
