@@ -139,10 +139,18 @@ import { provideNativeDateAdapter } from '@angular/material/core';
   styles: [`
     .schedules-container {
       padding: 24px;
+      
+      @media (max-width: 768px) {
+        padding: 16px 8px;
+      }
     }
 
     .header-section {
       margin-bottom: 24px;
+
+      @media (max-width: 768px) {
+        margin-bottom: 16px;
+      }
     }
 
     .location-header {
@@ -153,6 +161,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         color: #2c3e50;
         font-size: 24px;
         font-weight: 500;
+
+        @media (max-width: 768px) {
+          font-size: 20px;
+          margin-bottom: 12px;
+        }
       }
 
       .location-info {
@@ -160,16 +173,28 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         padding: 16px;
         border-radius: 8px;
 
+        @media (max-width: 768px) {
+          padding: 12px;
+        }
+
         .address {
           font-weight: 500;
           color: #2c3e50;
           margin-bottom: 4px;
           font-size: 16px;
+
+          @media (max-width: 768px) {
+            font-size: 14px;
+          }
         }
 
         .city-state {
           color: #495057;
           font-size: 14px;
+
+          @media (max-width: 768px) {
+            font-size: 12px;
+          }
         }
       }
     }
@@ -178,6 +203,13 @@ import { provideNativeDateAdapter } from '@angular/material/core';
       margin-bottom: 24px;
       display: flex;
       justify-content: flex-start;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+
+      @media (max-width: 768px) {
+        margin-bottom: 16px;
+        justify-content: center;
+      }
 
       ::ng-deep {
         .mat-button-toggle-group {
@@ -185,6 +217,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
           background: #f8f9fa;
           border-radius: 4px;
           overflow: hidden;
+          white-space: nowrap;
         }
 
         .mat-button-toggle {
@@ -197,6 +230,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
           .mat-button-toggle-label-content {
             line-height: 32px;
             padding: 0 16px;
+
+            @media (max-width: 768px) {
+              padding: 0 12px;
+              font-size: 14px;
+            }
           }
 
           &.mat-button-toggle-checked {
@@ -213,11 +251,33 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         grid-template-columns: repeat(7, 1fr);
         gap: 16px;
         margin-bottom: 24px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+
+        @media (max-width: 1024px) {
+          grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 768px) {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
 
         .day-column {
           background: #f8f9fa;
           border-radius: 8px;
           padding: 16px;
+          min-width: 0;
+
+          @media (max-width: 768px) {
+            padding: 12px;
+          }
 
           .day-header {
             font-weight: 500;
@@ -226,12 +286,21 @@ import { provideNativeDateAdapter } from '@angular/material/core';
             text-align: center;
             padding-bottom: 8px;
             border-bottom: 2px solid #e9ecef;
+
+            @media (max-width: 768px) {
+              margin-bottom: 12px;
+              font-size: 14px;
+            }
           }
 
           .day-schedules {
             display: flex;
             flex-direction: column;
             gap: 12px;
+
+            @media (max-width: 768px) {
+              gap: 8px;
+            }
           }
         }
       }
@@ -243,6 +312,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         cursor: pointer;
         transition: transform 0.2s, box-shadow 0.2s;
+        word-break: break-word;
+
+        @media (max-width: 768px) {
+          padding: 12px;
+        }
 
         &:hover {
           transform: translateY(-2px);
@@ -258,41 +332,41 @@ import { provideNativeDateAdapter } from '@angular/material/core';
             font-weight: 500;
             color: #2c3e50;
             margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.3;
+
+            @media (max-width: 768px) {
+              font-size: 13px;
+              margin-bottom: 6px;
+            }
           }
 
           .workout-name {
             color: #2c3e50;
             margin-bottom: 4px;
+            font-size: 14px;
+
+            @media (max-width: 768px) {
+              font-size: 13px;
+            }
           }
 
           .trainer-name {
             color: #6c757d;
-            font-size: 0.9em;
+            font-size: 13px;
             margin-bottom: 4px;
+
+            @media (max-width: 768px) {
+              font-size: 12px;
+            }
           }
 
           .capacity {
             color: #6c757d;
-            font-size: 0.9em;
-          }
+            font-size: 13px;
 
-          .visit-info {
-            margin-top: 10px;
-            border-top: 1px solid #eee;
-            padding-top: 8px;
-          }
-
-          .visit-badge {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            color: #2196f3;
-            font-size: 0.9em;
-
-            mat-icon {
-              font-size: 18px;
-              width: 18px;
-              height: 18px;
+            @media (max-width: 768px) {
+              font-size: 12px;
             }
           }
         }
@@ -304,37 +378,48 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         padding: 16px;
         background: white;
         border-radius: 8px;
+        font-size: 14px;
+
+        @media (max-width: 768px) {
+          padding: 12px;
+          font-size: 13px;
+        }
       }
-    }
-
-    .calendar-view {
-      .coming-soon {
-        text-align: center;
-        padding: 32px;
-        background: #f8f9fa;
-        border-radius: 8px;
-        color: #6c757d;
-      }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 32px;
-      background: #f8f9fa;
-      border-radius: 8px;
-      color: #6c757d;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 32px;
-      color: #6c757d;
     }
 
     .visit-info {
       margin-top: 10px;
       border-top: 1px solid #eee;
       padding-top: 8px;
+
+      @media (max-width: 768px) {
+        margin-top: 8px;
+        padding-top: 6px;
+      }
+    }
+
+    .visit-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #2196f3;
+      font-size: 13px;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+
+        @media (max-width: 768px) {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
     }
 
     .booked-dates {
@@ -346,13 +431,42 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     }
 
     .booked-date {
-      font-size: 0.85em;
+      font-size: 13px;
       color: #2196f3;
       background: #e3f2fd;
       padding: 4px 8px;
       border-radius: 4px;
       text-align: center;
       width: 100%;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+        padding: 3px 6px;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 32px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      color: #6c757d;
+
+      @media (max-width: 768px) {
+        padding: 24px;
+        font-size: 14px;
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 32px;
+      color: #6c757d;
+
+      @media (max-width: 768px) {
+        padding: 24px;
+        font-size: 14px;
+      }
     }
   `]
 })
