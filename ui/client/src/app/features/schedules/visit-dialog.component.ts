@@ -98,7 +98,7 @@ export interface VisitDialogData {
           
           <!-- Option to book more dates -->
           <div class="book-more-container">
-            <button mat-button color="primary" (click)="showDatePicker = true" *ngIf="!showDatePicker">
+            <button mat-button color="primary" (click)="onBookMoreDates()" *ngIf="!showDatePicker">
               {{ 'schedules.book_more_dates' | translate }}
             </button>
             
@@ -362,5 +362,10 @@ export class VisitDialogComponent {
         // Handle error - you might want to show a snackbar/toast here
       }
     });
+  }
+
+  onBookMoreDates(): void {
+    this.showDatePicker = true;
+    this.selectedDate = this.findClosestAvailableDate();
   }
 } 
