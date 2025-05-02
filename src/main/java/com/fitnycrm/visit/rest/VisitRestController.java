@@ -42,7 +42,7 @@ public class VisitRestController {
     @GetMapping("/visits")
     @PreAuthorize("hasRole('ROLE_CLIENT') && @permissionEvaluator.check(#tenantId)")
     @Operation(summary = "Get all client visits")
-    public List<VisitDetailsResponse> findAll(@PathVariable UUID tenantId, @AuthenticationPrincipal AuthenticatedUserDetails user) {
+    public List<VisitDetailsResponse> findAll(@PathVariable UUID tenantId, @PathVariable UUID locationId, @AuthenticationPrincipal AuthenticatedUserDetails user) {
         return facade.findAllByClientId(tenantId, user.getId());
     }
 }

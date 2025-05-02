@@ -64,7 +64,8 @@ public class VisitService {
         Visit visit = findById(scheduleId, visitId, clientId);
         Schedule schedule = visit.getSchedule();
         LocalTime startTime = schedule.getStartTime();
-        OffsetDateTime visitDateTime = OffsetDateTime.from(visit.getDate()).withHour(startTime.getHour()).withMinute(startTime.getMinute());
+        OffsetDateTime visitDateTime = visit.getDate().atTime(startTime).atZone(java.time.ZoneId.systemDefault())
+                .toOffsetDateTime();
         OffsetDateTime now = OffsetDateTime.now();
 
         if (visitDateTime.isBefore(now)) {
