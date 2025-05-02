@@ -338,6 +338,8 @@ export class VisitDialogComponent {
         this.visits.push(visit);
         this.selectedDate = null;
         this.errorMessage = null;
+        // Close dialog with success result to trigger refresh
+        this.dialogRef.close({ success: true, action: 'create', visit });
       },
       error: (error) => {
         console.error('Visit creation error:', error);
@@ -378,10 +380,8 @@ export class VisitDialogComponent {
         // Remove the cancelled visit from the list
         this.visits = this.visits.filter(v => v.id !== visitId);
         
-        // If all visits are cancelled, close the dialog with a result
-        if (this.visits.length === 0) {
-          this.dialogRef.close('all-cancelled');
-        }
+        // Close dialog with success result to trigger refresh
+        this.dialogRef.close({ success: true, action: 'cancel', visitId });
       },
       error: (error) => {
         console.error('Visit cancellation error:', error);

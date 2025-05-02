@@ -522,7 +522,7 @@ export class ScheduleListComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result?.success) {
         // Refresh visits after successful booking/cancellation
         this.visitService.getUserVisits(this.tenantId, this.locationId).subscribe(
           visits => {
