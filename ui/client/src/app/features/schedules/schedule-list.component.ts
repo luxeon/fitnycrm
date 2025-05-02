@@ -74,7 +74,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
               <div class="day-schedules">
                 @if (getDaySchedules(day).length) {
                   @for (schedule of getDaySchedules(day); track schedule.id) {
-                    <div class="schedule-card" 
+                    <div class="schedule-card"
                          [class.has-visit]="hasVisit(schedule.id)"
                          (click)="openVisitDialog(schedule, day)">
                       <div class="schedule-info">
@@ -90,7 +90,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
                         <div class="capacity">
                           {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
                         </div>
-                        
+
                         <!-- Show booked dates for this schedule and day -->
                         @if (getBookedDates(schedule.id, day).length) {
                           <div class="visit-info">
@@ -405,6 +405,8 @@ export class ScheduleListComponent implements OnInit {
         this.location = location;
         this.schedules = schedules || [];
         this.visits = visits;
+        // Clear the cache when visits are updated
+        this.bookedDatesCache = {};
         this.isLoading = false;
       },
       error: () => {
@@ -421,42 +423,61 @@ export class ScheduleListComponent implements OnInit {
   getDaySchedules(day: string): SchedulePageItemResponse[] {
     if (!this.schedules) return [];
     this.currentDay = day;
-    return this.schedules.filter(schedule => 
+    return this.schedules.filter(schedule =>
       schedule.daysOfWeek.includes(day.toUpperCase())
     );
   }
 
   hasVisit(scheduleId: string): boolean {
     if (!this.visits || !this.schedules) return false;
-    
+
     const dayName = this.currentDay.toUpperCase();
-    
+
     return this.visits.some(visit => {
       if (visit.scheduleId !== scheduleId) return false;
-      
+
       const visitDate = new Date(visit.date);
       const visitDayName = this.getDayName(visitDate.getDay());
-      
+
       return visitDayName === dayName;
     });
   }
 
+  // Cache for booked dates to prevent ExpressionChangedAfterItHasBeenCheckedError
+  private bookedDatesCache: { [key: string]: Date[] } = {};
+
   getBookedDates(scheduleId: string, day: string): Date[] {
-    if (!this.visits) return [];
-    
+    // Create a cache key using scheduleId and day
+    const cacheKey = `${scheduleId}_${day}`;
+
+    // Return cached result if available
+    if (this.bookedDatesCache[cacheKey]) {
+      return this.bookedDatesCache[cacheKey];
+    }
+
+    if (!this.visits) {
+      this.bookedDatesCache[cacheKey] = [];
+      return [];
+    }
+
     const dayName = day.toUpperCase();
-    
-    return this.visits
+
+    let dates = this.visits
       .filter(visit => {
         if (visit.scheduleId !== scheduleId) return false;
-        
+
         const visitDate = new Date(visit.date);
         const visitDayName = this.getDayName(visitDate.getDay());
-        
+
         return visitDayName === dayName;
       })
       .map(visit => new Date(visit.date))
       .sort((a, b) => a.getTime() - b.getTime());
+
+    // Cache the result
+    this.bookedDatesCache[cacheKey] = dates;
+
+    return dates;
   }
 
   private getDayName(dayIndex: number): string {
@@ -465,7 +486,7 @@ export class ScheduleListComponent implements OnInit {
   }
 
   getVisit(scheduleId: string): VisitResponse | undefined {
-    return this.visits.find(visit => 
+    return this.visits.find(visit =>
       visit.scheduleId === scheduleId && visit.status === 'CONFIRMED'
     );
   }
@@ -480,8 +501,8 @@ export class ScheduleListComponent implements OnInit {
       data: {
         schedule,
         visits: this.getBookedDates(schedule.id, selectedDay).map(date => {
-          const visit = this.visits.find(v => 
-            v.scheduleId === schedule.id && 
+          const visit = this.visits.find(v =>
+            v.scheduleId === schedule.id &&
             new Date(v.date).getTime() === date.getTime()
           );
           return visit!;
@@ -496,7 +517,11 @@ export class ScheduleListComponent implements OnInit {
       if (result) {
         // Refresh visits after successful booking/cancellation
         this.visitService.getUserVisits(this.tenantId, this.locationId).subscribe(
-          visits => this.visits = visits
+          visits => {
+            this.visits = visits;
+            // Clear the cache when visits are updated
+            this.bookedDatesCache = {};
+          }
         );
       }
     });
