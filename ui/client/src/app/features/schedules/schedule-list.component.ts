@@ -423,9 +423,17 @@ export class ScheduleListComponent implements OnInit {
   getDaySchedules(day: string): SchedulePageItemResponse[] {
     if (!this.schedules) return [];
     this.currentDay = day;
-    return this.schedules.filter(schedule =>
-      schedule.daysOfWeek.includes(day.toUpperCase())
-    );
+    return this.schedules
+      .filter(schedule => schedule.daysOfWeek.includes(day.toUpperCase()))
+      .sort((a, b) => {
+        // First sort by start time
+        const startTimeComparison = a.startTime.localeCompare(b.startTime);
+        // If start times are equal, sort by end time
+        if (startTimeComparison === 0) {
+          return a.endTime.localeCompare(b.endTime);
+        }
+        return startTimeComparison;
+      });
   }
 
   hasVisit(scheduleId: string): boolean {
