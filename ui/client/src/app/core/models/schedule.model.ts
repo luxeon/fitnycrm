@@ -18,4 +18,26 @@ export interface SchedulePageItemResponse {
   startTime: string;
   endTime: string;
   clientCapacity: number;
+}
+
+export interface VisitRequest {
+  scheduleId: string;
+  date: string;
+}
+
+export interface VisitResponse {
+  id: string;
+  scheduleId: string;
+  date: string;
+  status: 'CONFIRMED' | 'CANCELLED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserVisit extends VisitResponse {
+  scheduleName: string;
+  startTime: string;
+  endTime: string;
+  locationName: string;
+  trainerName?: string;
 } 

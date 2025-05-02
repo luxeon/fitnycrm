@@ -87,7 +87,9 @@
     "page": "Page",
     "of": "of",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "cancel": "Cancel",
+    "close": "Close"
   },
   "locations": {
     "title": "Locations",
@@ -100,7 +102,16 @@
     "noSchedules": "No schedules available for this location",
     "loading": "Loading schedules...",
     "weekly_view": "Weekly View",
-    "daily_view": "Daily View",
-    "no_schedules_for_day": "No schedules for this day"
+    "calendar_view": "Calendar View",
+    "no_schedules_for_day": "No schedules for this day",
+    "trainer": "Trainer",
+    "choose_date": "Choose date",
+    "book_visit": "Book Visit",
+    "booked": "Booked",
+    "visit_date": "Visit date",
+    "cancel_visit": "Cancel Visit",
+    "your_visits": "Your visits",
+    "book_more_dates": "Register more visits",
+    "calendar_coming_soon": "Calendar view is coming soon!"
   }
 }
