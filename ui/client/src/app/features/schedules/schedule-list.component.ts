@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScheduleService } from '../../core/services/schedule.service';
@@ -15,7 +15,11 @@ import { VisitService } from '../../core/services/visit.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCardModule } from '@angular/material/card';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatCalendar } from '@angular/material/datepicker';
+import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-schedule-list',
@@ -27,7 +31,9 @@ import { provideNativeDateAdapter } from '@angular/material/core';
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatDatepickerModule,
+    MatCardModule
   ],
   providers: [
     provideNativeDateAdapter()
@@ -55,11 +61,11 @@ import { provideNativeDateAdapter } from '@angular/material/core';
           <mat-button-toggle-group
             [value]="viewMode"
             (valueChange)="onViewModeChange($event)">
-            <mat-button-toggle value="weekly">
-              {{ 'schedules.weekly_view' | translate }}
-            </mat-button-toggle>
             <mat-button-toggle value="calendar">
               {{ 'schedules.calendar_view' | translate }}
+            </mat-button-toggle>
+            <mat-button-toggle value="weekly">
+              {{ 'schedules.weekly_view' | translate }}
             </mat-button-toggle>
           </mat-button-toggle-group>
         </div>
@@ -121,9 +127,54 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 
       <!-- Calendar View -->
       <div class="calendar-view" *ngIf="!isLoading && schedules?.length && viewMode === 'calendar'" @fadeInOut>
-        <!-- Calendar view implementation will be added in the next iteration -->
-        <div class="coming-soon">
-          {{ 'schedules.calendar_coming_soon' | translate }}
+        <mat-card class="calendar-card">
+          <mat-calendar 
+            [selected]="selectedDate"
+            (selectedChange)="onDateSelected($event)"
+            [dateClass]="dateClass">
+          </mat-calendar>
+        </mat-card>
+        
+        <div class="selected-date-schedules">
+          <h3 class="selected-date-header">
+            {{ selectedDate | date:'fullDate' }}
+          </h3>
+          <div class="schedules-list">
+            @if (getSchedulesForDate(selectedDate).length) {
+              @for (schedule of getSchedulesForDate(selectedDate); track schedule.id) {
+                <div class="schedule-card"
+                     [class.has-visit]="hasVisitOnDate(schedule.id, selectedDate)"
+                     (click)="openVisitDialog(schedule, getDayName(selectedDate.getDay()))">
+                  <div class="schedule-info">
+                    <div class="time-slot">
+                      {{ schedule.startTime | slice:0:5 }} - {{ schedule.endTime | slice:0:5 }}
+                    </div>
+                    <div class="workout-name" *ngIf="schedule.trainingName">
+                      {{ schedule.trainingName }}
+                    </div>
+                    <div class="trainer-name" *ngIf="schedule.defaultTrainerFullName">
+                      {{ schedule.defaultTrainerFullName }}
+                    </div>
+                    <div class="capacity">
+                      {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
+                    </div>
+                    @if (hasVisitOnDate(schedule.id, selectedDate)) {
+                      <div class="visit-info">
+                        <div class="visit-badge">
+                          <mat-icon color="primary">event_available</mat-icon>
+                          {{ 'schedules.booked' | translate }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            } @else {
+              <div class="no-schedules">
+                {{ 'schedules.no_schedules_for_day' | translate }}
+              </div>
+            }
+          </div>
         </div>
       </div>
 
@@ -468,6 +519,161 @@ import { provideNativeDateAdapter } from '@angular/material/core';
         font-size: 14px;
       }
     }
+
+    .calendar-view {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      margin-top: 24px;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-card {
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background: white;
+        width: fit-content;
+        height: fit-content;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+
+        ::ng-deep {
+          .mat-calendar {
+            width: 100%;
+            min-width: 280px;
+          }
+
+          .mat-calendar-body-cell.has-events::after {
+            background-color: #2196f3;
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+          }
+          
+          .mat-calendar-body-cell.has-visits::after {
+            background-color: #4caf50;
+            width: 8px;
+            height: 8px;
+          }
+
+          .mat-calendar-body-selected {
+            background-color: #2196f3;
+            color: white;
+          }
+
+          .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+            border-color: #2196f3;
+          }
+        }
+      }
+
+      .selected-date-schedules {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+
+        .selected-date-header {
+          margin: 0 0 16px;
+          color: #2c3e50;
+          font-size: 20px;
+          font-weight: 500;
+          padding-bottom: 12px;
+          border-bottom: 2px solid #e9ecef;
+        }
+
+        .schedules-list {
+          display: grid;
+          gap: 16px;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+      }
+
+      .schedule-card {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        border: 1px solid #e9ecef;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        &.has-visit {
+          border: 2px solid #2196f3;
+        }
+
+        .schedule-info {
+          .time-slot {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.3;
+          }
+
+          .workout-name {
+            color: #2c3e50;
+            margin-bottom: 4px;
+            font-size: 14px;
+          }
+
+          .trainer-name {
+            color: #6c757d;
+            font-size: 13px;
+            margin-bottom: 4px;
+          }
+
+          .capacity {
+            color: #6c757d;
+            font-size: 13px;
+          }
+        }
+
+        .visit-info {
+          margin-top: 8px;
+          padding-top: 8px;
+          border-top: 1px solid #e9ecef;
+        }
+
+        .visit-badge {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          color: #2196f3;
+          font-size: 13px;
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+
+      .no-schedules {
+        text-align: center;
+        color: #6c757d;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+    }
   `]
 })
 export class ScheduleListComponent implements OnInit {
@@ -483,7 +689,9 @@ export class ScheduleListComponent implements OnInit {
   isLoading = false;
   tenantId = '';
   locationId = '';
-  viewMode = 'weekly';
+  @Input() viewMode: 'weekly' | 'calendar' = 'calendar';
+  @Output() viewModeChange = new EventEmitter<'weekly' | 'calendar'>();
+  @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
 
   readonly daysOfWeek = [
     'MONDAY',
@@ -496,6 +704,8 @@ export class ScheduleListComponent implements OnInit {
   ];
 
   private currentDay: string = '';
+
+  selectedDate: Date = new Date();
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -532,6 +742,40 @@ export class ScheduleListComponent implements OnInit {
 
   onViewModeChange(mode: 'weekly' | 'calendar'): void {
     this.viewMode = mode;
+    this.viewModeChange.emit(mode);
+  }
+
+  onDateSelected(date: Date | null): void {
+    if (date) {
+      this.selectedDate = date;
+    }
+  }
+
+  dateClass = (date: Date): MatCalendarCellCssClasses => {
+    const dayName = this.getDayName(date.getDay());
+    const hasSchedules = this.getDaySchedules(dayName).length > 0;
+    
+    // Mark days that have visits for the user
+    const hasVisit = this.visits.some(visit => {
+      const visitDate = new Date(visit.date);
+      return this.isSameDay(visitDate, date);
+    });
+
+    if (hasVisit) {
+      return 'has-events has-visits';
+    } else if (hasSchedules) {
+      return 'has-events';
+    }
+    
+    return '';
+  }
+
+  getSchedulesForDate(date: Date): SchedulePageItemResponse[] {
+    if (!date || !this.schedules) return [];
+    
+    const dayName = this.getDayName(date.getDay());
+    this.currentDay = dayName; // Set the current day based on the selected date
+    return this.getDaySchedules(dayName);
   }
 
   getDaySchedules(day: string): SchedulePageItemResponse[] {
@@ -563,6 +807,31 @@ export class ScheduleListComponent implements OnInit {
 
       return visitDayName === dayName;
     });
+  }
+
+  /**
+   * Checks if a schedule has a booked visit on a specific date
+   * Used specifically for calendar view to ensure accurate display of booked status
+   */
+  hasVisitOnDate(scheduleId: string, date: Date): boolean {
+    if (!this.visits || !this.schedules) return false;
+
+    return this.visits.some(visit => {
+      if (visit.scheduleId !== scheduleId) return false;
+
+      const visitDate = new Date(visit.date);
+      return this.isSameDay(visitDate, date);
+    });
+  }
+
+  /**
+   * Utility method to compare if two dates represent the same day
+   * regardless of time component
+   */
+  private isSameDay(date1: Date, date2: Date): boolean {
+    return date1.getFullYear() === date2.getFullYear() &&
+           date1.getMonth() === date2.getMonth() &&
+           date1.getDate() === date2.getDate();
   }
 
   // Cache for booked dates to prevent ExpressionChangedAfterItHasBeenCheckedError
@@ -602,7 +871,7 @@ export class ScheduleListComponent implements OnInit {
     return dates;
   }
 
-  private getDayName(dayIndex: number): string {
+  getDayName(dayIndex: number): string {
     const days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     return days[dayIndex];
   }
@@ -619,20 +888,35 @@ export class ScheduleListComponent implements OnInit {
   }
 
   openVisitDialog(schedule: SchedulePageItemResponse, selectedDay: string): void {
+    const dialogData: any = {
+      schedule,
+      tenantId: this.tenantId,
+      locationId: this.locationId,
+      selectedDay
+    };
+    
+    if (this.viewMode === 'calendar') {
+      // In calendar view, we want to only show/book visits for the specific selected date
+      dialogData.selectedDate = new Date(this.selectedDate);
+      // Filter visits to only include the ones for this specific schedule and date
+      dialogData.visits = this.visits.filter(visit => {
+        if (visit.scheduleId !== schedule.id) return false;
+        const visitDate = new Date(visit.date);
+        return this.isSameDay(visitDate, this.selectedDate);
+      });
+    } else {
+      // In weekly view, show all visits for the day of week
+      dialogData.visits = this.getBookedDates(schedule.id, selectedDay).map(date => {
+        const visit = this.visits.find(v =>
+          v.scheduleId === schedule.id &&
+          new Date(v.date).getTime() === date.getTime()
+        );
+        return visit!;
+      });
+    }
+
     const dialogRef = this.dialog.open(VisitDialogComponent, {
-      data: {
-        schedule,
-        visits: this.getBookedDates(schedule.id, selectedDay).map(date => {
-          const visit = this.visits.find(v =>
-            v.scheduleId === schedule.id &&
-            new Date(v.date).getTime() === date.getTime()
-          );
-          return visit!;
-        }),
-        tenantId: this.tenantId,
-        locationId: this.locationId,
-        selectedDay
-      }
+      data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -643,8 +927,28 @@ export class ScheduleListComponent implements OnInit {
             this.visits = visits;
             // Clear the cache when visits are updated
             this.bookedDatesCache = {};
+            
+            // Force refresh the calendar view by creating a new date object
+            // This ensures the calendar markers update immediately
+            if (this.viewMode === 'calendar') {
+              const currentDate = new Date(this.selectedDate.getTime());
+              setTimeout(() => {
+                this.selectedDate = currentDate;
+                this.refreshCalendar();
+              });
+            }
           }
         );
+      }
+    });
+  }
+
+  private refreshCalendar(): void {
+    // Wait for the next change detection cycle
+    setTimeout(() => {
+      if (this.calendar) {
+        // Force the calendar to re-render
+        this.calendar.updateTodaysDate();
       }
     });
   }

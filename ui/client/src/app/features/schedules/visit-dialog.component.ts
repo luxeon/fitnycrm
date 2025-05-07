@@ -23,6 +23,7 @@ export interface VisitDialogData {
   tenantId: string;
   locationId: string;
   selectedDay: string;
+  selectedDate?: Date;
 }
 
 @Component({
@@ -59,6 +60,11 @@ export interface VisitDialogData {
           <p class="capacity">
             {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
           </p>
+          @if (isCalendarMode && selectedDate) {
+            <p class="selected-date">
+              {{ selectedDate | date:'fullDate' }}
+            </p>
+          }
         </div>
 
         @if (errorMessage) {
@@ -67,15 +73,19 @@ export interface VisitDialogData {
 
         <!-- If there are no existing visits, show date picker -->
         @if (!hasVisits()) {
-          <mat-form-field appearance="fill" class="date-picker">
-            <mat-label>{{ 'schedules.choose_date' | translate }}</mat-label>
-            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate"
-                   [min]="minDate" [max]="maxDate"
-                   [matDatepickerFilter]="dateFilter">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        } 
+          @if (isCalendarMode) {
+            <p class="availability-message">{{ 'schedules.no_visits_booked' | translate }}</p>
+          } @else {
+            <mat-form-field appearance="fill" class="date-picker">
+              <mat-label>{{ 'schedules.choose_date' | translate }}</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate"
+                     [min]="minDate" [max]="maxDate"
+                     [matDatepickerFilter]="dateFilter">
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          }
+        }
         
         <!-- If there are visits, show them in a list -->
         @if (hasVisits()) {
@@ -100,8 +110,8 @@ export interface VisitDialogData {
             </mat-list>
           </div>
           
-          <!-- Option to book more dates -->
-          <div class="book-more-container">
+          <!-- Option to book more dates - only show in weekly view -->
+          <div class="book-more-container" *ngIf="!isCalendarMode">
             <button mat-button color="primary" (click)="onBookMoreDates()" *ngIf="!showDatePicker">
               {{ 'schedules.book_more_dates' | translate }}
             </button>
@@ -157,6 +167,16 @@ export interface VisitDialogData {
       .trainer, .capacity {
         color: #666;
         margin: 4px 0;
+      }
+      
+      .selected-date {
+        margin-top: 12px;
+        font-weight: 500;
+        color: #2196f3;
+        padding: 4px 8px;
+        background: #e3f2fd;
+        border-radius: 4px;
+        display: inline-block;
       }
     }
 
@@ -226,6 +246,15 @@ export interface VisitDialogData {
         }
       }
     }
+
+    .availability-message {
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      color: #555;
+      text-align: center;
+      margin-bottom: 16px;
+    }
   `]
 })
 export class VisitDialogComponent {
@@ -261,18 +290,26 @@ export class VisitDialogComponent {
     'SUNDAY': 0
   };
 
+  // Flag to determine if we're in calendar view mode
+  isCalendarMode = false;
+
   constructor(@Inject(MAT_DIALOG_DATA) data: VisitDialogData) {
     this.schedule = data.schedule;
     this.visits = data.visits || [];
     this.tenantId = data.tenantId;
     this.locationId = data.locationId;
     this.selectedDay = data.selectedDay;
+    this.isCalendarMode = !!data.selectedDate;
     
     // Set first day of week to Monday
     this.dateAdapter.setLocale('en-GB'); // en-GB uses Monday as first day
     this.dateAdapter.getFirstDayOfWeek = () => 1;
 
-    if (!this.hasVisits()) {
+    if (this.isCalendarMode && data.selectedDate) {
+      // In calendar mode, we use the exact date selected
+      this.selectedDate = data.selectedDate;
+    } else if (!this.hasVisits()) {
+      // In weekly mode without visits, find the next available date
       this.selectedDate = this.findClosestAvailableDate();
     }
   }
@@ -284,6 +321,19 @@ export class VisitDialogComponent {
   // Filter to only allow selection of days that match the selected day
   dateFilter = (date: Date | null): boolean => {
     if (!date) return false;
+    
+    // In calendar mode with specific date, we just need the selected date
+    if (this.isCalendarMode) {
+      // Allow only the specific date
+      const currentDate = this.selectedDate;
+      if (currentDate) {
+        return date.getFullYear() === currentDate.getFullYear() && 
+               date.getMonth() === currentDate.getMonth() && 
+               date.getDate() === currentDate.getDate();
+      }
+    }
+    
+    // In weekly mode, allow all days that match the day of week
     const dayOfWeek = date.getDay(); // JavaScript's getDay() returns 0-6 (Sunday-Saturday)
     return this.dayMap[this.selectedDay] === dayOfWeek;
   };

@@ -97,13 +97,14 @@
     "loading": "Loading locations..."
   },
   "schedules": {
-    "title": "Club schedules",
+    "title": "Club Schedules",
     "capacity": "Capacity",
     "noSchedules": "No schedules available for this location",
     "loading": "Loading schedules...",
     "weekly_view": "Weekly View",
     "calendar_view": "Calendar View",
     "no_schedules_for_day": "No schedules for this day",
+    "no_visits_booked": "This date is not booked yet",
     "trainer": "Trainer",
     "choose_date": "Choose date",
     "book_visit": "Book Visit",
@@ -112,7 +113,6 @@
     "cancel_visit": "Cancel Visit",
     "your_visits": "Your visits",
     "book_more_dates": "Register more visits",
-    "calendar_coming_soon": "Calendar view is coming soon!",
     "errors": {
       "noCredits": "You need to purchase training credits first before booking this visit",
       "capacityExceeded": "This class is already full",
