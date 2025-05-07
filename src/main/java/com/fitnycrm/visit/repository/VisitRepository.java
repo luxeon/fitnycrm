@@ -18,6 +18,8 @@ public interface VisitRepository extends JpaRepository<Visit, UUID> {
 
     long countByScheduleAndDate(Schedule schedule, LocalDate date);
 
+    boolean existsByClientAndScheduleAndDate(User client, Schedule schedule, LocalDate date);
+
     @Query(value = "FROM Visit v JOIN v.schedule s WHERE v.client = :client AND s.location = :location " +
             "AND (:dateFrom IS NULL OR v.date >= :dateFrom) " +
             "AND (:dateTo IS NULL OR v.date <= :dateTo)")

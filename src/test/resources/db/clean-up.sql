@@ -1,3 +1,4 @@
+DELETE FROM client_training_visits;
 DELETE FROM training_payment_tariffs;
 DELETE FROM client_payments;
 DELETE FROM client_training_credits;

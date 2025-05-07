@@ -47,9 +47,13 @@ public class VisitService {
             throw new VisitRegistrationException("Date of week doesn't match to schedule");
         }
 
+        if (visitRepository.existsByClientAndScheduleAndDate(client, schedule, request.date())) {
+            throw new VisitRegistrationException("Client is already registered for this training and date");
+        }
+
         long count = visitRepository.countByScheduleAndDate(schedule, request.date());
         if (count >= schedule.getClientCapacity()) {
-            throw new VisitRegistrationException("Client capacity exceeded");
+            throw new VisitRegistrationException("Max capacity exceeded");
         }
 
         clientPaymentService.countVisit(tenantId, clientId, schedule.getTraining().getId());
@@ -97,5 +101,9 @@ public class VisitService {
         User client = clientService.findById(tenantId, clientId);
         Location location = locationService.findById(tenantId, locationId);
         return visitRepository.findAllByClientAndLocationAndDateBetween(client, location, dateFrom, dateTo, pageable);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID());
     }
 }

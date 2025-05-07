@@ -1,0 +1,7 @@
+{
+  "id": "${json-unit.any-string}",
+  "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
+  "date": "2099-12-27",
+  "createdAt": "${json-unit.any-string}",
+  "updatedAt": "${json-unit.any-string}"
+}
