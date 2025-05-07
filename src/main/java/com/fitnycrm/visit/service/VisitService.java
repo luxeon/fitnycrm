@@ -103,8 +103,4 @@ public class VisitService {
         Location location = locationService.findById(tenantId, locationId);
         return visitRepository.findAllByClientAndLocationAndDateBetween(client, location, dateFrom, dateTo, pageable);
     }
-
-    public static void main(String[] args) {
-        System.out.println(UUID.randomUUID());
-    }
 }

@@ -16,8 +16,8 @@ import java.util.UUID;
 
 import static com.fitnycrm.common.util.TestUtils.readFile;
 import static net.javacrumbs.jsonunit.spring.JsonUnitResultMatchers.json;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -26,6 +26,7 @@ class VisitRestControllerTest {
 
     private static final String CANCEL_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules/9a7632b1-e932-48fd-9296-001036b4ec19/visits/{visitId}";
     private static final String REGISTER_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules/9a7632b1-e932-48fd-9296-001036b4ec19/visits";
+    private static final String FIND_ALL_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/visits?sort=createdAt";
 
     private static final UUID LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec19");
@@ -190,6 +191,59 @@ class VisitRestControllerTest {
     @Sql("/db/visit/insert.sql")
     void cancel_whenUserHasUnauthorizedRole_thenReturn403() throws Exception {
         mockMvc.perform(delete(CANCEL_URL, "c3c3c3c3-e932-48fd-9296-001036b4ec19")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void findAll_whenValidRequest_thenReturnVisits() throws Exception {
+        var expectedResponse = readFile("fixture/visit/findAll/response/success.json");
+
+        mockMvc.perform(get(FIND_ALL_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("user1@test.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void findAll_whenDateFilterApplied_thenReturnFilteredVisits() throws Exception {
+        mockMvc.perform(get(FIND_ALL_URL)
+                        .param("dateFrom", "2100-01-01")
+                        .param("dateTo", "2100-01-31")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("user1@test.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content").isEmpty())
+                .andExpect(jsonPath("$.totalElements").value(0))
+                .andExpect(jsonPath("$.totalPages").value(0))
+                .andExpect(jsonPath("$.empty").value(true));
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void findAll_whenJwtTokenDoesNotExist_thenReturn401() throws Exception {
+        mockMvc.perform(get(FIND_ALL_URL))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void findAll_whenUserHasDifferentTenant_thenReturn403() throws Exception {
+        var expectedResponse = readFile("fixture/visit/findAll/response/access-denied.json");
+
+        mockMvc.perform(get("/api/tenants/{tenantId}/locations/{locationId}/visits",
+                        DIFFERENT_TENANT_ID, LOCATION_ID)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken("user1@test.com", UserRole.Name.CLIENT)))
+                .andExpect(status().isForbidden())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void findAll_whenUserHasUnauthorizedRole_thenReturn403() throws Exception {
+        mockMvc.perform(get(FIND_ALL_URL)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden());
     }

@@ -1,0 +1,57 @@
+{
+  "content": [
+    {
+      "id": "${json-unit.any-string}",
+      "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
+      "date": "2099-12-27",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    },
+    {
+      "id": "${json-unit.any-string}",
+      "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
+      "date": "2020-01-01",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    },
+    {
+      "id": "${json-unit.any-string}",
+      "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
+      "date": "2025-05-07",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    },
+    {
+      "id": "${json-unit.any-string}",
+      "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
+      "date": "2025-05-09",
+      "createdAt": "${json-unit.any-string}",
+      "updatedAt": "${json-unit.any-string}"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 20,
+    "sort": {
+      "sorted": true,
+      "empty": false,
+      "unsorted": false
+    },
+    "offset": 0,
+    "paged": true,
+    "unpaged": false
+  },
+  "last": true,
+  "totalElements": 4,
+  "totalPages": 1,
+  "size": 20,
+  "number": 0,
+  "sort": {
+    "sorted": true,
+    "empty": false,
+    "unsorted": false
+  },
+  "first": true,
+  "numberOfElements": 4,
+  "empty": false
+}

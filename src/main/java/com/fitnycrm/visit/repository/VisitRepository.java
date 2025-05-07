@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -21,10 +22,11 @@ public interface VisitRepository extends JpaRepository<Visit, UUID> {
     boolean existsByClientAndScheduleAndDate(User client, Schedule schedule, LocalDate date);
 
     @Query(value = "FROM Visit v JOIN v.schedule s WHERE v.client = :client AND s.location = :location " +
-            "AND (:dateFrom IS NULL OR v.date >= :dateFrom) " +
-            "AND (:dateTo IS NULL OR v.date <= :dateTo)")
-    Page<Visit> findAllByClientAndLocationAndDateBetween(User client, Location location, 
-                                                        LocalDate dateFrom, LocalDate dateTo, 
-                                                        Pageable pageable);
+            "AND (CAST(:dateFrom AS java.time.LocalDate) IS NULL OR v.date >= :dateFrom) " +
+            "AND (CAST(:dateTo AS java.time.LocalDate) IS NULL OR v.date <= :dateTo)")
+    Page<Visit> findAllByClientAndLocationAndDateBetween(User client, Location location,
+                                                         @Param("dateFrom") LocalDate dateFrom,
+                                                         @Param("dateTo") LocalDate dateTo,
+                                                         Pageable pageable);
 
 }
