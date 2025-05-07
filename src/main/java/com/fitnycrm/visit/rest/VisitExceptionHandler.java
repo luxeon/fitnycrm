@@ -1,7 +1,7 @@
 package com.fitnycrm.visit.rest;
 
 import com.fitnycrm.common.rest.model.ErrorResponse;
-import com.fitnycrm.training.service.exception.TrainingNotFoundException;
+import com.fitnycrm.visit.service.exception.VisitCancellationException;
 import com.fitnycrm.visit.service.exception.VisitRegistrationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -17,6 +17,12 @@ public class VisitExceptionHandler {
     @ExceptionHandler(VisitRegistrationException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorResponse handleVisitRegistrationException(VisitRegistrationException e) {
+        return ErrorResponse.of(e.getMessage());
+    }
+
+    @ExceptionHandler(VisitCancellationException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ErrorResponse handleVisitCancellationException(VisitCancellationException e) {
         return ErrorResponse.of(e.getMessage());
     }
 

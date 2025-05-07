@@ -81,7 +81,8 @@ public class VisitService {
             throw new VisitCancellationException("You can't cancel a visit in the past");
         }
 
-        if (ChronoUnit.HOURS.between(visitDateTime, now) < CANCEL_UNTIL_IN_HOURS) {
+        if (visit.getDate().isEqual(LocalDate.now()) &&
+                ChronoUnit.HOURS.between(visitDateTime, now) < CANCEL_UNTIL_IN_HOURS) {
             throw new VisitCancellationException("You can cancel before " + CANCEL_UNTIL_IN_HOURS + " hours till training.");
         }
         visitRepository.delete(visit);
