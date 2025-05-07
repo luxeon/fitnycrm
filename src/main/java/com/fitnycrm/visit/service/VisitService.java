@@ -1,5 +1,7 @@
 package com.fitnycrm.visit.service;
 
+import com.fitnycrm.location.repository.entity.Location;
+import com.fitnycrm.location.service.LocationService;
 import com.fitnycrm.payment.service.ClientPaymentService;
 import com.fitnycrm.schedule.repository.entity.Schedule;
 import com.fitnycrm.schedule.service.ScheduleService;
@@ -12,13 +14,15 @@ import com.fitnycrm.visit.service.exception.VisitCancellationException;
 import com.fitnycrm.visit.service.exception.VisitNotFoundException;
 import com.fitnycrm.visit.service.exception.VisitRegistrationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,6 +36,7 @@ public class VisitService {
     private final ScheduleService scheduleService;
     private final VisitRepository visitRepository;
     private final ClientPaymentService clientPaymentService;
+    private final LocationService locationService;
 
     @Transactional
     public Visit register(UUID tenantId, UUID locationId, UUID scheduleId, CreateVisitRequest request, UUID clientId) {
@@ -42,9 +47,13 @@ public class VisitService {
             throw new VisitRegistrationException("Date of week doesn't match to schedule");
         }
 
+        if (visitRepository.existsByClientAndScheduleAndDate(client, schedule, request.date())) {
+            throw new VisitRegistrationException("Client is already registered for this training and date");
+        }
+
         long count = visitRepository.countByScheduleAndDate(schedule, request.date());
         if (count >= schedule.getClientCapacity()) {
-            throw new VisitRegistrationException("Client capacity exceeded");
+            throw new VisitRegistrationException("Max capacity exceeded");
         }
 
         clientPaymentService.countVisit(tenantId, clientId, schedule.getTraining().getId());
@@ -88,8 +97,13 @@ public class VisitService {
     }
 
     @Transactional(readOnly = true)
-    public List<Visit> findAllByClientId(UUID tenantId, UUID clientId) {
-        clientService.findById(tenantId, clientId);
-        return visitRepository.findAllByClientId(clientId);
+    public Page<Visit> findAll(UUID tenantId, UUID locationId, UUID clientId, LocalDate dateFrom, LocalDate dateTo, Pageable pageable) {
+        User client = clientService.findById(tenantId, clientId);
+        Location location = locationService.findById(tenantId, locationId);
+        return visitRepository.findAllByClientAndLocationAndDateBetween(client, location, dateFrom, dateTo, pageable);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(UUID.randomUUID());
     }
 }

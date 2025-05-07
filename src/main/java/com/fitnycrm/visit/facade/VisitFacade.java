@@ -3,11 +3,14 @@ package com.fitnycrm.visit.facade;
 import com.fitnycrm.visit.facade.mapper.VisitResponseMapper;
 import com.fitnycrm.visit.rest.model.CreateVisitRequest;
 import com.fitnycrm.visit.rest.model.VisitDetailsResponse;
+import com.fitnycrm.visit.rest.model.VisitPageItemResponse;
 import com.fitnycrm.visit.service.VisitService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Component
@@ -25,9 +28,8 @@ public class VisitFacade {
         service.cancel(scheduleId, visitId, clientId);
     }
 
-    public List<VisitDetailsResponse> findAllByClientId(UUID tenantId, UUID clientId) {
-        return service.findAllByClientId(tenantId, clientId).stream()
-                .map(responseMapper::toDetailsResponse)
-                .toList();
+    public Page<VisitPageItemResponse> findAll(UUID tenantId, UUID locationId, UUID clientId, LocalDate dateFrom, LocalDate dateTo, Pageable pageable) {
+        return service.findAll(tenantId, locationId, clientId, dateFrom, dateTo, pageable)
+                .map(responseMapper::toVisitPageItemResponse);
     }
 }

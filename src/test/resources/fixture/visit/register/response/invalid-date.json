@@ -1,0 +1,9 @@
+{
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "date",
+      "message": "must be a date in the present or in the future"
+    }
+  ]
+}
