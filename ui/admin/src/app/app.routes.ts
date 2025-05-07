@@ -6,8 +6,6 @@ import { adminGuard } from './core/guards/admin.guard';
 import { tenantCheckGuard } from './core/guards/tenant-check.guard';
 import { CreateTenantComponent } from './features/tenant/create-tenant.component';
 import { ClubDetailsComponent } from './features/location/club-details.component';
-import { CreateWorkoutComponent } from './features/training/create-workout.component';
-import { EditWorkoutComponent } from './features/training/edit-workout.component';
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
 import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
 import { ClientDetailsComponent } from './features/dashboard/components/clients/client-details/client-details.component';
@@ -44,18 +42,6 @@ export const routes: Routes = [
     component: ClubDetailsComponent,
     canActivate: [adminGuard],
     data: { titleKey: 'location.details.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/workout/create',
-    component: CreateWorkoutComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'training.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/workout/:workoutId/edit',
-    component: EditWorkoutComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'training.edit.pageTitle' }
   },
   {
     path: 'dashboard',
