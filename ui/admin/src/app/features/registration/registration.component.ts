@@ -37,7 +37,11 @@ export class RegistrationComponent {
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.pattern(this.phonePattern)]],
-      password: ['', [Validators.required, Validators.pattern(this.passwordPattern)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern(this.passwordPattern)
+      ]],
       confirmPassword: ['', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
@@ -108,8 +112,8 @@ export class RegistrationComponent {
         length: control.errors['maxlength'].requiredLength
       });
     }
-    if (control.errors['pattern']) {
-      return this.translate.instant(`registration.form.${controlName}.pattern`);
+    if (control.errors['pattern'] && controlName === 'password') {
+      return this.translate.instant('registration.form.password.pattern');
     }
     if (control.errors['passwordMismatch']) {
       return this.translate.instant('registration.form.confirmPassword.mismatch');
