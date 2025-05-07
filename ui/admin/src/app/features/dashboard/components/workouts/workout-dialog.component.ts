@@ -39,7 +39,10 @@ export interface WorkoutDialogData {
 
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>{{ 'dashboard.workouts.description' | translate }}</mat-label>
-            <textarea matInput formControlName="description" rows="3"></textarea>
+            <textarea matInput formControlName="description" rows="3" required></textarea>
+            <mat-error *ngIf="form.get('description')?.hasError('required')">
+              {{ 'common.validation.required' | translate }}
+            </mat-error>
           </mat-form-field>
 
           <div class="form-row">
@@ -99,7 +102,7 @@ export class WorkoutDialogComponent {
   ) {
     this.form = this.fb.group({
       name: [data.workout?.name ?? '', Validators.required],
-      description: [data.workout?.description ?? ''],
+      description: [data.workout?.description ?? '', Validators.required],
       durationMinutes: [data.workout?.durationMinutes ?? 60, [Validators.required, Validators.min(1)]],
     });
   }
