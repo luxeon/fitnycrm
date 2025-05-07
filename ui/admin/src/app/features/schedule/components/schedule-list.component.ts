@@ -138,25 +138,25 @@ interface SchedulesByDay {
 
     .weekly-view {
       margin-bottom: 1.5rem;
-      
+
       .day-column {
         min-width: 130px;
       }
-      
+
       .day-schedules {
         padding: 0.5rem;
       }
-      
+
       .schedule-card {
         padding-top: 1.5rem;
         min-height: 70px;
-        
+
         .time-slot {
           font-size: 0.8rem;
           white-space: normal;
           line-height: 1.2;
         }
-        
+
         .capacity {
           font-size: 0.75rem;
           margin-top: 3px;
@@ -306,32 +306,32 @@ interface SchedulesByDay {
     .daily-view {
       .schedule-card {
         padding: 1.25rem 1rem 1rem;
-        
+
         .time-slot {
           font-size: 1rem;
           margin-bottom: 0.5rem;
         }
-        
+
         .capacity {
           font-size: 0.9rem;
         }
       }
-      
+
       .card-actions {
         top: 10px;
         right: 10px;
         gap: 6px;
       }
-      
+
       .edit-btn, .delete-btn {
         width: 24px;
         height: 24px;
       }
-      
+
       .edit-icon {
         font-size: 14px;
       }
-      
+
       .delete-icon {
         font-size: 16px;
       }
@@ -358,8 +358,6 @@ export class ScheduleListComponent implements OnInit {
   }
 
   organizeSchedulesByDay(): void {
-    console.log('Organizing schedules by day, received schedules:', this.schedules);
-
     // Initialize empty arrays for each day
     this.schedulesByDay = {};
     this.weekDays.forEach(day => {
@@ -371,22 +369,18 @@ export class ScheduleListComponent implements OnInit {
     this.weekDays.forEach(day => {
       dayMap[day.toLowerCase()] = day;
     });
-    console.log('Day map for case-insensitive matching:', dayMap);
 
     // Organize schedules by day
     if (this.schedules && this.schedules.length > 0) {
       this.schedules.forEach(schedule => {
-        console.log('Processing schedule:', schedule);
         if (schedule.daysOfWeek && Array.isArray(schedule.daysOfWeek)) {
           schedule.daysOfWeek.forEach(day => {
-            console.log('Processing day:', day);
 
             // Try to match the day (case-insensitive)
             const normalizedDay = day.toLowerCase();
             const matchedDay = dayMap[normalizedDay];
 
             if (matchedDay) {
-              console.log(`Adding schedule to day: ${matchedDay} (matched from: ${day})`);
               this.schedulesByDay[matchedDay].push(schedule);
             } else {
               // Try to match by first letter or partial match
@@ -396,9 +390,7 @@ export class ScheduleListComponent implements OnInit {
               );
 
               if (possibleMatches.length > 0) {
-                console.log(`Found possible matches for day "${day}":`, possibleMatches);
                 possibleMatches.forEach(matchedDay => {
-                  console.log(`Adding schedule to possible match day: ${matchedDay}`);
                   this.schedulesByDay[matchedDay].push(schedule);
                 });
               } else {
@@ -421,7 +413,6 @@ export class ScheduleListComponent implements OnInit {
       });
     });
 
-    console.log('Organized schedules by day:', this.schedulesByDay);
   }
 
   selectDay(day: string): void {

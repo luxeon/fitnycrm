@@ -60,8 +60,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
           <div class="action-header">
             <div class="title-section">
               <h3>{{ 'location.details.schedule.title' | translate }}</h3>
-              <mat-button-toggle-group 
-                class="view-toggle" 
+              <mat-button-toggle-group
+                class="view-toggle"
                 [value]="scheduleViewMode"
                 (change)="onViewModeChange($event.value)">
                 <mat-button-toggle value="weekly">
@@ -320,17 +320,6 @@ export class ClubDetailsComponent implements OnInit {
     this.isLoadingSchedules = true;
     try {
       this.schedules = await firstValueFrom(this.scheduleService.getSchedules(this.tenantId, this.locationId));
-      console.log('Loaded schedules:', this.schedules);
-
-      // Check if schedules have the expected structure
-      if (this.schedules && this.schedules.length > 0) {
-        this.schedules.forEach(schedule => {
-          console.log('Schedule:', schedule);
-          console.log('Days of week:', schedule.daysOfWeek);
-        });
-      } else {
-        console.log('No schedules loaded or schedules array is empty');
-      }
     } catch (error) {
       console.error('Error loading schedules:', error);
     } finally {
