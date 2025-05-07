@@ -194,6 +194,9 @@
       "pageTitle": "Edit Location",
       "title": "Edit Location"
     },
+    "update": {
+      "success": "Location updated successfully"
+    },
     "details": {
       "pageTitle": "Club Location Details",
       "title": "Club Details",
@@ -320,7 +323,7 @@
     },
     "success": {
       "title": "Email Confirmed",
-      "message": "Your email has been successfully confirmed. You can now access your account.",
+      "message": "Your email has been successfully confirmed.",
       "login": {
         "text": "You can now",
         "link": "log in"
@@ -367,7 +370,7 @@
         "placeholder": "Enter your password",
         "required": "Password is required",
         "minLength": "Password must be at least 8 characters",
-        "complexity": "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character"
+        "pattern": "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character"
       },
       "confirmPassword": {
         "label": "Confirm Password",
@@ -380,7 +383,8 @@
         "loading": "Signing up..."
       },
       "submit": {
-        "label": "Sign Up"
+        "label": "Sign Up",
+        "loading": "Signing Up..."
       }
     },
     "error": {
@@ -402,6 +406,9 @@
       "pageTitle": "Edit Trainer",
       "title": "Edit Trainer",
       "subtitle": "Update trainer's details"
+    },
+    "update": {
+      "success": "Trainer data updated"
     },
     "delete": {
       "title": "Delete Trainer",
