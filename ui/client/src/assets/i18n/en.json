@@ -30,6 +30,7 @@
   "signup": {
     "title": "Create Your Account",
     "subtitle": "Complete your registration to get started",
+    "invitationMessage": "You've been invited to join a sport club. Please complete your registration below.",
     "success": {
       "title": "Registration Successful!",
       "message": "Your account has been created and you've been added to the sport club. Redirecting to login page..."

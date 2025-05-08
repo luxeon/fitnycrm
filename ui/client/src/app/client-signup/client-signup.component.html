@@ -10,7 +10,12 @@
       <mat-card-content>
         <div class="header">
           <h2>{{ 'signup.title' | translate }}</h2>
-          <p class="subtitle">{{ 'signup.subtitle' | translate }}</p>
+          <div *ngIf="inviteId; else defaultSubtitle" class="invitation-banner">
+            <span class="invitation-text">{{ 'signup.invitationMessage' | translate }}</span>
+          </div>
+          <ng-template #defaultSubtitle>
+            <p class="subtitle">{{ 'signup.subtitle' | translate }}</p>
+          </ng-template>
         </div>
 
         <div *ngIf="submitSuccess" class="success-message">

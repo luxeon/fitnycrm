@@ -55,6 +55,26 @@
     color: #666;
     font-size: 1rem;
   }
+
+  .invitation-banner {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0 0 0;
+    text-align: center;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+
+    .invitation-text {
+      font-size: inherit;
+      font-weight: 500;
+      color: inherit;
+    }
+  }
 }
 
 .signup-form {

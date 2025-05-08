@@ -58,7 +58,7 @@ export class ClientSignupComponent implements OnInit {
       if (inviteIdParam) this.inviteId = inviteIdParam;
     });
     
-    // Then check if we have stored invitation data (in case the user clicked the signup link from login)
+    // Then check if we have stored invitation data
     if (!this.route.snapshot.paramMap.has('tenantId') && this.invitationStorage.hasPendingInvitation()) {
       const invitation = this.invitationStorage.getStoredInvitation();
       if (invitation) {
@@ -66,6 +66,17 @@ export class ClientSignupComponent implements OnInit {
         this.inviteId = invitation.inviteId;
       }
     }
+
+    // Initialize the form
+    this.signupForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      phoneNumber: ['', [Validators.pattern(/^\+[1-9]\d{1,14}$/)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required]]
+    }, {
+      validators: this.passwordMatchValidator
+    });
   }
   
   constructor() {

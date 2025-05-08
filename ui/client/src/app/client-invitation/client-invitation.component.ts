@@ -93,9 +93,9 @@ export class ClientInvitationComponent implements OnInit {
         // If logged in, try to join the tenant
         this.joinTenant(tenantId, inviteId);
       } else {
-        // If not logged in, store the invitation data and redirect to login
+        // If not logged in, store the invitation data and redirect to signup
         this.invitationStorageService.storeInvitation(tenantId, inviteId);
-        this.router.navigate(['/login']);
+        this.router.navigate(['/signup']);
       }
     });
   }
