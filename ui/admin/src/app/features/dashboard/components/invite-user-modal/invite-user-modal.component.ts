@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-invite-user-modal',
   standalone: true,
-  imports: [CommonModule, TranslateModule, FormsModule],
+  imports: [CommonModule, TranslateModule, FormsModule, MatProgressSpinnerModule],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -32,18 +33,22 @@ import { animate, style, transition, trigger } from '@angular/animations';
               [(ngModel)]="email"
               placeholder="{{ 'dashboard.clients.invite.emailPlaceholder' | translate }}"
               class="form-control"
+              (keydown.enter)="onEnterPressed($any($event))"
+              [disabled]="isLoading"
             >
           </div>
         </div>
         <div class="modal-actions">
-          <button class="cancel-button" (click)="onCancel()">
+          <button class="cancel-button" (click)="onCancel()" [disabled]="isLoading">
             {{ 'common.cancel' | translate }}
           </button>
           <button 
             class="invite-button" 
-            [disabled]="!isValidEmail()"
+            [disabled]="!isValidEmail() || isLoading"
             (click)="onInvite()">
-            {{ 'dashboard.clients.invite.send' | translate }}
+            <mat-spinner *ngIf="isLoading" diameter="20" class="spinner"></mat-spinner>
+            <span *ngIf="!isLoading">{{ 'dashboard.clients.invite.send' | translate }}</span>
+            <span *ngIf="isLoading">{{ 'dashboard.clients.invite.sending' | translate }}</span>
           </button>
         </div>
       </div>
@@ -104,6 +109,11 @@ import { animate, style, transition, trigger } from '@angular/animations';
           outline: none;
           border-color: #3498db;
         }
+
+        &:disabled {
+          background-color: #f8f9fa;
+          cursor: not-allowed;
+        }
       }
     }
 
@@ -119,6 +129,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
         cursor: pointer;
         font-size: 14px;
         transition: background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 100px;
 
         &:disabled {
           opacity: 0.5;
@@ -139,9 +153,14 @@ import { animate, style, transition, trigger } from '@angular/animations';
     .invite-button {
       background: #3498db;
       color: white;
+      gap: 8px;
 
       &:hover:not(:disabled) {
         background: #2980b9;
+      }
+
+      .spinner {
+        margin-right: 8px;
       }
     }
   `]
@@ -151,10 +170,20 @@ export class InviteUserModalComponent {
   @Output() invite = new EventEmitter<string>();
 
   email: string = '';
+  isLoading = false;
 
   @HostListener('document:keydown.escape')
   onEscapePressed(): void {
-    this.onCancel();
+    if (!this.isLoading) {
+      this.onCancel();
+    }
+  }
+
+  onEnterPressed(event: any): void {
+    if (!this.isLoading && this.isValidEmail()) {
+      event.preventDefault();
+      this.onInvite();
+    }
   }
 
   onCancel(): void {
@@ -162,7 +191,8 @@ export class InviteUserModalComponent {
   }
 
   onInvite(): void {
-    if (this.isValidEmail()) {
+    if (this.isValidEmail() && !this.isLoading) {
+      this.isLoading = true;
       this.invite.emit(this.email);
     }
   }
