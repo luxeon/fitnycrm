@@ -1,12 +1,4 @@
 <div class="dashboard-container">
-  <mat-toolbar color="primary" class="toolbar">
-    <span>{{ 'dashboard.appName' | translate }}</span>
-    <span class="spacer"></span>
-    <button mat-icon-button (click)="logout()" [attr.aria-label]="'dashboard.actions.logout' | translate">
-      <mat-icon>logout</mat-icon>
-    </button>
-  </mat-toolbar>
-
   <div class="content">
     @if (userClaims()) {
       <mat-card class="welcome-card">

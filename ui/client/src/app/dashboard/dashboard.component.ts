@@ -70,9 +70,4 @@ export class DashboardComponent implements OnInit {
       this.router.navigate(['/tenant', tenant.id, 'locations']);
     }
   }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
 }

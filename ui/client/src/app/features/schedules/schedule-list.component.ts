@@ -20,6 +20,7 @@ import { MatCardModule } from '@angular/material/card';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-schedule-list',
@@ -33,7 +34,8 @@ import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
     MatIconModule,
     MatBadgeModule,
     MatDatepickerModule,
-    MatCardModule
+    MatCardModule,
+    BreadcrumbComponent
   ],
   providers: [
     provideNativeDateAdapter()
@@ -48,6 +50,11 @@ import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
   ],
   template: `
     <div class="schedules-container">
+      <app-breadcrumb 
+        [tenantId]="tenantId"
+        [locationName]="location?.address ?? null"
+      ></app-breadcrumb>
+
       <div class="header-section" @fadeInOut>
         <div class="location-header" *ngIf="location">
           <h2 class="schedules-title">{{ 'schedules.title' | translate }}</h2>

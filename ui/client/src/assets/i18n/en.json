@@ -92,24 +92,28 @@
     "cancel": "Cancel",
     "close": "Close"
   },
+  "breadcrumb": {
+    "dashboard": "Dashboard",
+    "locations": "Locations"
+  },
   "locations": {
     "title": "Locations",
-    "noLocations": "No locations available",
+    "noLocations": "No locations found",
     "loading": "Loading locations..."
   },
   "schedules": {
-    "title": "Club Schedules",
-    "capacity": "Capacity",
-    "noSchedules": "No schedules available for this location",
+    "title": "Schedules",
+    "noSchedules": "No schedules found",
     "loading": "Loading schedules...",
-    "weekly_view": "Weekly View",
-    "calendar_view": "Calendar View",
+    "calendar_view": "Calendar",
+    "weekly_view": "Weekly",
+    "capacity": "Capacity",
+    "booked": "Booked",
     "no_schedules_for_day": "No schedules for this day",
     "no_visits_booked": "This date is not booked yet",
     "trainer": "Trainer",
     "choose_date": "Choose date",
     "book_visit": "Book Visit",
-    "booked": "Booked",
     "visit_date": "Visit date",
     "cancel_visit": "Cancel Visit",
     "your_visits": "Your visits",

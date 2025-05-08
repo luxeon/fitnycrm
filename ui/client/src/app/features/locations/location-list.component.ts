@@ -5,16 +5,20 @@ import { LocationService } from '../../core/services/location.service';
 import { Page } from '../../core/models/page.model';
 import { LocationPageItemResponse } from '../../core/models/location.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-location-list',
   standalone: true,
   imports: [
     CommonModule,
-    TranslateModule
+    TranslateModule,
+    BreadcrumbComponent
   ],
   template: `
     <div class="locations-container">
+      <app-breadcrumb [tenantId]="tenantId"></app-breadcrumb>
+      
       <h2 class="locations-title">{{ 'locations.title' | translate }}</h2>
       
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
@@ -161,8 +165,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class LocationListComponent implements OnInit {
   private locationService = inject(LocationService);
-  private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;

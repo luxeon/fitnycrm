@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { InvitationStorageService } from './invitation-storage.service';
 
 export interface AuthRequest {
   email: string;
@@ -25,6 +26,7 @@ export interface UserClaims {
 })
 export class AuthService {
   private http = inject(HttpClient);
+  private invitationStorage = inject(InvitationStorageService);
   private readonly TOKEN_KEY = 'auth_token';
 
   login(credentials: AuthRequest): Observable<AuthResponse> {
@@ -36,6 +38,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
+    this.invitationStorage.clearStoredInvitation();
   }
 
   getToken(): string | null {

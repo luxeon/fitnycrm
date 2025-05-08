@@ -36,28 +36,28 @@ export class ClientSignupComponent implements OnInit {
   private fb = inject(FormBuilder);
   private clientSignupService = inject(ClientSignupService);
   private invitationStorage = inject(InvitationStorageService);
-  
-  tenantId: string = '11111111-1111-1111-1111-111111111111'; // Default value for now
-  inviteId: string = '22222222-2222-2222-2222-222222222222'; // Default value for now
-  
+
+  tenantId: string = '';
+  inviteId: string = '';
+
   signupForm: FormGroup;
-  
+
   isSubmitting = false;
   submitError: string | null = null;
   submitSuccess = false;
   hidePassword = true;
   hideConfirmPassword = true;
-  
+
   ngOnInit(): void {
     // First check URL parameters
     this.route.paramMap.subscribe(params => {
       const tenantIdParam = params.get('tenantId');
       const inviteIdParam = params.get('inviteId');
-      
+
       if (tenantIdParam) this.tenantId = tenantIdParam;
       if (inviteIdParam) this.inviteId = inviteIdParam;
     });
-    
+
     // Then check if we have stored invitation data
     if (!this.route.snapshot.paramMap.has('tenantId') && this.invitationStorage.hasPendingInvitation()) {
       const invitation = this.invitationStorage.getStoredInvitation();
@@ -78,7 +78,7 @@ export class ClientSignupComponent implements OnInit {
       validators: this.passwordMatchValidator
     });
   }
-  
+
   constructor() {
     this.signupForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
@@ -86,15 +86,15 @@ export class ClientSignupComponent implements OnInit {
       phoneNumber: ['', [Validators.pattern('^\\+?[1-9]\\d{1,14}$')]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
       confirmPassword: ['', [Validators.required]]
-    }, { 
-      validators: this.passwordMatchValidator 
+    }, {
+      validators: this.passwordMatchValidator
     });
   }
-  
+
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get('password')?.value;
     const confirmPassword = formGroup.get('confirmPassword')?.value;
-    
+
     if (password !== confirmPassword) {
       formGroup.get('confirmPassword')?.setErrors({ passwordMismatch: true });
       return { passwordMismatch: true };
@@ -103,32 +103,32 @@ export class ClientSignupComponent implements OnInit {
       return null;
     }
   }
-  
+
   onSubmit() {
     if (this.signupForm.invalid) {
       this.markFormGroupTouched(this.signupForm);
       return;
     }
-    
+
     this.isSubmitting = true;
     this.submitError = null;
-    
+
     const request: SignupClientRequest = {
       firstName: this.signupForm.get('firstName')!.value,
       lastName: this.signupForm.get('lastName')!.value,
       phoneNumber: this.signupForm.get('phoneNumber')!.value,
       password: this.signupForm.get('password')!.value
     };
-    
+
     this.clientSignupService.signup(this.tenantId, this.inviteId, request)
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.isSubmitting = false;
           this.submitSuccess = true;
-          
+
           // Clear any stored invitation data
           this.invitationStorage.clearStoredInvitation();
-          
+
           // Redirect to login page after 3 seconds
           setTimeout(() => {
             this.router.navigate(['/login']);
@@ -136,7 +136,7 @@ export class ClientSignupComponent implements OnInit {
         },
         error: (error) => {
           this.isSubmitting = false;
-          
+
           if (error.status === 404) {
             this.submitError = 'The invitation was not found or has expired.';
           } else if (error.status === 400) {
@@ -147,22 +147,22 @@ export class ClientSignupComponent implements OnInit {
         }
       });
   }
-  
+
   // Helper method to mark all controls as touched
   private markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
-      
+
       if ((control as any).controls) {
         this.markFormGroupTouched(control as FormGroup);
       }
     });
   }
-  
+
   // Helper getters for form validation
   get firstNameControl() { return this.signupForm.get('firstName'); }
   get lastNameControl() { return this.signupForm.get('lastName'); }
   get phoneNumberControl() { return this.signupForm.get('phoneNumber'); }
   get passwordControl() { return this.signupForm.get('password'); }
   get confirmPasswordControl() { return this.signupForm.get('confirmPassword'); }
-} 
+}
