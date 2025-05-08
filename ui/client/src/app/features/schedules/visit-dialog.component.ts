@@ -50,7 +50,7 @@ export interface VisitDialogData {
   template: `
     <div class="visit-dialog">
       <h2 mat-dialog-title>{{ schedule.trainingName }}</h2>
-      
+
       <mat-dialog-content>
         <div class="schedule-details">
           <p class="time">{{ schedule.startTime | slice:0:5 }} - {{ schedule.endTime | slice:0:5 }}</p>
@@ -86,7 +86,7 @@ export interface VisitDialogData {
             </mat-form-field>
           }
         }
-        
+
         <!-- If there are visits, show them in a list -->
         @if (hasVisits()) {
           <div class="visits-list">
@@ -95,7 +95,7 @@ export interface VisitDialogData {
               @for (visit of visits; track visit.id) {
                 <div class="visit-list-row">
                   <span class="visit-date">{{ visit.date | date:'longDate' }}</span>
-                  <button mat-icon-button color="warn" 
+                  <button mat-icon-button color="warn"
                           [disabled]="cancellingVisitId === visit.id"
                           (click)="cancelVisit(visit.id)">
                     @if (cancellingVisitId === visit.id) {
@@ -109,13 +109,13 @@ export interface VisitDialogData {
               }
             </mat-list>
           </div>
-          
+
           <!-- Option to book more dates - only show in weekly view -->
           <div class="book-more-container" *ngIf="!isCalendarMode">
             <button mat-button color="primary" (click)="onBookMoreDates()" *ngIf="!showDatePicker">
               {{ 'schedules.book_more_dates' | translate }}
             </button>
-            
+
             @if (showDatePicker) {
               <mat-form-field appearance="fill" class="date-picker">
                 <mat-label>{{ 'schedules.choose_date' | translate }}</mat-label>
@@ -134,9 +134,9 @@ export interface VisitDialogData {
         <button mat-button [mat-dialog-close]="null">
           {{ 'common.close' | translate }}
         </button>
-        
+
         @if ((!hasVisits() || showDatePicker) && selectedDate) {
-          <button mat-raised-button color="primary" 
+          <button mat-raised-button color="primary"
                   [disabled]="isCreating || !selectedDate"
                   (click)="createVisit()">
             @if (isCreating) {
@@ -168,7 +168,7 @@ export interface VisitDialogData {
         color: #666;
         margin: 4px 0;
       }
-      
+
       .selected-date {
         margin-top: 12px;
         font-weight: 500;
@@ -186,7 +186,7 @@ export interface VisitDialogData {
 
     .visits-list {
       margin-bottom: 20px;
-      
+
       h3 {
         margin-bottom: 10px;
         color: #2c3e50;
@@ -237,10 +237,10 @@ export interface VisitDialogData {
 
     mat-dialog-actions {
       padding-top: 16px;
-      
+
       button {
         min-width: 120px;
-        
+
         mat-spinner {
           margin: 0 auto;
         }
@@ -268,7 +268,7 @@ export class VisitDialogComponent {
   tenantId: string;
   locationId: string;
   selectedDay: string;
-  
+
   selectedDate: Date | null = null;
   isCreating = false;
   cancellingVisitId: string | null = null;
@@ -300,7 +300,7 @@ export class VisitDialogComponent {
     this.locationId = data.locationId;
     this.selectedDay = data.selectedDay;
     this.isCalendarMode = !!data.selectedDate;
-    
+
     // Set first day of week to Monday
     this.dateAdapter.setLocale('en-GB'); // en-GB uses Monday as first day
     this.dateAdapter.getFirstDayOfWeek = () => 1;
@@ -321,18 +321,18 @@ export class VisitDialogComponent {
   // Filter to only allow selection of days that match the selected day
   dateFilter = (date: Date | null): boolean => {
     if (!date) return false;
-    
+
     // In calendar mode with specific date, we just need the selected date
     if (this.isCalendarMode) {
       // Allow only the specific date
       const currentDate = this.selectedDate;
       if (currentDate) {
-        return date.getFullYear() === currentDate.getFullYear() && 
-               date.getMonth() === currentDate.getMonth() && 
+        return date.getFullYear() === currentDate.getFullYear() &&
+               date.getMonth() === currentDate.getMonth() &&
                date.getDate() === currentDate.getDate();
       }
     }
-    
+
     // In weekly mode, allow all days that match the day of week
     const dayOfWeek = date.getDay(); // JavaScript's getDay() returns 0-6 (Sunday-Saturday)
     return this.dayMap[this.selectedDay] === dayOfWeek;
@@ -341,10 +341,10 @@ export class VisitDialogComponent {
   private findClosestAvailableDate(): Date {
     const today = new Date();
     const result = new Date(today);
-    
+
     // Get the day number for the selected day
     const selectedDayNumber = this.dayMap[this.selectedDay];
-    
+
     // Find the closest day that matches the selected day
     while (result.getDay() !== selectedDayNumber || result < today) {
       result.setDate(result.getDate() + 1);
@@ -354,7 +354,7 @@ export class VisitDialogComponent {
         break;
       }
     }
-    
+
     return result;
   }
 
@@ -393,7 +393,7 @@ export class VisitDialogComponent {
       },
       error: (error) => {
         console.error('Visit creation error:', error);
-        if (error.error?.message?.includes('you should pay for the training first')) {
+        if (error.error?.message?.includes('Client training credit not found for client')) {
           this.errorMessage = this.translate.instant('schedules.errors.noCredits');
         } else if (error.error?.message?.includes('Client capacity exceeded')) {
           this.errorMessage = this.translate.instant('schedules.errors.capacityExceeded');
@@ -412,7 +412,7 @@ export class VisitDialogComponent {
     this.errorMessage = null;
     this.cancellingVisitId = visitId;
     const visitToCancel = this.visits.find(v => v.id === visitId);
-    
+
     if (!visitToCancel) {
       this.cancellingVisitId = null;
       return;
@@ -429,7 +429,7 @@ export class VisitDialogComponent {
       next: () => {
         // Remove the cancelled visit from the list
         this.visits = this.visits.filter(v => v.id !== visitId);
-        
+
         // Close dialog with success result to trigger refresh
         this.dialogRef.close({ success: true, action: 'cancel', visitId });
       },
@@ -445,4 +445,4 @@ export class VisitDialogComponent {
     this.selectedDate = this.findClosestAvailableDate();
     this.errorMessage = null;
   }
-} 
+}
