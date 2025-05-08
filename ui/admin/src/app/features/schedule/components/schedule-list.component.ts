@@ -3,9 +3,16 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScheduleListItemResponse } from '../../../core/services/schedule.service';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { TrainingService } from '../../../core/services/training.service';
+import { TrainerService } from '../../../core/services/trainer.service';
+import { inject } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 
 interface SchedulesByDay {
-  [day: string]: ScheduleListItemResponse[];
+  [day: string]: (ScheduleListItemResponse & {
+    trainingName?: string;
+    trainerName?: string;
+  })[];
 }
 
 @Component({
@@ -37,32 +44,47 @@ interface SchedulesByDay {
         <div class="day-columns">
           @for (day of weekDays; track day) {
             <div class="day-column">
-              <div class="day-header">{{ day }}</div>
+              <div class="day-header">
+                <span class="day-name">{{ day }}</span>
+                <span class="schedule-count" *ngIf="schedulesByDay[day].length">
+                  {{ schedulesByDay[day].length }} {{ 'schedule.classes' | translate }}
+                </span>
+              </div>
               <div class="day-schedules">
                 @if (schedulesByDay[day].length) {
                   @for (schedule of schedulesByDay[day]; track schedule.id) {
-                    <div class="schedule-card">
-                      <div class="card-actions">
-                        <button class="edit-btn" (click)="onEditClick(schedule)" aria-label="Edit">
-                          <span class="edit-icon">✎</span>
-                        </button>
-                        <button class="delete-btn" (click)="onDeleteClick(schedule)" aria-label="Delete">
-                          <span class="delete-icon">×</span>
-                        </button>
+                    <div class="schedule-card" [class.has-trainer]="schedule.trainerName">
+                      <div class="time-badge">
+                        {{ schedule.startTime }} - {{ schedule.endTime }}
                       </div>
-                      <div class="schedule-info">
-                        <div class="time-slot">
-                          {{ schedule.startTime }} - {{ schedule.endTime }}
+                      <div class="card-content">
+                        <div class="training-info">
+                          <h4 class="training-name" *ngIf="schedule.trainingName">
+                            {{ schedule.trainingName }}
+                          </h4>
+                          <div class="trainer-info" *ngIf="schedule.trainerName">
+                            <span class="trainer-icon">👤</span>
+                            {{ schedule.trainerName }}
+                          </div>
+                          <div class="capacity-badge">
+                            <span class="capacity-icon">👥</span>
+                            {{ schedule.clientCapacity }}
+                          </div>
                         </div>
-                        <div class="capacity">
-                          {{ 'schedule.capacity' | translate }}: {{ schedule.clientCapacity }}
+                        <div class="card-actions">
+                          <button class="action-btn edit-btn" (click)="onEditClick(schedule)" title="{{ 'common.edit' | translate }}">
+                            <span class="material-icons">edit</span>
+                          </button>
+                          <button class="action-btn delete-btn" (click)="onDeleteClick(schedule)" title="{{ 'common.delete' | translate }}">
+                            <span class="material-icons">delete</span>
+                          </button>
                         </div>
                       </div>
                     </div>
                   }
                 } @else {
                   <div class="no-schedules">
-                    {{ 'schedule.no_schedules' | translate }}
+                    <span>{{ 'schedule.no_schedules' | translate }}</span>
                   </div>
                 }
               </div>
@@ -72,32 +94,47 @@ interface SchedulesByDay {
       </div>
 
       <div class="daily-view" *ngIf="viewMode === 'daily'">
-        <h3 class="day-title">{{ selectedDay }}</h3>
-        <div class="day-schedules-list">
+        <div class="daily-header">
+          <h3 class="day-title">{{ selectedDay }}</h3>
+          <span class="schedule-count" *ngIf="schedulesByDay[selectedDay].length">
+            {{ schedulesByDay[selectedDay].length }} {{ 'schedule.classes' | translate }}
+          </span>
+        </div>
+        <div class="daily-schedules">
           @if (schedulesByDay[selectedDay].length) {
             @for (schedule of schedulesByDay[selectedDay]; track schedule.id) {
-              <div class="schedule-card">
-                <div class="card-actions">
-                  <button class="edit-btn" (click)="onEditClick(schedule)">
-                    <span class="edit-icon">✎</span>
-                  </button>
-                  <button class="delete-btn" (click)="onDeleteClick(schedule)">
-                    <span class="delete-icon">×</span>
-                  </button>
+              <div class="schedule-card" [class.has-trainer]="schedule.trainerName">
+                <div class="time-badge">
+                  {{ schedule.startTime }} - {{ schedule.endTime }}
                 </div>
-                <div class="schedule-info">
-                  <div class="time-slot">
-                    {{ schedule.startTime }} - {{ schedule.endTime }}
+                <div class="card-content">
+                  <div class="training-info">
+                    <h4 class="training-name" *ngIf="schedule.trainingName">
+                      {{ schedule.trainingName }}
+                    </h4>
+                    <div class="trainer-info" *ngIf="schedule.trainerName">
+                      <span class="trainer-icon">👤</span>
+                      {{ schedule.trainerName }}
+                    </div>
+                    <div class="capacity-badge">
+                      <span class="capacity-icon">👥</span>
+                      {{ schedule.clientCapacity }}
+                    </div>
                   </div>
-                  <div class="capacity">
-                    {{ 'schedule.capacity' | translate }}: {{ schedule.clientCapacity }}
+                  <div class="card-actions">
+                    <button class="action-btn edit-btn" (click)="onEditClick(schedule)" title="{{ 'common.edit' | translate }}">
+                      <span class="material-icons">edit</span>
+                    </button>
+                    <button class="action-btn delete-btn" (click)="onDeleteClick(schedule)" title="{{ 'common.delete' | translate }}">
+                      <span class="material-icons">delete</span>
+                    </button>
                   </div>
                 </div>
               </div>
             }
           } @else {
             <div class="no-schedules">
-              {{ 'schedule.no_schedules' | translate }}
+              <span>{{ 'schedule.no_schedules' | translate }}</span>
             </div>
           }
         </div>
@@ -106,234 +143,274 @@ interface SchedulesByDay {
   `,
   styles: [`
     .schedule-list {
-      margin-top: 1rem;
+      margin: 0;
+      max-width: 1400px;
+      padding: 0;
     }
 
     .day-tabs {
       display: flex;
-      overflow-x: auto;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid #e9ecef;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
     }
 
     .day-tab {
       padding: 0.75rem 1.5rem;
-      background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 500;
       color: #6c757d;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
 
       &:hover {
+        border-color: #3498db;
         color: #3498db;
       }
 
       &.active {
-        color: #3498db;
-        border-bottom-color: #3498db;
+        background: #3498db;
+        border-color: #3498db;
+        color: white;
       }
     }
 
     .weekly-view {
-      margin-bottom: 1.5rem;
-
-      .day-column {
-        min-width: 130px;
-      }
-
-      .day-schedules {
-        padding: 0.5rem;
-      }
-
-      .schedule-card {
-        padding-top: 1.5rem;
-        min-height: 70px;
-
-        .time-slot {
-          font-size: 0.8rem;
-          white-space: normal;
-          line-height: 1.2;
-        }
-
-        .capacity {
-          font-size: 0.75rem;
-          margin-top: 3px;
-        }
-      }
+      margin-bottom: 2rem;
+      overflow-x: hidden;
     }
 
     .day-columns {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 0.5rem;
-      overflow-x: auto;
+
+      @media (max-width: 1400px) {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+      }
+
+      @media (max-width: 1200px) {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
     }
 
     .day-column {
-      min-width: 130px;
-      border-radius: 8px;
-      background: #f8f9fa;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
       border: 1px solid #e9ecef;
+      overflow: hidden;
+      min-width: 0; /* Prevent overflow */
     }
 
     .day-header {
       padding: 0.75rem;
-      background: #3498db;
-      color: white;
-      font-weight: 500;
-      text-align: center;
-      border-top-left-radius: 8px;
-      border-top-right-radius: 8px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e9ecef;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .day-name {
+      font-weight: 600;
+      color: #2c3e50;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .schedule-count {
+      font-size: 0.75rem;
+      color: #6c757d;
+      background: #e9ecef;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      margin-left: 0.25rem;
+      flex-shrink: 0;
     }
 
     .day-schedules {
       padding: 0.75rem;
-      min-height: 100px;
-      max-height: 400px;
+      min-height: 150px;
+      max-height: 500px;
       overflow-y: auto;
     }
 
-    .daily-view {
-      margin-bottom: 1.5rem;
-    }
-
-    .day-title {
-      margin-top: 0;
-      margin-bottom: 1rem;
-      color: #2c3e50;
-      font-size: 1.5rem;
-    }
-
-    .day-schedules-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
-    }
-
     .schedule-card {
-      position: relative;
-      padding: 1.5rem 0.75rem 0.75rem;
       background: white;
       border-radius: 8px;
       border: 1px solid #e9ecef;
       margin-bottom: 0.75rem;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.2s ease;
+      overflow: hidden;
 
       &:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
+
+      &.has-trainer {
+        border-left: 4px solid #3498db;
+      }
+    }
+
+    .time-badge {
+      background: #f8f9fa;
+      padding: 0.5rem 0.75rem;
+      font-weight: 500;
+      color: #2c3e50;
+      font-size: 0.8rem;
+      border-bottom: 1px solid #e9ecef;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-content {
+      padding: 0.75rem;
+    }
+
+    .training-info {
+      margin-bottom: 0.5rem;
+    }
+
+    .training-name {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.9rem;
+      color: #2c3e50;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .trainer-info {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: #6c757d;
+      font-size: 0.8rem;
+      margin-bottom: 0.5rem;
+      word-break: break-word;
+    }
+
+    .capacity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: #e9ecef;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #6c757d;
     }
 
     .card-actions {
-      position: absolute;
-      top: 5px;
-      right: 5px;
       display: flex;
-      gap: 4px;
-      z-index: 5;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid #e9ecef;
     }
 
-    .edit-btn, .delete-btn {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
+    .action-btn {
+      padding: 0.4rem;
       border: none;
+      border-radius: 4px;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      padding: 0;
-    }
+      transition: all 0.2s ease;
+      background: transparent;
 
-    .edit-btn {
-      background: #3498db;
-      color: white;
+      &.edit-btn {
+        color: #3498db;
 
-      .edit-icon {
-        font-size: 12px;
-        line-height: 1;
+        &:hover {
+          background: rgba(52, 152, 219, 0.1);
+        }
       }
 
-      &:hover {
-        background: #2980b9;
-      }
-    }
+      &.delete-btn {
+        color: #e74c3c;
 
-    .delete-btn {
-      background: #e74c3c;
-      color: white;
-
-      .delete-icon {
-        font-size: 14px;
-        line-height: 1;
+        &:hover {
+          background: rgba(231, 76, 60, 0.1);
+        }
       }
 
-      &:hover {
-        background: #c0392b;
+      .material-icons {
+        font-size: 16px;
       }
     }
 
-    .schedule-info {
-      margin-top: 0.5rem;
+    .daily-view {
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .time-slot {
-      font-weight: 500;
-      margin-bottom: 0.25rem;
+    .daily-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .day-title {
+      margin: 0;
+      font-size: 1.5rem;
       color: #2c3e50;
-      word-break: break-word;
-      font-size: 0.85rem;
-      line-height: 1.3;
+      font-weight: 600;
     }
 
-    .capacity {
-      font-size: 0.8rem;
-      color: #7f8c8d;
+    .daily-schedules {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
     }
 
     .no-schedules {
-      padding: 1rem;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem;
       color: #6c757d;
-      font-style: italic;
+      text-align: center;
+      background: #f8f9fa;
+      border-radius: 8px;
+      min-height: 130px;
     }
 
-    // Specific styles for daily view (larger cards)
-    .daily-view {
-      .schedule-card {
-        padding: 1.25rem 1rem 1rem;
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
 
-        .time-slot {
-          font-size: 1rem;
-          margin-bottom: 0.5rem;
-        }
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 4px;
+    }
 
-        .capacity {
-          font-size: 0.9rem;
-        }
-      }
+    ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 4px;
 
-      .card-actions {
-        top: 10px;
-        right: 10px;
-        gap: 6px;
-      }
-
-      .edit-btn, .delete-btn {
-        width: 24px;
-        height: 24px;
-      }
-
-      .edit-icon {
-        font-size: 14px;
-      }
-
-      .delete-icon {
-        font-size: 16px;
+      &:hover {
+        background: #a8a8a8;
       }
     }
   `]
@@ -341,9 +418,12 @@ interface SchedulesByDay {
 export class ScheduleListComponent implements OnInit {
   @Input() schedules: ScheduleListItemResponse[] = [];
   @Input() viewMode: 'weekly' | 'daily' = 'weekly';
-  @Output() scheduleDeleted = new EventEmitter<string>();
-  @Output() scheduleEdit = new EventEmitter<ScheduleListItemResponse>();
-  @Output() viewModeChange = new EventEmitter<'weekly' | 'daily'>();
+  @Input() tenantId!: string;
+  @Output() editClick = new EventEmitter<ScheduleListItemResponse>();
+  @Output() deleteClick = new EventEmitter<string>();
+
+  private readonly trainingService = inject(TrainingService);
+  private readonly trainerService = inject(TrainerService);
 
   weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   schedulesByDay: SchedulesByDay = {};
@@ -357,7 +437,7 @@ export class ScheduleListComponent implements OnInit {
     this.organizeSchedulesByDay();
   }
 
-  organizeSchedulesByDay(): void {
+  private async organizeSchedulesByDay(): Promise<void> {
     // Initialize empty arrays for each day
     this.schedulesByDay = {};
     this.weekDays.forEach(day => {
@@ -365,70 +445,69 @@ export class ScheduleListComponent implements OnInit {
     });
 
     // Create a map for case-insensitive day matching
-    const dayMap: { [key: string]: string } = {};
-    this.weekDays.forEach(day => {
-      dayMap[day.toLowerCase()] = day;
-    });
+    const dayMap = new Map(this.weekDays.map(day => [day.toUpperCase(), day]));
 
-    // Organize schedules by day
-    if (this.schedules && this.schedules.length > 0) {
-      this.schedules.forEach(schedule => {
-        if (schedule.daysOfWeek && Array.isArray(schedule.daysOfWeek)) {
-          schedule.daysOfWeek.forEach(day => {
-
-            // Try to match the day (case-insensitive)
-            const normalizedDay = day.toLowerCase();
-            const matchedDay = dayMap[normalizedDay];
-
-            if (matchedDay) {
-              this.schedulesByDay[matchedDay].push(schedule);
-            } else {
-              // Try to match by first letter or partial match
-              const possibleMatches = this.weekDays.filter(weekDay =>
-                weekDay.toLowerCase().startsWith(normalizedDay) ||
-                normalizedDay.startsWith(weekDay.toLowerCase())
-              );
-
-              if (possibleMatches.length > 0) {
-                possibleMatches.forEach(matchedDay => {
-                  this.schedulesByDay[matchedDay].push(schedule);
-                });
-              } else {
-                console.log('No matching day found for:', day);
-              }
-            }
-          });
-        } else {
-          console.log('Schedule has no daysOfWeek or it is not an array:', schedule);
+    // Group schedules by day
+    for (const schedule of this.schedules) {
+      for (const day of schedule.daysOfWeek) {
+        const normalizedDay = dayMap.get(day.toUpperCase());
+        if (normalizedDay) {
+          const enrichedSchedule = { ...schedule };
+          this.schedulesByDay[normalizedDay].push(enrichedSchedule);
         }
-      });
-    } else {
-      console.log('No schedules to organize');
+      }
     }
 
-    // Sort schedules by start time for each day
-    Object.keys(this.schedulesByDay).forEach(day => {
-      this.schedulesByDay[day].sort((a, b) => {
-        return a.startTime.localeCompare(b.startTime);
-      });
-    });
+    // Sort schedules by start time
+    for (const day in this.schedulesByDay) {
+      this.schedulesByDay[day].sort((a, b) => a.startTime.localeCompare(b.startTime));
+    }
 
+    if (this.schedules.length > 0) {
+      // Collect unique training and trainer IDs
+      const trainingIds = new Set(this.schedules.map(s => s.trainingId));
+      const trainerIds = new Set(this.schedules.map(s => s.defaultTrainerId));
+
+      try {
+        // Fetch training and trainer details
+        const [trainings, trainers] = await Promise.all([
+          Promise.all(Array.from(trainingIds).map(id =>
+            firstValueFrom(this.trainingService.getTraining(this.tenantId, id))
+          )),
+          Promise.all(Array.from(trainerIds).map(id =>
+            firstValueFrom(this.trainerService.getTrainer(this.tenantId, id))
+          ))
+        ]);
+
+        // Create lookup maps
+        const trainingMap = new Map(trainings.map(t => [t!.id, t!.name]));
+        const trainerMap = new Map(trainers.map(t => [t!.id, `${t!.firstName} ${t!.lastName}`]));
+
+        // Enrich schedules with names
+        for (const day in this.schedulesByDay) {
+          this.schedulesByDay[day] = this.schedulesByDay[day].map(schedule => ({
+            ...schedule,
+            trainingName: trainingMap.get(schedule.trainingId),
+            trainerName: trainerMap.get(schedule.defaultTrainerId)
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching training or trainer details:', error);
+      }
+    }
   }
 
   selectDay(day: string): void {
     this.selectedDay = day;
   }
 
-  setViewMode(mode: 'weekly' | 'daily'): void {
-    this.viewMode = mode;
-    this.viewModeChange.emit(mode);
+  onEditClick(schedule: ScheduleListItemResponse): void {
+    this.editClick.emit(schedule);
   }
 
   onDeleteClick(schedule: ScheduleListItemResponse): void {
-    this.scheduleDeleted.emit(schedule.id);
-  }
-
-  onEditClick(schedule: ScheduleListItemResponse): void {
-    this.scheduleEdit.emit(schedule);
+    this.deleteClick.emit(schedule.id);
   }
 }
+
+

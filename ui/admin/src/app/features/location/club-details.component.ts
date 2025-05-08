@@ -86,9 +86,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
             *ngIf="!isLoadingSchedules && schedules && schedules.length > 0"
             [schedules]="schedules"
             [viewMode]="scheduleViewMode"
-            (viewModeChange)="onViewModeChange($event)"
-            (scheduleDeleted)="onScheduleDelete($event)"
-            (scheduleEdit)="onScheduleEdit($event)">
+            [tenantId]="tenantId"
+            (editClick)="onScheduleEdit($event)"
+            (deleteClick)="onScheduleDelete($event)">
           </app-schedule-list>
         </div>
       </div>
