@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
 import { TrainingService, TrainingPageItemResponse } from '../../../../../core/services/training.service';
+import { TariffService, TariffResponse } from '../../../../../core/services/tariff.service';
 
 export interface PaymentDialogData {
   tenantId: string;
@@ -48,6 +49,16 @@ interface CurrencyOption {
             <mat-error *ngIf="form.get('trainingId')?.hasError('required')">
               {{ 'common.validation.required' | translate }}
             </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'dashboard.clients.details.payments.add.tariff' | translate }}</mat-label>
+            <mat-select formControlName="tariffId" (selectionChange)="onTariffSelected()">
+              <mat-option [value]="null">{{ 'common.custom' | translate }}</mat-option>
+              <mat-option *ngFor="let tariff of tariffs" [value]="tariff.id">
+                {{ tariff.name }}
+              </mat-option>
+            </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width">
@@ -126,6 +137,7 @@ interface CurrencyOption {
 export class PaymentDialogComponent implements OnInit {
   form: FormGroup;
   trainings: TrainingPageItemResponse[] = [];
+  tariffs: TariffResponse[] = [];
   isLoading = false;
   currencies: CurrencyOption[] = [
     { value: 'USD', label: 'USD - US Dollar' },
@@ -137,10 +149,12 @@ export class PaymentDialogComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<PaymentDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PaymentDialogData,
-    private trainingService: TrainingService
+    private trainingService: TrainingService,
+    private tariffService: TariffService
   ) {
     this.form = this.fb.group({
       trainingId: ['', Validators.required],
+      tariffId: [null],
       trainingsCount: [10, [Validators.required, Validators.min(1)]],
       validDays: [30, [Validators.required, Validators.min(1)]],
       price: [100, [Validators.required, Validators.min(0)]],
@@ -151,19 +165,46 @@ export class PaymentDialogComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       this.isLoading = true;
-      const response = await firstValueFrom(this.trainingService.findAll(this.data.tenantId));
-      this.trainings = response || [];
+      const [trainingsResponse, tariffsResponse] = await Promise.all([
+        firstValueFrom(this.trainingService.findAll(this.data.tenantId)),
+        firstValueFrom(this.tariffService.findAll(this.data.tenantId))
+      ]);
+
+      this.trainings = trainingsResponse || [];
+      this.tariffs = tariffsResponse || [];
     } catch (error) {
-      console.error('Failed to load trainings:', error);
+      console.error('Failed to load data:', error);
       this.trainings = [];
+      this.tariffs = [];
     } finally {
       this.isLoading = false;
     }
   }
 
+  onTariffSelected(): void {
+    const tariffId = this.form.get('tariffId')?.value;
+    if (!tariffId) {
+      return;
+    }
+
+    const selectedTariff = this.tariffs.find(t => t.id === tariffId);
+    if (selectedTariff) {
+      this.form.patchValue({
+        trainingsCount: selectedTariff.trainingsCount,
+        validDays: selectedTariff.validDays,
+        price: selectedTariff.price,
+        currency: selectedTariff.currency
+      });
+    }
+  }
+
   onSubmit(): void {
     if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+      // Remove tariffId from the submitted form data
+      const formData = { ...this.form.value };
+      delete formData.tariffId;
+
+      this.dialogRef.close(formData);
     }
   }
 

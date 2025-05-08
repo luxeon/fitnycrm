@@ -32,7 +32,8 @@
     "actions": "Actions",
     "remainingTrainings": "Remaining Trainings",
     "subscriptionExpiration": "Subscription Expires On",
-    "return": "Return"
+    "return": "Return",
+    "custom": "Custom"
   },
   "login": {
     "pageTitle": "Login",
@@ -153,6 +154,7 @@
             "button": "Add Payment",
             "title": "Add New Payment",
             "training": "Training",
+            "tariff": "Tariff",
             "trainingsCount": "Number of Trainings",
             "validDays": "Valid for (days)",
             "price": "Price",
