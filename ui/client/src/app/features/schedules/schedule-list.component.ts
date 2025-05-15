@@ -83,7 +83,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
         <div class="day-columns">
           @for (day of daysOfWeek; track day) {
             <div class="day-column">
-              <div class="day-header">{{ day }}</div>
+              <div class="day-header">{{ 'schedules.days.' + day | translate }}</div>
               <div class="day-schedules">
                 @if (getDaySchedules(day).length) {
                   @for (schedule of getDaySchedules(day); track schedule.id) {

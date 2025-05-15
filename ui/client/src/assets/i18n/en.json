@@ -97,7 +97,7 @@
     "close": "Close"
   },
   "breadcrumb": {
-    "dashboard": "Dashboard",
+    "dashboard": "Clubs",
     "locations": "Locations"
   },
   "locations": {
@@ -122,6 +122,15 @@
     "cancel_visit": "Cancel Visit",
     "your_visits": "Your visits",
     "book_more_dates": "Register more visits",
+    "days": {
+      "MONDAY": "Monday",
+      "TUESDAY": "Tuesday",
+      "WEDNESDAY": "Wednesday",
+      "THURSDAY": "Thursday",
+      "FRIDAY": "Friday",
+      "SATURDAY": "Saturday",
+      "SUNDAY": "Sunday"
+    },
     "errors": {
       "noCredits": "You need to purchase training credits first before booking this visit",
       "capacityExceeded": "This class is already full",
