@@ -42,7 +42,8 @@ export class RegistrationComponent {
         Validators.minLength(8),
         Validators.pattern(this.passwordPattern)
       ]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      locale: ['en', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
@@ -70,7 +71,8 @@ export class RegistrationComponent {
         lastName: formValue.lastName,
         email: formValue.email,
         password: formValue.password,
-        phoneNumber: formValue.phoneNumber || undefined
+        phoneNumber: formValue.phoneNumber || undefined,
+        locale: formValue.locale
       };
 
       this.authService.signup(request).subscribe({

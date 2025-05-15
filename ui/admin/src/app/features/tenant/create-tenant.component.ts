@@ -48,6 +48,20 @@ import { firstValueFrom } from 'rxjs';
             </textarea>
           </div>
 
+          <div class="form-group">
+            <label for="locale">{{ 'tenant.form.locale.label' | translate }}</label>
+            <select
+              id="locale"
+              formControlName="locale"
+              [class.error]="tenantForm.get('locale')?.invalid && tenantForm.get('locale')?.touched">
+              <option value="en">English</option>
+              <option value="uk">Українська</option>
+            </select>
+            <div class="error-message" *ngIf="tenantForm.get('locale')?.invalid && tenantForm.get('locale')?.touched">
+              {{ 'tenant.form.locale.required' | translate }}
+            </div>
+          </div>
+
           <button type="submit" [disabled]="tenantForm.invalid || isLoading">
             {{ isLoading ? ('tenant.form.button.creating' | translate) : ('tenant.form.button.create' | translate) }}
           </button>
@@ -98,7 +112,7 @@ import { firstValueFrom } from 'rxjs';
           font-weight: 500;
         }
 
-        input, textarea {
+        input, textarea, select {
           width: 100%;
           padding: 10px;
           border: 1px solid #ddd;
@@ -117,6 +131,11 @@ import { firstValueFrom } from 'rxjs';
 
         textarea {
           resize: vertical;
+        }
+
+        select {
+          background-color: white;
+          cursor: pointer;
         }
       }
 
@@ -165,7 +184,8 @@ export class CreateTenantComponent {
 
   tenantForm: FormGroup = this.fb.group({
     name: ['', [Validators.required]],
-    description: ['']
+    description: [''],
+    locale: ['en', [Validators.required]]
   });
 
   errorMessage: string | null = null;
@@ -179,7 +199,8 @@ export class CreateTenantComponent {
       try {
         const request: CreateTenantRequest = {
           name: this.tenantForm.get('name')?.value,
-          description: this.tenantForm.get('description')?.value
+          description: this.tenantForm.get('description')?.value,
+          locale: this.tenantForm.get('locale')?.value
         };
 
         await firstValueFrom(this.tenantService.createTenant(request));

@@ -88,6 +88,20 @@
         </div>
       </div>
 
+      <div class="form-group">
+        <label for="locale">{{ 'registration.form.locale.label' | translate }}</label>
+        <select 
+          id="locale"
+          formControlName="locale"
+          [class.error]="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">
+          <option value="en">English</option>
+          <option value="uk">Українська</option>
+        </select>
+        <div class="error-message" *ngIf="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">
+          {{ getErrorMessage('locale') }}
+        </div>
+      </div>
+
       <button type="submit" [disabled]="registrationForm.invalid || isLoading">
         <span *ngIf="!isLoading">{{ 'registration.form.submit.label' | translate }}</span>
         <span *ngIf="isLoading">{{ 'registration.form.submit.loading' | translate }}</span>

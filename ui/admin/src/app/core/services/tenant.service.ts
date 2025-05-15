@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 export interface CreateTenantRequest {
   name: string;
   description?: string;
+  locale: string;
 }
 
 export interface TenantResponse {
