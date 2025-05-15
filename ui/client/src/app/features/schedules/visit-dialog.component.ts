@@ -45,7 +45,11 @@ export interface VisitDialogData {
   ],
   providers: [
     provideNativeDateAdapter(),
-    { provide: MAT_DATE_LOCALE, useValue: 'en-US' }
+    { 
+      provide: MAT_DATE_LOCALE, 
+      useFactory: (translate: TranslateService) => translate.currentLang || 'en',
+      deps: [TranslateService]
+    }
   ],
   template: `
     <div class="visit-dialog">
@@ -62,7 +66,7 @@ export interface VisitDialogData {
           </p>
           @if (isCalendarMode && selectedDate) {
             <p class="selected-date">
-              {{ selectedDate | date:'fullDate' }}
+              {{ selectedDate | date:'fullDate':undefined:translate.currentLang }}
             </p>
           }
         </div>
@@ -94,7 +98,7 @@ export interface VisitDialogData {
             <mat-list>
               @for (visit of visits; track visit.id) {
                 <div class="visit-list-row">
-                  <span class="visit-date">{{ visit.date | date:'longDate' }}</span>
+                  <span class="visit-date">{{ visit.date | date:'longDate':undefined:translate.currentLang }}</span>
                   <button mat-icon-button color="warn"
                           [disabled]="cancellingVisitId === visit.id"
                           (click)="cancelVisit(visit.id)">
@@ -261,7 +265,7 @@ export class VisitDialogComponent {
   private visitService = inject(VisitService);
   private dialogRef = inject(MatDialogRef<VisitDialogComponent>);
   private dateAdapter = inject(DateAdapter<Date>);
-  private translate = inject(TranslateService);
+  protected translate = inject(TranslateService);
 
   schedule: SchedulePageItemResponse;
   visits: VisitResponse[] = [];

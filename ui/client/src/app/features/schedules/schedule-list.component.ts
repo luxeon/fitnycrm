@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScheduleService } from '../../core/services/schedule.service';
 import { SchedulePageItemResponse, VisitResponse } from '../../core/models/schedule.model';
 import { ActivatedRoute } from '@angular/router';
@@ -113,7 +113,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
                             </div>
                             <div class="booked-dates">
                               @for (date of getBookedDates(schedule.id, day); track date) {
-                                <div class="booked-date">{{ date | date:'MMM d, yyyy' }}</div>
+                                <div class="booked-date">{{ date | date:'MMM d, yyyy':undefined:translate.currentLang }}</div>
                               }
                             </div>
                           </div>
@@ -144,7 +144,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
         
         <div class="selected-date-schedules">
           <h3 class="selected-date-header">
-            {{ selectedDate | date:'fullDate' }}
+            {{ selectedDate | date:'fullDate':undefined:translate.currentLang }}
           </h3>
           <div class="schedules-list">
             @if (getSchedulesForDate(selectedDate).length) {
@@ -689,6 +689,7 @@ export class ScheduleListComponent implements OnInit {
   private visitService = inject(VisitService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
+  protected translate = inject(TranslateService);
 
   schedules: SchedulePageItemResponse[] | null = null;
   location: LocationPageItemResponse | null = null;
