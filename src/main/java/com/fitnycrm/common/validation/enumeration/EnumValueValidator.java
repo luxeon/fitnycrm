@@ -1,4 +1,4 @@
-package com.fitnycrm.common.validation;
+package com.fitnycrm.common.validation.enumeration;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -7,23 +7,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class EnumSetValueValidator implements ConstraintValidator<EnumSetValue, Set<String>> {
+public class EnumValueValidator implements ConstraintValidator<EnumValue, String> {
     private Set<String> acceptedValues;
 
     @Override
-    public void initialize(EnumSetValue annotation) {
+    public void initialize(EnumValue annotation) {
         acceptedValues = Stream.of(annotation.enumClass().getEnumConstants())
                 .map(Enum::name)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public boolean isValid(Set<String> values, ConstraintValidatorContext context) {
-        if (values == null) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (value == null) {
             return true;
         }
-
-        boolean isValid = acceptedValues.containsAll(values);
+        boolean isValid = acceptedValues.contains(value);
         if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(

@@ -25,3 +25,8 @@ mail:
   from: noreply@fitnycrm.com
   confirmationUrl: ${fitny.base-url}/auth/confirm-email
   clientRegistrationUrl: ${fitny.base-url}/tenants/%s/clients/signup/%s
+
+localization:
+  supported-locales:
+    - en
+    - uk

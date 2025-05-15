@@ -1,6 +1,6 @@
 package com.fitnycrm.schedule.rest.model;
 
-import com.fitnycrm.common.validation.EnumSetValue;
+import com.fitnycrm.common.validation.enumeration.EnumSetValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

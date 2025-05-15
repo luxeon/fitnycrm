@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,6 +29,9 @@ public class Tenant {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private Locale locale;
 
     @ManyToMany
     @JoinTable(

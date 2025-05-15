@@ -14,6 +14,9 @@ public record TenantListItemResponse(
         @Schema(description = "Name of the tenant")
         String name,
 
+        @Schema(description = "Default tenant locale")
+        String locale,
+
         @Schema(description = "Creation timestamp", example = "2024-10-15T12:00:00Z")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime createdAt,

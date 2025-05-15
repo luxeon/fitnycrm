@@ -1,4 +1,4 @@
-package com.fitnycrm.common.validation;
+package com.fitnycrm.common.validation.enumeration;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

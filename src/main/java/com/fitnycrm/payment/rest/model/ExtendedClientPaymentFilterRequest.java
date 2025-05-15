@@ -1,6 +1,6 @@
 package com.fitnycrm.payment.rest.model;
 
-import com.fitnycrm.common.validation.EnumValue;
+import com.fitnycrm.common.validation.enumeration.EnumValue;
 import com.fitnycrm.payment.repository.entity.PaymentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.format.annotation.DateTimeFormat;
