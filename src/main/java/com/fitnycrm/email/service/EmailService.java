@@ -15,6 +15,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class EmailService {
     private final SpringTemplateEngine templateEngine;
 
     @Async
-    public void sendConfirmationEmail(String to, String token) {
+    public void sendConfirmationEmail(String to, String token, Locale locale) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, StandardCharsets.UTF_8.name());
@@ -34,7 +35,7 @@ public class EmailService {
             context.setVariable("confirmationUrl",
                     String.format("%s?token=%s", emailProperties.getConfirmationUrl(), token));
 
-            String content = templateEngine.process("email/confirmation", context);
+            String content = templateEngine.process("email/%s/confirmation".formatted(locale.getLanguage()), context);
 
             helper.setFrom(emailProperties.getFrom());
             helper.setTo(to);
@@ -60,7 +61,8 @@ public class EmailService {
             context.setVariable("inviterName", inviterFullName);
             context.setVariable("tenantName", tenant.getName());
 
-            String content = templateEngine.process("email/client-invitation", context);
+            String content = templateEngine.process("email/%s/client-invitation"
+                    .formatted(tenant.getLocale().getLanguage()), context);
 
             helper.setFrom(emailProperties.getFrom());
             helper.setTo(invitation.getEmail());

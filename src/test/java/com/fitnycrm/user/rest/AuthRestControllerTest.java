@@ -34,7 +34,7 @@ class AuthRestControllerTest {
 
     @RegisterExtension
     static GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(GreenMailConfiguration.aConfig().withUser("test@fittrackcrm.com", "test"));
+            .withConfiguration(GreenMailConfiguration.aConfig().withUser("test@fitnycrm.com", "test"));
 
     @Autowired
     private MockMvc mockMvc;

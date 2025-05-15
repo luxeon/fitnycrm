@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Email Confirmation</title>
+    <title>Підтвердження електронної пошти</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,17 +31,17 @@
     </style>
 </head>
 <body>
-<h2>Welcome to FitTrack CRM!</h2>
-<p>Thank you for registering. Please confirm your email address by clicking the button below:</p>
+<h2>Ласкаво просимо до Fitny CRM!</h2>
+<p>Дякуємо за реєстрацію. Будь ласка, підтвердіть свою електронну адресу, натиснувши кнопку нижче:</p>
 
-<a th:href="${confirmationUrl}" class="button">Confirm Email</a>
+<a th:href="${confirmationUrl}" class="button">Підтвердити електронну пошту</a>
 
-<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+<p>Якщо кнопка не працює, ви також можете скопіювати та вставити це посилання у свій браузер:</p>
 <p th:text="${confirmationUrl}"></p>
 
 <div class="footer">
-    <p>This email was sent automatically. Please do not reply to this email.</p>
-    <p>&copy; 2025 FitTrack CRM. All rights reserved.</p>
+    <p>Цей лист надіслано автоматично. Будь ласка, не відповідайте на цей лист.</p>
+    <p>&copy; 2025 Fitny CRM. Усі права захищені.</p>
 </div>
 </body>
-</html> 
+</html>

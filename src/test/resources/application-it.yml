@@ -11,7 +11,7 @@ spring:
   mail:
     host: localhost
     port: 3025
-    username: test@fittrackcrm.com
+    username: test@fitnycrm.com
     password: test
 
 jwt:

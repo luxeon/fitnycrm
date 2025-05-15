@@ -52,7 +52,7 @@ public class AdminUserService {
 
         user = userRepository.save(user);
 
-        emailService.sendConfirmationEmail(user.getEmail(), user.getConfirmationToken());
+        emailService.sendConfirmationEmail(user.getEmail(), user.getConfirmationToken(), user.getLocale());
 
         return user;
     }
