@@ -104,6 +104,17 @@
             </mat-error>
           </mat-form-field>
 
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'signup.form.locale.label' | translate }}</mat-label>
+            <mat-select formControlName="locale">
+              <mat-option value="en">English</mat-option>
+              <mat-option value="uk">Українська</mat-option>
+            </mat-select>
+            <mat-error *ngIf="localeControl?.hasError('required')">
+              {{ 'signup.form.locale.required' | translate }}
+            </mat-error>
+          </mat-form-field>
+
           <div *ngIf="submitError" class="alert-error">
             {{ submitError }}
           </div>

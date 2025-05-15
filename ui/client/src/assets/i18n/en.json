@@ -65,6 +65,10 @@
         "required": "Please confirm your password",
         "mismatch": "Passwords do not match"
       },
+      "locale": {
+        "label": "Language",
+        "required": "Please select your preferred language"
+      },
       "submit": "Create Account"
     },
     "login": {
