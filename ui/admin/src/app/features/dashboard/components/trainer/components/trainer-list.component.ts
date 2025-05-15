@@ -6,6 +6,7 @@ import { ConfirmationDialogComponent } from '../../confirmation-dialog/confirmat
 import { firstValueFrom } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TrainerDialogComponent } from './trainer-dialog.component';
 
 @Component({
@@ -16,17 +17,18 @@ import { TrainerDialogComponent } from './trainer-dialog.component';
     TranslateModule,
     ConfirmationDialogComponent,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ],
   template: `
     <div class="trainers-grid">
       <div class="trainer-card" *ngFor="let trainer of trainers">
         <div class="trainer-info">
           <div class="card-actions">
-            <button class="edit-btn" (click)="onEditClick(trainer)">
+            <button class="edit-btn" (click)="onEditClick(trainer)" matTooltip="{{ 'common.edit' | translate }}">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteClick(trainer)">
+            <button class="delete-btn" (click)="onDeleteClick(trainer)" matTooltip="{{ 'common.delete' | translate }}">
               <span class="delete-icon">×</span>
             </button>
           </div>

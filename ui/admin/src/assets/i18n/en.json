@@ -82,6 +82,7 @@
       "noLocations": "No locations found. Add your first location to get started.",
       "loading": "Loading locations...",
       "addLocation": "Add Location",
+      "edit": "Edit Location",
       "delete": {
         "title": "Delete Location",
         "message": "Are you sure you want to delete this location? This action cannot be undone.",
@@ -308,6 +309,9 @@
     "workout": {
       "title": "Workout: {{name}}"
     }
+  },
+  "header": {
+    "logout": "Logout"
   },
   "emailConfirmation": {
     "pageTitle": "Email Confirmation",

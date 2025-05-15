@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { TrainingService, TrainingPageItemResponse } from '../../../../core/services/training.service';
@@ -19,6 +20,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
     TranslateModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatTooltipModule,
     ConfirmationDialogComponent
   ],
   animations: [
@@ -49,13 +51,13 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
       <div class="workouts-grid" *ngIf="!isLoading && workouts?.length">
         <div class="workout-card" *ngFor="let workout of workouts">
           <div class="card-actions">
-            <button class="tariff-btn" (click)="onAssignTariffs(workout)" title="{{ 'dashboard.workouts.tariffs.assign' | translate }}">
+            <button class="tariff-btn" (click)="onAssignTariffs(workout)" matTooltip="{{ 'dashboard.workouts.tariffs.assign' | translate }}">
               <span class="tariff-icon">💰</span>
             </button>
-            <button class="edit-btn" (click)="onEditWorkout(workout)" title="{{ 'common.edit' | translate }}">
+            <button class="edit-btn" (click)="onEditWorkout(workout)" matTooltip="{{ 'common.edit' | translate }}">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteClick(workout)" title="{{ 'common.delete' | translate }}">
+            <button class="delete-btn" (click)="onDeleteClick(workout)" matTooltip="{{ 'common.delete' | translate }}">
               <span class="delete-icon">×</span>
             </button>
           </div>
