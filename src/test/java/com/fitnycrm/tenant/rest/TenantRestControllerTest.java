@@ -104,6 +104,19 @@ class TenantRestControllerTest {
     }
 
     @Test
+    void create_whenNotSupportedLocale_thenBadRequest() throws Exception {
+        var request = readFile("fixture/tenant/create/request/unsupported-locale.json");
+        var expectedResponse = readFile("fixture/tenant/create/response/unsupported-locale.json");
+
+        mockMvc.perform(post(BASE_URL)
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminWithoutTenantTestJwtToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
     void create_whenInvalidRequest_thenReturn400() throws Exception {
         var request = readFile("fixture/tenant/create/request/invalid-tenant.json");
         var expectedResponse = readFile("fixture/tenant/create/response/validation-error.json");

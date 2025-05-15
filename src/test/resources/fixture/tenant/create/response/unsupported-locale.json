@@ -1,0 +1,9 @@
+{
+  "message": "Validation failed",
+  "errors": [
+    {
+      "field": "locale",
+      "message": "Allowed locales are: en, uk"
+    }
+  ]
+}

@@ -6,6 +6,7 @@
       "lastName": "Trainer",
       "email": "john.trainer@example.com",
       "phoneNumber": "+1234567890",
+      "locale": "en",
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     },
@@ -15,6 +16,7 @@
       "lastName": "Trainer",
       "email": "jane.trainer@example.com",
       "phoneNumber": "+1234567891",
+      "locale": "en",
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     },
@@ -24,6 +26,7 @@
       "lastName": "Trainer",
       "email": "bob.trainer@example.com",
       "phoneNumber": "+1234567892",
+      "locale": "en",
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     }

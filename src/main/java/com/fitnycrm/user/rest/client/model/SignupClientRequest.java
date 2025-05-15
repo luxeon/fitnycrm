@@ -1,5 +1,6 @@
 package com.fitnycrm.user.rest.client.model;
 
+import com.fitnycrm.common.validation.locale.SupportedLocale;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -24,6 +25,11 @@ public record SignupClientRequest(
         @Schema(description = "Client's password", example = "password123")
         @NotNull
         @Size(min = 8, max = 255)
-        String password
+        String password,
+
+        @Schema(description = "Client's locale", example = "en")
+        @NotNull
+        @SupportedLocale
+        String locale
 ) {
 } 

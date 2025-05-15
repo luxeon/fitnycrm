@@ -7,12 +7,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.Locale;
+
 @Mapper(componentModel = "spring")
 public interface TrainerRequestMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    User toUser(CreateTrainerRequest request);
+    User toUser(CreateTrainerRequest request, Locale locale);
 
     void updateUser(@MappingTarget User user, UpdateTrainerRequest request);
 } 

@@ -23,6 +23,9 @@ public record ClientDetailsResponse(
         @Schema(description = "User's phone number")
         String phoneNumber,
 
+        @Schema(description = "User's locale")
+        String locale,
+
         @Schema(description = "Creation timestamp", example = "2024-03-15T12:00:00Z")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime createdAt,

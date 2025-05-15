@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -43,6 +44,7 @@ public class AdminUserService {
                 new RoleNotFoundException(UserRole.Name.ADMIN));
         user.setRoles(Set.of(role));
 
+        user.setLocale(Locale.forLanguageTag(request.locale()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEmailConfirmed(false);
         user.setConfirmationToken(TokenUtils.generateToken());

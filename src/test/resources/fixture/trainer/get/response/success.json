@@ -4,6 +4,7 @@
   "firstName": "John",
   "lastName": "Trainer",
   "phoneNumber": "+1234567890",
+  "locale": "en",
   "createdAt": "${json-unit.any-string}",
   "updatedAt": "${json-unit.any-string}"
 } 

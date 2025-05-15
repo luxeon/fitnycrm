@@ -23,6 +23,9 @@ public record TrainerDetailsResponse(
         @Schema(description = "Phone number")
         String phoneNumber,
 
+        @Schema(description = "Trainers's locale")
+        String locale,
+
         @Schema(description = "Timestamp when the trainer was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime createdAt,

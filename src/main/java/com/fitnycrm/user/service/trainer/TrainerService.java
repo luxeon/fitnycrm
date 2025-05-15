@@ -36,7 +36,7 @@ public class TrainerService {
             throw new UserEmailAlreadyExistsException(request.email());
         }
         Tenant tenant = tenantService.findById(tenantId);
-        User trainer = requestMapper.toUser(request);
+        User trainer = requestMapper.toUser(request, tenant.getLocale());
         UserRole trainerRole = roleRepository.findByName(UserRole.Name.TRAINER)
                 .orElseThrow(() -> new RoleNotFoundException(Name.TRAINER));
 

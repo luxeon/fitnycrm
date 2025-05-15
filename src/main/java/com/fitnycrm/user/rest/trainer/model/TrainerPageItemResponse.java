@@ -11,17 +11,20 @@ public record TrainerPageItemResponse(
         @Schema(description = "Unique identifier of the trainer")
         UUID id,
 
-        @Schema(description = "First name")
+        @Schema(description = "Trainers's first name")
         String firstName,
 
-        @Schema(description = "Last name")
+        @Schema(description = "Trainers's last name")
         String lastName,
 
-        @Schema(description = "Email address")
+        @Schema(description = "Trainers's email address")
         String email,
 
-        @Schema(description = "Phone number")
+        @Schema(description = "Trainers's phone number")
         String phoneNumber,
+
+        @Schema(description = "Trainers's locale")
+        String locale,
 
         @Schema(description = "Timestamp when the trainer was created")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

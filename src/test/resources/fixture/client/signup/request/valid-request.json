@@ -2,5 +2,6 @@
     "firstName": "John",
     "lastName": "Doe",
     "phoneNumber": "+12345678901",
-    "password": "StrongP@ssw0rd123"
+    "password": "StrongP@ssw0rd123",
+    "locale": "en"
 } 

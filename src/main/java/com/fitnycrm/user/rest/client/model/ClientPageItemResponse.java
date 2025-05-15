@@ -8,20 +8,23 @@ import java.util.UUID;
 
 @Schema(description = "Client page item response")
 public record ClientPageItemResponse(
-        @Schema(description = "User ID")
+        @Schema(description = "Client ID")
         UUID id,
 
-        @Schema(description = "User's first name")
+        @Schema(description = "Client's first name")
         String firstName,
 
-        @Schema(description = "User's last name")
+        @Schema(description = "Client's last name")
         String lastName,
 
-        @Schema(description = "User's email")
+        @Schema(description = "Client's email")
         String email,
 
-        @Schema(description = "User's phone number")
+        @Schema(description = "Client's phone number")
         String phoneNumber,
+
+        @Schema(description = "Client's locale")
+        String locale,
 
         @Schema(description = "Creation timestamp", example = "2024-03-15T12:00:00Z")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.OffsetDateTime;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -100,6 +101,7 @@ public class ClientService {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setPhoneNumber(request.phoneNumber());
+        user.setLocale(Locale.forLanguageTag(request.locale()));
         user.setPassword(passwordEncoder.encode(request.password()));
 
         UserRole role = roleRepository.findByName(UserRole.Name.CLIENT).orElseThrow(() ->
