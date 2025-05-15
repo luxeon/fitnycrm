@@ -105,6 +105,9 @@
     "noLocations": "Локацій не знайдено",
     "loading": "Завантаження локацій..."
   },
+  "locationDetails": {
+    "title": "Локація"
+  },
   "schedules": {
     "title": "Розклад",
     "noSchedules": "Розкладів не знайдено",

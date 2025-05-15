@@ -105,6 +105,9 @@
     "noLocations": "No locations found",
     "loading": "Loading locations..."
   },
+  "locationDetails": {
+    "title": "Location details"
+  },
   "schedules": {
     "title": "Schedules",
     "noSchedules": "No schedules found",

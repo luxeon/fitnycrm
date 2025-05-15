@@ -5,7 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { authGuard } from './core/guards/auth.guard';
 import { ClientInvitationComponent } from './client-invitation/client-invitation.component';
 import { LocationListComponent } from './features/locations/location-list.component';
-import { ScheduleListComponent } from './features/schedules/schedule-list.component';
+import { LocationDetailsComponent } from './features/location-details/location-details.component';
 
 export const routes: Routes = [
   {
@@ -36,8 +36,8 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
-    path: 'tenant/:tenantId/locations/:locationId/schedules',
-    component: ScheduleListComponent,
+    path: 'tenant/:tenantId/locations/:locationId',
+    component: LocationDetailsComponent,
     canActivate: [authGuard]
   },
   {

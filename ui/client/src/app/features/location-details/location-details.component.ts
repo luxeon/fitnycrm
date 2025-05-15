@@ -50,14 +50,14 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
   ],
   template: `
     <div class="schedules-container">
-      <app-breadcrumb 
+      <app-breadcrumb
         [tenantId]="tenantId"
         [locationName]="location?.address ?? null"
       ></app-breadcrumb>
 
       <div class="header-section" @fadeInOut>
         <div class="location-header" *ngIf="location">
-          <h2 class="schedules-title">{{ 'schedules.title' | translate }}</h2>
+          <h2 class="schedules-title">{{ 'locationDetails.title' | translate }}</h2>
           <div class="location-info">
             <div class="address">{{ location.address }}</div>
             <div class="city-state">{{ location.city }}, {{ location.state }} {{ location.postalCode }}</div>
@@ -135,13 +135,13 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
       <!-- Calendar View -->
       <div class="calendar-view" *ngIf="!isLoading && schedules?.length && viewMode === 'calendar'" @fadeInOut>
         <mat-card class="calendar-card">
-          <mat-calendar 
+          <mat-calendar
             [selected]="selectedDate"
             (selectedChange)="onDateSelected($event)"
             [dateClass]="dateClass">
           </mat-calendar>
         </mat-card>
-        
+
         <div class="selected-date-schedules">
           <h3 class="selected-date-header">
             {{ selectedDate | date:'fullDate':undefined:translate.currentLang }}
@@ -197,7 +197,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
   styles: [`
     .schedules-container {
       padding: 24px;
-      
+
       @media (max-width: 768px) {
         padding: 16px 8px;
       }
@@ -566,7 +566,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
             height: 6px;
             border-radius: 50%;
           }
-          
+
           .mat-calendar-body-cell.has-visits::after {
             background-color: #4caf50;
             width: 8px;
@@ -683,7 +683,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
     }
   `]
 })
-export class ScheduleListComponent implements OnInit {
+export class LocationDetailsComponent implements OnInit {
   private scheduleService = inject(ScheduleService);
   private locationService = inject(LocationService);
   private visitService = inject(VisitService);
@@ -762,7 +762,7 @@ export class ScheduleListComponent implements OnInit {
   dateClass = (date: Date): MatCalendarCellCssClasses => {
     const dayName = this.getDayName(date.getDay());
     const hasSchedules = this.getDaySchedules(dayName).length > 0;
-    
+
     // Mark days that have visits for the user
     const hasVisit = this.visits.some(visit => {
       const visitDate = new Date(visit.date);
@@ -774,13 +774,13 @@ export class ScheduleListComponent implements OnInit {
     } else if (hasSchedules) {
       return 'has-events';
     }
-    
+
     return '';
   }
 
   getSchedulesForDate(date: Date): SchedulePageItemResponse[] {
     if (!date || !this.schedules) return [];
-    
+
     const dayName = this.getDayName(date.getDay());
     this.currentDay = dayName; // Set the current day based on the selected date
     return this.getDaySchedules(dayName);
@@ -902,7 +902,7 @@ export class ScheduleListComponent implements OnInit {
       locationId: this.locationId,
       selectedDay
     };
-    
+
     if (this.viewMode === 'calendar') {
       // In calendar view, we want to only show/book visits for the specific selected date
       dialogData.selectedDate = new Date(this.selectedDate);
@@ -935,7 +935,7 @@ export class ScheduleListComponent implements OnInit {
             this.visits = visits;
             // Clear the cache when visits are updated
             this.bookedDatesCache = {};
-            
+
             // Force refresh the calendar view by creating a new date object
             // This ensures the calendar markers update immediately
             if (this.viewMode === 'calendar') {

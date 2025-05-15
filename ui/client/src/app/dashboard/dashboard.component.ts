@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
       const locations = await firstValueFrom(this.locationService.getLocations(tenant.id));
 
       if (locations.content.length === 1) {
-        this.router.navigate(['/tenant', tenant.id, 'locations', locations.content[0].id, 'schedules']);
+        this.router.navigate(['/tenant', tenant.id, 'locations', locations.content[0].id]);
       } else {
         this.router.navigate(['/tenant', tenant.id, 'locations']);
       }
