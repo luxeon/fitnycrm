@@ -17,7 +17,17 @@ export class AppComponent {
   private readonly translateService = inject(TranslateService);
 
   constructor() {
+    this.setupLanguage();
     this.setupTitleUpdates();
+  }
+
+  private setupLanguage(): void {
+    // Set default language
+    this.translateService.setDefaultLang('en');
+    
+    // Use browser language if available, otherwise use default
+    const browserLang = this.translateService.getBrowserLang();
+    this.translateService.use(browserLang?.match(/en|es|uk/) ? browserLang : 'en');
   }
 
   private setupTitleUpdates(): void {

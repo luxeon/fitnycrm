@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService, UserSignupRequest } from '../../core/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-registration',
@@ -13,7 +14,8 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    TranslateModule
+    TranslateModule,
+    LanguageSwitcherComponent
   ],
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.scss']

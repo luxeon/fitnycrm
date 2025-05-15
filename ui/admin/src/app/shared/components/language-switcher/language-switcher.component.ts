@@ -1,53 +1,89 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
+interface Language {
+  code: string;
+  name: string;
+  flag: string;
+}
 
 @Component({
   selector: 'app-language-switcher',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatMenuModule, MatButtonModule, MatIconModule],
   template: `
     <div class="language-switcher">
-      <button 
-        (click)="switchLanguage('en')" 
-        [class.active]="currentLang === 'en'">
-        🇺🇸 EN
+      <button mat-button [matMenuTriggerFor]="languageMenu" class="language-button">
+        <span class="flag">{{ getCurrentLanguage().flag }}</span>
+        <span class="lang-code">{{ getCurrentLanguage().code.toUpperCase() }}</span>
+        <mat-icon>arrow_drop_down</mat-icon>
       </button>
-      <button 
-        (click)="switchLanguage('es')" 
-        [class.active]="currentLang === 'es'">
-        🇪🇸 ES
-      </button>
+      <mat-menu #languageMenu="matMenu" xPosition="before">
+        @for (language of languages; track language.code) {
+          <button mat-menu-item 
+            (click)="switchLanguage(language.code)"
+            [class.active]="currentLang() === language.code">
+            <span class="flag">{{ language.flag }}</span>
+            <span class="lang-name">{{ language.name }}</span>
+          </button>
+        }
+      </mat-menu>
     </div>
   `,
   styles: [`
     .language-switcher {
-      display: flex;
-      gap: 8px;
+      display: inline-block;
     }
-    button {
-      padding: 8px 16px;
-      border: 1px solid #ddd;
+    
+    .language-button {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
       border-radius: 4px;
-      background: white;
-      cursor: pointer;
+      background: transparent;
+      border: 1px solid #ddd;
       transition: all 0.2s;
     }
-    button:hover {
-      background: #f5f5f5;
+    
+    .flag {
+      font-size: 1.2rem;
+      margin-right: 4px;
     }
+    
+    .lang-code {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .lang-name {
+      margin-left: 8px;
+    }
+    
     button.active {
-      background: #e0e0e0;
-      border-color: #bbb;
+      background: #f0f0f0;
     }
   `]
 })
 export class LanguageSwitcherComponent {
   private translate = inject(TranslateService);
-  currentLang = this.translate.currentLang;
+  currentLang = signal(this.translate.currentLang || 'en');
+  
+  languages: Language[] = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'uk', name: 'Українська', flag: '🇺🇦' }
+  ];
 
-  switchLanguage(lang: string) {
+  getCurrentLanguage(): Language {
+    return this.languages.find(lang => lang.code === this.currentLang()) || this.languages[0];
+  }
+
+  switchLanguage(lang: string): void {
     this.translate.use(lang);
-    this.currentLang = lang;
+    this.currentLang.set(lang);
   }
 } 

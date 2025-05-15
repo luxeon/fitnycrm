@@ -1,5 +1,9 @@
 <div class="registration-container">
   <div class="registration-card">
+    <div class="language-switcher-container">
+      <app-language-switcher></app-language-switcher>
+    </div>
+    
     <h2>{{ 'registration.title' | translate }}</h2>
     <p class="subtitle">{{ 'registration.subtitle' | translate }}</p>
 
@@ -95,6 +99,7 @@
           formControlName="locale"
           [class.error]="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">
           <option value="en">English</option>
+          <option value="es">Español</option>
           <option value="uk">Українська</option>
         </select>
         <div class="error-message" *ngIf="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">

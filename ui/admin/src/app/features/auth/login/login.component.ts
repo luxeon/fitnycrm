@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { firstValueFrom } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     ReactiveFormsModule,
     RouterLink,
     TranslateModule,
+    LanguageSwitcherComponent
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
