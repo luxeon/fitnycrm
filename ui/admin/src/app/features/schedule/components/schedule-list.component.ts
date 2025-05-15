@@ -35,7 +35,7 @@ interface SchedulesByDay {
             class="day-tab"
             [class.active]="selectedDay === day"
             (click)="selectDay(day)">
-            {{ day }}
+            {{ 'schedule.days.' + day.toLowerCase() | translate }}
           </button>
         }
       </div>
@@ -45,7 +45,7 @@ interface SchedulesByDay {
           @for (day of weekDays; track day) {
             <div class="day-column">
               <div class="day-header">
-                <span class="day-name">{{ day }}</span>
+                <span class="day-name">{{ 'schedule.days.' + day.toLowerCase() | translate }}</span>
                 <span class="schedule-count" *ngIf="schedulesByDay[day].length">
                   {{ schedulesByDay[day].length }} {{ 'schedule.classes' | translate }}
                 </span>
