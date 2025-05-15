@@ -24,7 +24,7 @@ interface Language {
       </button>
       <mat-menu #languageMenu="matMenu" xPosition="before">
         @for (language of languages; track language.code) {
-          <button mat-menu-item 
+          <button mat-menu-item
             (click)="switchLanguage(language.code)"
             [class.active]="currentLang() === language.code">
             <span class="flag">{{ language.flag }}</span>
@@ -38,7 +38,7 @@ interface Language {
     .language-switcher {
       display: inline-block;
     }
-    
+
     .language-button {
       display: flex;
       align-items: center;
@@ -48,21 +48,21 @@ interface Language {
       border: 1px solid #ddd;
       transition: all 0.2s;
     }
-    
+
     .flag {
       font-size: 1.2rem;
       margin-right: 4px;
     }
-    
+
     .lang-code {
       font-size: 0.9rem;
       font-weight: 500;
     }
-    
+
     .lang-name {
       margin-left: 8px;
     }
-    
+
     button.active {
       background: #f0f0f0;
     }
@@ -71,10 +71,10 @@ interface Language {
 export class LanguageSwitcherComponent {
   private translate = inject(TranslateService);
   currentLang = signal(this.translate.currentLang || 'en');
-  
+
   languages: Language[] = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    // { code: 'es', name: 'Español', flag: '🇪🇸' },
     { code: 'uk', name: 'Українська', flag: '🇺🇦' }
   ];
 
@@ -86,4 +86,4 @@ export class LanguageSwitcherComponent {
     this.translate.use(lang);
     this.currentLang.set(lang);
   }
-} 
+}

@@ -27,7 +27,7 @@ export class AppComponent {
     
     // Use browser language if available, otherwise use default
     const browserLang = this.translateService.getBrowserLang();
-    this.translateService.use(browserLang?.match(/en|es|uk/) ? browserLang : 'en');
+    this.translateService.use(browserLang?.match(/en|uk/) ? browserLang : 'en');
   }
 
   private setupTitleUpdates(): void {
