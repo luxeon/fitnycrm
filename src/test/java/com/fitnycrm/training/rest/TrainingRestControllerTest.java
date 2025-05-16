@@ -249,14 +249,6 @@ class TrainingRestControllerTest {
                 .andExpect(json().isEqualTo(expectedResponse));
     }
 
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void findById_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
-        mockMvc.perform(get(BASE_URL + "/{trainingId}", EXISTING_TRAINING_ID)
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
-                .andExpect(status().isForbidden());
-    }
-
     @Test
     @Sql("/db/training/insert.sql")
     void findByTenantId_whenTrainingsExist_thenReturnPaginatedTrainings() throws Exception {
@@ -287,16 +279,6 @@ class TrainingRestControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden())
                 .andExpect(json().isEqualTo(expectedResponse));
-    }
-
-    @ParameterizedTest
-    @EnumSource(value = UserRole.Name.class, names = {"CLIENT", "TRAINER"})
-    void findByTenantId_whenUserHasUnauthorizedRole_thenReturn403(UserRole.Name role) throws Exception {
-        mockMvc.perform(get(BASE_URL)
-                        .param("page", "0")
-                        .param("size", "10")
-                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(role)))
-                .andExpect(status().isForbidden());
     }
 
     @Test

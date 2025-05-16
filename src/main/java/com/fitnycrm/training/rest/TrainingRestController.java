@@ -71,7 +71,7 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "404", description = "Training not found")
     })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public TrainingDetailsResponse findById(@PathVariable UUID tenantId,
                                             @PathVariable UUID id) {
         return trainingFacade.findById(tenantId, id);
@@ -84,7 +84,7 @@ public class TrainingRestController {
             @ApiResponse(responseCode = "403", description = "Access denied")
     })
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN') and @permissionEvaluator.check(#tenantId)")
+    @PreAuthorize("@permissionEvaluator.check(#tenantId)")
     public Page<TrainingPageItemResponse> findByTenantId(@PathVariable UUID tenantId,
                                                          Pageable pageable) {
         return trainingFacade.findByTenantId(tenantId, pageable);
