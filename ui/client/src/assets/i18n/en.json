@@ -158,7 +158,8 @@
     "status": {
       "completed": "Completed",
       "pending": "Pending",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "expired": "Expired"
     }
   }
 }

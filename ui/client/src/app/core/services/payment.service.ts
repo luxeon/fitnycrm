@@ -6,7 +6,8 @@ import { Page } from '../models/page.model';
 export enum PaymentStatus {
   COMPLETED = 'COMPLETED',
   PENDING = 'PENDING',
-  CANCELED = 'CANCELED'
+  CANCELED = 'CANCELED',
+  EXPIRED = 'EXPIRED'
 }
 
 export interface PaymentPageItemResponse {

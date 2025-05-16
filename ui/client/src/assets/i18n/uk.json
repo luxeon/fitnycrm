@@ -158,7 +158,8 @@
     "status": {
       "completed": "Завершено",
       "pending": "В обробці",
-      "canceled": "Скасовано"
+      "canceled": "Скасовано",
+      "expired": "Закінчився"
     }
   }
 }

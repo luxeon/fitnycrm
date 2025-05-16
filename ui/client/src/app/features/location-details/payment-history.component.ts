@@ -102,10 +102,10 @@ import { ActivatedRoute } from '@angular/router';
               <th mat-header-cell *matHeaderCellDef>{{ 'payment.history.status' | translate }}</th>
               <td mat-cell *matCellDef="let payment">
                 <mat-chip 
-                  [color]="getStatusColor(payment.status)" 
-                  [matTooltip]="'payment.status.' + payment.status?.toLowerCase() | translate"
+                  [color]="getStatusColor(getEffectiveStatus(payment))" 
+                  [matTooltip]="'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate"
                   disableRipple>
-                  {{ 'payment.status.' + payment.status?.toLowerCase() | translate }}
+                  {{ 'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate }}
                 </mat-chip>
               </td>
             </ng-container>
@@ -180,6 +180,10 @@ import { ActivatedRoute } from '@angular/router';
     ::ng-deep .mat-accent.mat-mdc-chip.mat-mdc-standard-chip {
       --mdc-chip-elevated-container-color: #f39c12;
     }
+
+    ::ng-deep .mat-muted.mat-mdc-chip.mat-mdc-standard-chip {
+      --mdc-chip-elevated-container-color: #95a5a6;
+    }
   `]
 })
 export class PaymentHistoryComponent implements OnInit {
@@ -239,6 +243,32 @@ export class PaymentHistoryComponent implements OnInit {
     this.fetchPayments();
   }
 
+  /**
+   * Checks if a payment is expired based on its creation date and validity period
+   */
+  isExpired(payment: PaymentPageItemResponse): boolean {
+    // Only check for expiration on COMPLETED payments with validDays
+    if (payment.status !== PaymentStatus.COMPLETED || !payment.validDays) {
+      return false;
+    }
+
+    const createdAt = new Date(payment.createdAt);
+    const expiryDate = new Date(createdAt);
+    expiryDate.setDate(expiryDate.getDate() + payment.validDays);
+    
+    return new Date() > expiryDate;
+  }
+
+  /**
+   * Gets the effective status of a payment, including calculated EXPIRED status
+   */
+  getEffectiveStatus(payment: PaymentPageItemResponse): PaymentStatus {
+    if (this.isExpired(payment)) {
+      return PaymentStatus.EXPIRED;
+    }
+    return payment.status;
+  }
+
   getStatusColor(status: PaymentStatus): string {
     switch (status) {
       case PaymentStatus.COMPLETED:
@@ -247,6 +277,8 @@ export class PaymentHistoryComponent implements OnInit {
         return 'warn';
       case PaymentStatus.PENDING:
         return 'accent';
+      case PaymentStatus.EXPIRED:
+        return 'muted';
       default:
         return '';
     }
