@@ -153,7 +153,9 @@
       "amount": "Сума",
       "status": "Статус",
       "valid_for": "дійсно",
-      "days": "днів"
+      "days": "днів",
+      "remaining": "Залишилось",
+      "expires": "Діє до"
     },
     "status": {
       "completed": "Завершено",

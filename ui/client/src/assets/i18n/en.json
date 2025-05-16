@@ -153,7 +153,9 @@
       "amount": "Amount",
       "status": "Status",
       "valid_for": "valid for",
-      "days": "days"
+      "days": "days",
+      "remaining": "Remaining",
+      "expires": "Expires"
     },
     "status": {
       "completed": "Completed",

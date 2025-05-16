@@ -11,10 +11,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { PaymentService, PaymentPageItemResponse, PaymentStatus } from '../../core/services/payment.service';
+import { PaymentService, PaymentPageItemResponse, PaymentStatus, TrainingCreditsSummaryResponse } from '../../core/services/payment.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Page } from '../../core/models/page.model';
 import { ActivatedRoute } from '@angular/router';
+import { forkJoin, of, switchMap } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-payment-history',
@@ -42,7 +44,7 @@ import { ActivatedRoute } from '@angular/router';
   ],
   template: `
     <div class="payment-history-container" @fadeInOut>
-      <mat-expansion-panel 
+      <mat-expansion-panel
         [expanded]="isExpanded"
         (opened)="panelOpened()"
         (closed)="isExpanded = false">
@@ -88,6 +90,14 @@ import { ActivatedRoute } from '@angular/router';
                 <span *ngIf="payment.validDays" class="validity">
                   ({{ 'payment.history.valid_for' | translate }} {{ payment.validDays }} {{ 'payment.history.days' | translate }})
                 </span>
+                <div *ngIf="getEffectiveStatus(payment) === 'COMPLETED' && !isExpired(payment) && hasCreditsSummary(payment)" class="remaining-credits">
+                  <span class="credits-info">
+                    {{ 'payment.history.remaining' | translate }}: {{ getCreditsSummary(payment)?.remainingTrainings }}
+                  </span>
+                  <span class="credits-info">
+                    {{ 'payment.history.expires' | translate }}: {{ getCreditsSummary(payment)?.expiresAt | date:'mediumDate' }}
+                  </span>
+                </div>
               </td>
             </ng-container>
 
@@ -101,8 +111,8 @@ import { ActivatedRoute } from '@angular/router';
             <ng-container matColumnDef="status">
               <th mat-header-cell *matHeaderCellDef>{{ 'payment.history.status' | translate }}</th>
               <td mat-cell *matCellDef="let payment">
-                <mat-chip 
-                  [color]="getStatusColor(getEffectiveStatus(payment))" 
+                <mat-chip
+                  [color]="getStatusColor(getEffectiveStatus(payment))"
                   [matTooltip]="'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate"
                   disableRipple>
                   {{ 'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate }}
@@ -162,6 +172,18 @@ import { ActivatedRoute } from '@angular/router';
       margin-left: 4px;
     }
 
+    .remaining-credits {
+      margin-top: 4px;
+      font-size: 0.85em;
+      color: #3498db;
+    }
+
+    .credits-info {
+      display: block;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
     ::ng-deep .mat-mdc-chip.mat-mdc-standard-chip {
       --mdc-chip-label-text-color: white;
       --mdc-chip-elevated-container-color: #3498db;
@@ -195,18 +217,21 @@ export class PaymentHistoryComponent implements OnInit {
   isLoading = false;
   tenantId = '';
   clientId = '';
-  
+
   payments: Page<PaymentPageItemResponse> | null = null;
   displayedColumns: string[] = ['date', 'training', 'units', 'amount', 'status'];
   currentPage = 0;
   pageSize = 5;
+
+  // Store training credits summary by training ID
+  creditsSummaries: Map<string, TrainingCreditsSummaryResponse> = new Map();
 
   ngOnInit(): void {
     const claims = this.authService.getUserClaims();
     if (claims) {
       // Get the UUID id from JWT claims
       this.clientId = claims.id;
-      
+
       // Get tenant ID from route params
       this.route.params.subscribe(params => {
         if (params['tenantId']) {
@@ -223,12 +248,54 @@ export class PaymentHistoryComponent implements OnInit {
 
   fetchPayments(): void {
     if (!this.tenantId || !this.clientId) return;
-    
+
     this.isLoading = true;
     this.paymentService.getPayments(this.tenantId, this.clientId, this.currentPage, this.pageSize)
-      .subscribe({
-        next: (response) => {
+      .pipe(
+        switchMap(response => {
           this.payments = response;
+
+          // Reset credits summaries map
+          this.creditsSummaries.clear();
+
+          // Create an array of observables for fetching training credits summaries
+          // Only for non-expired COMPLETED payments
+          const creditRequests =
+            response.content
+              .filter(payment =>
+                payment.status === PaymentStatus.COMPLETED &&
+                !this.isExpired(payment) &&
+                payment.training?.id
+              )
+              .map(payment =>
+                this.paymentService.getTrainingCreditsSummary(
+                  this.tenantId,
+                  this.clientId,
+                  payment.training.id
+                ).pipe(
+                  map(summary => [payment.training.id, summary] as [string, TrainingCreditsSummaryResponse]),
+                  catchError(() => of(null as unknown as [string, TrainingCreditsSummaryResponse]))
+                )
+              );
+
+          // If there are no credit requests, return empty array
+          if (creditRequests.length === 0) {
+            return of([]);
+          }
+
+          // Execute all requests in parallel
+          return forkJoin(creditRequests);
+        })
+      )
+      .subscribe({
+        next: (summaries) => {
+          // Store summaries in map
+          summaries.forEach(item => {
+            if (item) {
+              const [trainingId, summary] = item;
+              this.creditsSummaries.set(trainingId, summary);
+            }
+          });
           this.isLoading = false;
         },
         error: () => {
@@ -253,17 +320,14 @@ export class PaymentHistoryComponent implements OnInit {
     }
 
     const createdAt = new Date(payment.createdAt);
-    const expiryDate = new Date(createdAt);
-    expiryDate.setDate(expiryDate.getDate() + payment.validDays);
-    
-    return new Date() > expiryDate;
+    const expiresAt = new Date(createdAt);
+    expiresAt.setDate(expiresAt.getDate() + payment.validDays);
+
+    return expiresAt < new Date();
   }
 
-  /**
-   * Gets the effective status of a payment, including calculated EXPIRED status
-   */
   getEffectiveStatus(payment: PaymentPageItemResponse): PaymentStatus {
-    if (this.isExpired(payment)) {
+    if (payment.status === PaymentStatus.COMPLETED && this.isExpired(payment)) {
       return PaymentStatus.EXPIRED;
     }
     return payment.status;
@@ -271,16 +335,25 @@ export class PaymentHistoryComponent implements OnInit {
 
   getStatusColor(status: PaymentStatus): string {
     switch (status) {
-      case PaymentStatus.COMPLETED:
-        return 'primary';
-      case PaymentStatus.CANCELED:
-        return 'warn';
-      case PaymentStatus.PENDING:
-        return 'accent';
-      case PaymentStatus.EXPIRED:
-        return 'muted';
-      default:
-        return '';
+      case PaymentStatus.COMPLETED: return 'primary';
+      case PaymentStatus.PENDING: return 'accent';
+      case PaymentStatus.CANCELED: return 'warn';
+      case PaymentStatus.EXPIRED: return 'muted';
+      default: return '';
     }
   }
-} 
+
+  /**
+   * Checks if credits summary exists for a payment
+   */
+  hasCreditsSummary(payment: PaymentPageItemResponse): boolean {
+    return !!payment.training?.id && this.creditsSummaries.has(payment.training.id);
+  }
+
+  /**
+   * Gets credits summary for a payment
+   */
+  getCreditsSummary(payment: PaymentPageItemResponse): TrainingCreditsSummaryResponse | undefined {
+    return payment.training?.id ? this.creditsSummaries.get(payment.training.id) : undefined;
+  }
+}

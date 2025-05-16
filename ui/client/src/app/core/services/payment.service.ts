@@ -31,6 +31,11 @@ export interface PaymentFilterRequest {
   toDate?: string;
 }
 
+export interface TrainingCreditsSummaryResponse {
+  remainingTrainings: number;
+  expiresAt: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,5 +50,11 @@ export class PaymentService {
     };
 
     return this.http.get<Page<PaymentPageItemResponse>>(`/api/tenants/${tenantId}/clients/${clientId}/payments`, { params });
+  }
+
+  getTrainingCreditsSummary(tenantId: string, clientId: string, trainingId: string): Observable<TrainingCreditsSummaryResponse> {
+    return this.http.get<TrainingCreditsSummaryResponse>(
+      `/api/tenants/${tenantId}/clients/${clientId}/trainings/${trainingId}/credits/summary`
+    );
   }
 } 
