@@ -15,10 +15,15 @@ export interface AuthResponse {
 
 export interface UserClaims {
   sub: string;
+  id: string;
+  tenantIds: string[];
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
+  roles?: any[];
   exp: number;
+  iat?: number;
 }
 
 @Injectable({

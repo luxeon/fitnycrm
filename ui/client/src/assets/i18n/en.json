@@ -140,5 +140,25 @@
       "invalidDate": "Selected date is not available for this schedule",
       "generic": "An error occurred while booking your visit. Please try again."
     }
+  },
+  "payment": {
+    "history": {
+      "title": "Payment History",
+      "show": "Show payment history",
+      "hide": "Hide payment history",
+      "empty": "No payment records found",
+      "date": "Date",
+      "training": "Training",
+      "units": "Units",
+      "amount": "Amount",
+      "status": "Status",
+      "valid_for": "valid for",
+      "days": "days"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "canceled": "Canceled"
+    }
   }
 }

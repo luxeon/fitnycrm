@@ -21,6 +21,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
+import { PaymentHistoryComponent } from './payment-history.component';
 
 @Component({
   selector: 'app-schedule-list',
@@ -35,7 +36,8 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
     MatBadgeModule,
     MatDatepickerModule,
     MatCardModule,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    PaymentHistoryComponent
   ],
   providers: [
     provideNativeDateAdapter()
@@ -63,6 +65,8 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
             <div class="city-state">{{ location.city }}, {{ location.state }} {{ location.postalCode }}</div>
           </div>
         </div>
+
+        <app-payment-history></app-payment-history>
 
         <div class="view-controls">
           <mat-button-toggle-group
