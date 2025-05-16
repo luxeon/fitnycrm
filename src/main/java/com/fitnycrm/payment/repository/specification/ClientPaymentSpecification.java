@@ -3,6 +3,7 @@ package com.fitnycrm.payment.repository.specification;
 import com.fitnycrm.payment.repository.entity.ClientPayment;
 import com.fitnycrm.payment.rest.model.ClientPaymentFilterRequest;
 import com.fitnycrm.payment.rest.model.ExtendedClientPaymentFilterRequest;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -24,6 +25,10 @@ public class ClientPaymentSpecification {
     public static Specification<ClientPayment> withTenantFilters(UUID tenantId, ExtendedClientPaymentFilterRequest filter) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
+
+            if (query != null && Long.class != query.getResultType()) {
+                root.fetch("training", JoinType.LEFT);
+            }
 
             predicates.add(cb.equal(root.get("tenant").get("id"), tenantId));
 

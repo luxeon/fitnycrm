@@ -17,8 +17,8 @@ public record ClientPaymentPageItemResponse(
         @Schema(description = "Current status of the payment")
         PaymentStatus status,
 
-        @Schema(description = "ID of the training")
-        UUID trainingId,
+        @Schema(description = "Payment training")
+        Training training,
 
         @Schema(description = "Number of trainings included in the payment")
         Integer trainingsCount,
@@ -36,4 +36,8 @@ public record ClientPaymentPageItemResponse(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
         OffsetDateTime createdAt
 ) {
-} 
+
+    public record Training(@Schema(description = "Id of the training") UUID id,
+                           @Schema(description = "Name of the training") String name) {
+    }
+}

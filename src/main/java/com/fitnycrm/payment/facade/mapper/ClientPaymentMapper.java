@@ -12,7 +12,6 @@ public interface ClientPaymentMapper {
     @Mapping(target = "trainingId", source = "training.id")
     ClientPaymentDetailsResponse toDetailsResponse(ClientPayment payment);
 
-    @Mapping(target = "trainingId", source = "training.id")
     ClientPaymentPageItemResponse toPageItemResponse(ClientPayment payment);
 
 } 
