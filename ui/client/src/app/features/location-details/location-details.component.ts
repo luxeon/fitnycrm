@@ -22,6 +22,8 @@ import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarCellCssClasses } from '@angular/material/datepicker';
 import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 import { PaymentHistoryComponent } from './payment-history.component';
+import { TrainingService } from '../../core/services/training.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-schedule-list',
@@ -93,6 +95,7 @@ import { PaymentHistoryComponent } from './payment-history.component';
                   @for (schedule of getDaySchedules(day); track schedule.id) {
                     <div class="schedule-card"
                          [class.has-visit]="hasVisit(schedule.id)"
+                         [class.purchase-required]="isPurchaseRequired(schedule)"
                          (click)="openVisitDialog(schedule, day)">
                       <div class="schedule-info">
                         <div class="time-slot">
@@ -107,6 +110,13 @@ import { PaymentHistoryComponent } from './payment-history.component';
                         <div class="capacity">
                           {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
                         </div>
+
+                        @if (isPurchaseRequired(schedule)) {
+                          <div class="purchase-required-badge">
+                            <mat-icon color="warn">shopping_cart</mat-icon>
+                            {{ 'schedules.purchase_required' | translate }}
+                          </div>
+                        }
 
                         <!-- Show booked dates for this schedule and day -->
                         @if (getBookedDates(schedule.id, day).length) {
@@ -155,6 +165,7 @@ import { PaymentHistoryComponent } from './payment-history.component';
               @for (schedule of getSchedulesForDate(selectedDate); track schedule.id) {
                 <div class="schedule-card"
                      [class.has-visit]="hasVisitOnDate(schedule.id, selectedDate)"
+                     [class.purchase-required]="isPurchaseRequired(schedule)"
                      (click)="openVisitDialog(schedule, getDayName(selectedDate.getDay()))">
                   <div class="schedule-info">
                     <div class="time-slot">
@@ -169,6 +180,12 @@ import { PaymentHistoryComponent } from './payment-history.component';
                     <div class="capacity">
                       {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
                     </div>
+                    @if (isPurchaseRequired(schedule)) {
+                      <div class="purchase-required-badge">
+                        <mat-icon color="warn">shopping_cart</mat-icon>
+                        {{ 'schedules.purchase_required' | translate }}
+                      </div>
+                    }
                     @if (hasVisitOnDate(schedule.id, selectedDate)) {
                       <div class="visit-info">
                         <div class="visit-badge">
@@ -389,6 +406,10 @@ import { PaymentHistoryComponent } from './payment-history.component';
           border: 2px solid #2196f3;
         }
 
+        &.purchase-required {
+          border: 2px solid #f44336;
+        }
+
         .schedule-info {
           .time-slot {
             font-weight: 500;
@@ -469,6 +490,35 @@ import { PaymentHistoryComponent } from './payment-history.component';
 
       @media (max-width: 768px) {
         font-size: 12px;
+      }
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+
+        @media (max-width: 768px) {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+
+    .purchase-required-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #f44336;
+      font-size: 13px;
+      margin-top: 8px;
+      padding: 4px 8px;
+      background-color: #ffebee;
+      border-radius: 4px;
+
+      @media (max-width: 768px) {
+        font-size: 12px;
+        margin-top: 6px;
       }
 
       mat-icon {
@@ -628,6 +678,10 @@ import { PaymentHistoryComponent } from './payment-history.component';
           border: 2px solid #2196f3;
         }
 
+        &.purchase-required {
+          border: 2px solid #f44336;
+        }
+
         .schedule-info {
           .time-slot {
             font-weight: 500;
@@ -691,6 +745,8 @@ export class LocationDetailsComponent implements OnInit {
   private scheduleService = inject(ScheduleService);
   private locationService = inject(LocationService);
   private visitService = inject(VisitService);
+  private trainingService = inject(TrainingService);
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   protected translate = inject(TranslateService);
@@ -701,9 +757,13 @@ export class LocationDetailsComponent implements OnInit {
   isLoading = false;
   tenantId = '';
   locationId = '';
+  clientId = '';
   @Input() viewMode: 'weekly' | 'calendar' = 'calendar';
   @Output() viewModeChange = new EventEmitter<'weekly' | 'calendar'>();
   @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
+
+  // Map to track which trainings require purchase
+  trainingsPurchaseRequired: { [trainingId: string]: boolean } = {};
 
   readonly daysOfWeek = [
     'MONDAY',
@@ -723,6 +783,13 @@ export class LocationDetailsComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.tenantId = params['tenantId'];
       this.locationId = params['locationId'];
+
+      // Get the current user's ID
+      const userClaims = this.authService.getUserClaims();
+      if (userClaims) {
+        this.clientId = userClaims.id;
+      }
+
       this.loadData();
     });
   }
@@ -743,12 +810,51 @@ export class LocationDetailsComponent implements OnInit {
         this.visits = visits;
         // Clear the cache when visits are updated
         this.bookedDatesCache = {};
+
+        // Check credits for each training if client ID is available
+        if (this.clientId && this.schedules.length > 0) {
+          this.checkTrainingCredits();
+        }
+
         this.isLoading = false;
       },
       error: () => {
         this.isLoading = false;
         // Handle error - you might want to show a snackbar/toast here
       }
+    });
+  }
+
+  /**
+   * Check if the user has credits for each training
+   */
+  private checkTrainingCredits(): void {
+    if (!this.schedules || !this.clientId) return;
+
+    // Get unique training IDs from schedules
+    const trainingIds = new Set<string>();
+    this.schedules.forEach(schedule => {
+      if (schedule.trainingId) {
+        trainingIds.add(schedule.trainingId);
+      }
+    });
+
+    // Reset the purchase required map
+    this.trainingsPurchaseRequired = {};
+
+    // Check credits for each training
+    trainingIds.forEach(trainingId => {
+      this.trainingService.getTrainingCreditsSummary(this.tenantId, this.clientId, trainingId)
+        .subscribe({
+          next: (response) => {
+            // If expiresAt is null or remainingTrainings is 0, purchase is required
+            this.trainingsPurchaseRequired[trainingId] = !response.expiresAt || response.remainingTrainings <= 0;
+          },
+          error: () => {
+            // If there's an error, assume purchase is required
+            this.trainingsPurchaseRequired[trainingId] = true;
+          }
+        });
     });
   }
 
@@ -897,6 +1003,14 @@ export class LocationDetailsComponent implements OnInit {
   getVisitsForSchedule(scheduleId: string): VisitResponse[] {
     if (!this.visits) return [];
     return this.visits.filter(visit => visit.scheduleId === scheduleId);
+  }
+
+  /**
+   * Check if a schedule requires purchase (no credits available)
+   */
+  isPurchaseRequired(schedule: SchedulePageItemResponse): boolean {
+    if (!schedule.trainingId) return false;
+    return this.trainingsPurchaseRequired[schedule.trainingId];
   }
 
   openVisitDialog(schedule: SchedulePageItemResponse, selectedDay: string): void {

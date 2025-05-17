@@ -113,9 +113,9 @@ import { map, catchError } from 'rxjs/operators';
               <td mat-cell *matCellDef="let payment">
                 <mat-chip
                   [color]="getStatusColor(getEffectiveStatus(payment))"
-                  [matTooltip]="'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate"
+                  [matTooltip]="'payment.status.' + getEffectiveStatus(payment).toLowerCase() | translate"
                   disableRipple>
-                  {{ 'payment.status.' + getEffectiveStatus(payment)?.toLowerCase() | translate }}
+                  {{ 'payment.status.' + getEffectiveStatus(payment).toLowerCase() | translate }}
                 </mat-chip>
               </td>
             </ng-container>
