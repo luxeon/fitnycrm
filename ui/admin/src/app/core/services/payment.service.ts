@@ -6,7 +6,7 @@ import { PaymentStatus } from '../models/payment-status.enum';
 export interface PaymentPageItemResponse {
   id: string;
   status: PaymentStatus;
-  trainingId: string;
+  training: { id: string; name: string };
   trainingsCount: number;
   validDays: number;
   price: number;
@@ -54,4 +54,4 @@ export class PaymentService {
   cancelPayment(tenantId: string, clientId: string, paymentId: string): Observable<any> {
     return this.http.post<any>(`/api/tenants/${tenantId}/clients/${clientId}/payments/${paymentId}/cancel`, {});
   }
-} 
+}

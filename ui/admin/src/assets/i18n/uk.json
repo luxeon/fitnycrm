@@ -33,7 +33,8 @@
     "remainingTrainings": "Залишилось тренувань",
     "subscriptionExpiration": "Підписка закінчується",
     "return": "Повернутися",
-    "custom": "Індивідуальний"
+    "custom": "Індивідуальний",
+    "remaining": "залишилось"
   },
   "login": {
     "pageTitle": "Вхід",

@@ -33,7 +33,8 @@
     "remainingTrainings": "Remaining Trainings",
     "subscriptionExpiration": "Subscription Expires On",
     "return": "Return",
-    "custom": "Custom"
+    "custom": "Custom",
+    "remaining": "remaining"
   },
   "login": {
     "pageTitle": "Login",

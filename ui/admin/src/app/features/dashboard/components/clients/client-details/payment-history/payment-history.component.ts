@@ -6,6 +6,9 @@ import { NotificationService } from '../../../../../../core/services/notificatio
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaymentDialogComponent } from '../payment-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { TrainingService } from '../../../../../../core/services/training.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-payment-history',
@@ -47,7 +50,12 @@ import { TranslateService } from '@ngx-translate/core';
                   {{ 'payment.status.' + payment.status.toLowerCase() | translate }}
                 </span>
               </td>
-              <td>{{ payment.trainingsCount }}</td>
+              <td>
+                {{ payment.trainingsCount }}
+                <span *ngIf="remainingTrainings[payment.id] !== undefined" class="remaining-trainings">
+                  ({{ remainingTrainings[payment.id] }} {{ 'common.remaining' | translate }})
+                </span>
+              </td>
               <td>{{ payment.validDays }}</td>
               <td>{{ payment.price }} {{ payment.currency }}</td>
               <td>{{ payment.createdAt | date:'fullDate':undefined:translate.currentLang }}</td>
@@ -182,6 +190,12 @@ import { TranslateService } from '@ngx-translate/core';
       }
     }
 
+    .remaining-trainings {
+      color: #6c757d;
+      font-size: 0.9em;
+      margin-left: 4px;
+    }
+
     .cancel-button {
       padding: 4px 8px;
       background: #ffebee;
@@ -235,12 +249,14 @@ export class PaymentHistoryComponent implements OnInit {
   @Input() clientId!: string;
 
   private paymentService = inject(PaymentService);
+  private trainingService = inject(TrainingService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
   public translate = inject(TranslateService);
 
   isLoading = false;
   payments: PaymentPageItemResponse[] = [];
+  remainingTrainings: { [key: string]: number } = {};
   currentPage = 0;
   totalPages = 0;
 
@@ -256,6 +272,7 @@ export class PaymentHistoryComponent implements OnInit {
           this.payments = response.content;
           this.currentPage = response.number;
           this.totalPages = response.totalPages;
+          this.loadRemainingTrainings();
           this.isLoading = false;
         },
         error: (error) => {
@@ -263,6 +280,38 @@ export class PaymentHistoryComponent implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+
+  private loadRemainingTrainings(): void {
+    // Get the most recent payment for each training
+    const trainingPayments = new Map<string, PaymentPageItemResponse>();
+    this.payments.forEach(payment => {
+      if (payment.status !== 'CANCELED') {
+        const existingPayment = trainingPayments.get(payment.training.id);
+        if (!existingPayment || new Date(payment.createdAt) > new Date(existingPayment.createdAt)) {
+          trainingPayments.set(payment.training.id, payment);
+        }
+      }
+    });
+
+    // Fetch remaining trainings for each training
+    const requests = Array.from(trainingPayments.values()).map(payment =>
+      this.trainingService.getTrainingCreditsSummary(this.tenantId, this.clientId, payment.training.id)
+        .pipe(
+          map(summary => ({ paymentId: payment.id, remaining: summary.remainingTrainings })),
+          catchError(() => of({ paymentId: payment.id, remaining: undefined }))
+        )
+    );
+
+    if (requests.length > 0) {
+      forkJoin(requests).subscribe(results => {
+        results.forEach(result => {
+          if (result.remaining !== undefined) {
+            this.remainingTrainings[result.paymentId] = result.remaining;
+          }
+        });
+      });
+    }
   }
 
   onPageChange(page: number): void {
