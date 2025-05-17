@@ -95,7 +95,7 @@ import { AuthService } from '../../core/services/auth.service';
                   @for (schedule of getDaySchedules(day); track schedule.id) {
                     <div class="schedule-card"
                          [class.has-visit]="hasVisit(schedule.id)"
-                         [class.purchase-required]="isPurchaseRequired(schedule)"
+                         [class.purchase-required]="!hasVisitOnDate(schedule.id, selectedDate) && isPurchaseRequired(schedule)"
                          (click)="openVisitDialog(schedule, day)">
                       <div class="schedule-info">
                         <div class="time-slot">
@@ -111,7 +111,7 @@ import { AuthService } from '../../core/services/auth.service';
                           {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
                         </div>
 
-                        @if (isPurchaseRequired(schedule)) {
+                        @if (!hasVisitOnDate(schedule.id, selectedDate) && isPurchaseRequired(schedule)) {
                           <div class="purchase-required-badge">
                             <mat-icon color="warn">shopping_cart</mat-icon>
                             {{ 'schedules.purchase_required' | translate }}
@@ -165,7 +165,7 @@ import { AuthService } from '../../core/services/auth.service';
               @for (schedule of getSchedulesForDate(selectedDate); track schedule.id) {
                 <div class="schedule-card"
                      [class.has-visit]="hasVisitOnDate(schedule.id, selectedDate)"
-                     [class.purchase-required]="isPurchaseRequired(schedule)"
+                     [class.purchase-required]="!hasVisitOnDate(schedule.id, selectedDate) && isPurchaseRequired(schedule)"
                      (click)="openVisitDialog(schedule, getDayName(selectedDate.getDay()))">
                   <div class="schedule-info">
                     <div class="time-slot">
@@ -180,7 +180,7 @@ import { AuthService } from '../../core/services/auth.service';
                     <div class="capacity">
                       {{ 'schedules.capacity' | translate }}: {{ schedule.clientCapacity }}
                     </div>
-                    @if (isPurchaseRequired(schedule)) {
+                    @if (!hasVisitOnDate(schedule.id, selectedDate) && isPurchaseRequired(schedule)) {
                       <div class="purchase-required-badge">
                         <mat-icon color="warn">shopping_cart</mat-icon>
                         {{ 'schedules.purchase_required' | translate }}
