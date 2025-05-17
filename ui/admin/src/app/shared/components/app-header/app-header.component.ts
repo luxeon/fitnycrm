@@ -26,8 +26,8 @@ import { AuthService } from '../../../core/services/auth.service';
     <mat-toolbar color="primary">
       <div class="toolbar-container">
         <div class="logo-section">
-          <a routerLink="/dashboard">
-            <span class="app-title">FitNYC Admin</span>
+          <a routerLink="/dashboard" class="app-title">
+            <span class="fitny">Fitny</span><span class="crm">CRM</span>
           </a>
         </div>
         
@@ -59,12 +59,29 @@ import { AuthService } from '../../../core/services/auth.service';
       
       a {
         text-decoration: none;
-        color: white;
+        color: inherit;
       }
       
       .app-title {
-        font-size: 1.2rem;
-        font-weight: 500;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        font-family: 'Inter', 'Roboto', Arial, sans-serif;
+        display: flex;
+        align-items: center;
+      }
+      .fitny {
+        color: #2c3e50;
+        font-weight: 700;
+      }
+      .crm {
+        margin-left: 2px;
+        background: linear-gradient(90deg, #3498db 0%, #00bfae 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        font-weight: 700;
       }
     }
     

@@ -45,7 +45,7 @@ export class AppComponent {
         this.translateService.get(route.data['titleKey'])
       )
     ).subscribe(translatedTitle => {
-      this.titleService.setTitle(`${translatedTitle} - FitNYC`);
+      this.titleService.setTitle(`${translatedTitle} - FitnyCRM`);
     });
   }
 }
