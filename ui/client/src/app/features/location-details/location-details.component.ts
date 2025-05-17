@@ -811,6 +811,11 @@ export class LocationDetailsComponent implements OnInit {
         // Clear the cache when visits are updated
         this.bookedDatesCache = {};
 
+        // Fetch training details for each schedule
+        if (this.schedules.length > 0) {
+          this.fetchTrainingDetails();
+        }
+
         // Check credits for each training if client ID is available
         if (this.clientId && this.schedules.length > 0) {
           this.checkTrainingCredits();
@@ -822,6 +827,39 @@ export class LocationDetailsComponent implements OnInit {
         this.isLoading = false;
         // Handle error - you might want to show a snackbar/toast here
       }
+    });
+  }
+
+  /**
+   * Fetch training details for each schedule to get the training name
+   */
+  private fetchTrainingDetails(): void {
+    if (!this.schedules) return;
+
+    // Get unique training IDs from schedules
+    const trainingIds = new Set<string>();
+    this.schedules.forEach(schedule => {
+      if (schedule.trainingId) {
+        trainingIds.add(schedule.trainingId);
+      }
+    });
+
+    // Fetch training details for each unique training ID
+    trainingIds.forEach(trainingId => {
+      this.trainingService.getTraining(this.tenantId, trainingId)
+        .subscribe({
+          next: (training) => {
+            // Update trainingName for all schedules with this trainingId
+            this.schedules?.forEach(schedule => {
+              if (schedule.trainingId === trainingId) {
+                schedule.trainingName = training.name;
+              }
+            });
+          },
+          error: (error) => {
+            console.error(`Error fetching training details for training ID ${trainingId}:`, error);
+          }
+        });
     });
   }
 
