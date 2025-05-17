@@ -139,6 +139,7 @@
       "noCredits": "You need to purchase training credits first before booking this visit",
       "capacityExceeded": "This class is already full",
       "invalidDate": "Selected date is not available for this schedule",
+      "shouldPayFOrVisit": "Unable to book visit: you should pay for the training first",
       "generic": "An error occurred while booking your visit. Please try again."
     }
   },

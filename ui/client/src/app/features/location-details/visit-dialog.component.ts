@@ -45,8 +45,8 @@ export interface VisitDialogData {
   ],
   providers: [
     provideNativeDateAdapter(),
-    { 
-      provide: MAT_DATE_LOCALE, 
+    {
+      provide: MAT_DATE_LOCALE,
       useFactory: (translate: TranslateService) => translate.currentLang || 'en',
       deps: [TranslateService]
     }
@@ -403,6 +403,10 @@ export class VisitDialogComponent {
           this.errorMessage = this.translate.instant('schedules.errors.capacityExceeded');
         } else if (error.error?.message?.includes('Date of week doesn\'t match')) {
           this.errorMessage = this.translate.instant('schedules.errors.invalidDate');
+        } else if (error.error?.message?.includes('Unable to book visit: you should pay for the training first.')) {
+          this.errorMessage = this.translate.instant('schedules.errors.shouldPayFOrVisit');
+        } else if (error.error?.message === "Validation failed") {
+          this.errorMessage = error.error?.errors[0]?.message ?? this.translate.instant('schedules.errors.generic');
         } else {
           this.errorMessage = this.translate.instant('schedules.errors.generic');
         }
