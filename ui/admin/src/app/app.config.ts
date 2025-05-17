@@ -7,6 +7,13 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { importProvidersFrom } from '@angular/core';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { registerLocaleData } from '@angular/common';
+import localeUk from '@angular/common/locales/uk';
+import localeEn from '@angular/common/locales/en';
+
+// Register locale data for supported languages
+registerLocaleData(localeUk, 'uk');
+registerLocaleData(localeEn, 'en');
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {

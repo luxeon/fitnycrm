@@ -5,6 +5,7 @@ import { PaymentService, PaymentPageItemResponse } from '../../../../../../core/
 import { NotificationService } from '../../../../../../core/services/notification.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PaymentDialogComponent } from '../payment-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-payment-history',
@@ -49,7 +50,7 @@ import { PaymentDialogComponent } from '../payment-dialog.component';
               <td>{{ payment.trainingsCount }}</td>
               <td>{{ payment.validDays }}</td>
               <td>{{ payment.price }} {{ payment.currency }}</td>
-              <td>{{ payment.createdAt | date }}</td>
+              <td>{{ payment.createdAt | date:'fullDate':undefined:translate.currentLang }}</td>
               <td>
                 <button
                   *ngIf="payment.status !== 'CANCELED'"
@@ -236,6 +237,7 @@ export class PaymentHistoryComponent implements OnInit {
   private paymentService = inject(PaymentService);
   private notificationService = inject(NotificationService);
   private dialog = inject(MatDialog);
+  public translate = inject(TranslateService);
 
   isLoading = false;
   payments: PaymentPageItemResponse[] = [];
