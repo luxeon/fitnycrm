@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -71,7 +71,7 @@ import { map, catchError } from 'rxjs/operators';
             <!-- Date Column -->
             <ng-container matColumnDef="date">
               <th mat-header-cell *matHeaderCellDef>{{ 'payment.history.date' | translate }}</th>
-              <td mat-cell *matCellDef="let payment">{{ payment.createdAt | date:'medium' }}</td>
+              <td mat-cell *matCellDef="let payment">{{ payment.createdAt | date:'mediumDate':undefined:translate.currentLang }}</td>
             </ng-container>
 
             <!-- Training Column -->
@@ -212,6 +212,7 @@ export class PaymentHistoryComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
+  public readonly translate = inject(TranslateService);
 
   isExpanded = false;
   isLoading = false;
