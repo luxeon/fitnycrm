@@ -37,11 +37,16 @@ export class LoginComponent implements OnInit {
   errorMessages: { [key: string]: string } = {};
 
   constructor() {
-    // Set default language
     this.translate.setDefaultLang('en');
-    // Use browser language if available, otherwise use default
-    const browserLang = this.translate.getBrowserLang();
-    this.translate.use(browserLang?.match(/en|es/) ? browserLang : 'en');
+
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+
+    if (savedLanguage && savedLanguage.match(/en|uk/)) {
+      this.translate.use(savedLanguage);
+    } else {
+      const browserLang = this.translate.getBrowserLang();
+      this.translate.use(browserLang?.match(/en|uk/) ? browserLang : 'en');
+    }
   }
 
   async ngOnInit() {

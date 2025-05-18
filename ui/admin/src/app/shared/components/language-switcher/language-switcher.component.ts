@@ -70,7 +70,7 @@ interface Language {
 })
 export class LanguageSwitcherComponent {
   private translate = inject(TranslateService);
-  currentLang = signal(this.translate.currentLang || 'en');
+  currentLang = signal(this.translate.currentLang || localStorage.getItem('selectedLanguage') || 'en');
 
   languages: Language[] = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -85,5 +85,6 @@ export class LanguageSwitcherComponent {
   switchLanguage(lang: string): void {
     this.translate.use(lang);
     this.currentLang.set(lang);
+    localStorage.setItem('selectedLanguage', lang);
   }
 }

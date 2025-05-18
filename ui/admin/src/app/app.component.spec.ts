@@ -41,6 +41,11 @@ describe('AppComponent', () => {
   let translateService: TranslateService;
 
   beforeEach(async () => {
+    // Mock localStorage
+    let store: { [key: string]: string } = {};
+    spyOn(localStorage, 'getItem').and.callFake((key) => store[key] || null);
+    spyOn(localStorage, 'setItem').and.callFake((key, value) => store[key] = value);
+
     await TestBed.configureTestingModule({
       imports: [
         AppComponent,
@@ -50,7 +55,7 @@ describe('AppComponent', () => {
       ],
       providers: [
         provideRouter([
-          { 
+          {
             path: 'login',
             component: DummyLoginComponent,
             data: { titleKey: 'login.pageTitle' }
@@ -82,7 +87,7 @@ describe('AppComponent', () => {
 
   it('should update title on navigation', fakeAsync(() => {
     const spy = spyOn(titleService, 'setTitle');
-    
+
     // Initialize the component
     fixture.detectChanges();
     tick(); // Wait for initial navigation
@@ -99,7 +104,7 @@ describe('AppComponent', () => {
 
   it('should set default title for root path', fakeAsync(() => {
     const spy = spyOn(titleService, 'setTitle');
-    
+
     // Initialize the component
     fixture.detectChanges();
     tick(); // Wait for initial navigation
@@ -112,5 +117,26 @@ describe('AppComponent', () => {
 
     // Verify the default title was set
     expect(spy).toHaveBeenCalledWith('FitNYC - FitNYC');
+  }));
+
+  it('should use language from localStorage if available', fakeAsync(() => {
+    // Set language in localStorage before component initialization
+    localStorage.setItem('selectedLanguage', 'uk');
+
+    // Create a new instance to trigger setupLanguage with our localStorage value
+    TestBed.resetTestingModule();
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+    translateService = TestBed.inject(TranslateService);
+
+    // Spy on translateService.use to verify it's called with the correct language
+    const spy = spyOn(translateService, 'use').and.callThrough();
+
+    // Initialize the component
+    fixture.detectChanges();
+    tick();
+
+    // Verify the language from localStorage was used
+    expect(spy).toHaveBeenCalledWith('uk');
   }));
 });
