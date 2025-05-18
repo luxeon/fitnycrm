@@ -1,10 +1,27 @@
 spring:
   application:
     name: core
+  datasource:
+    hikari:
+      connection-test-query: select 1
+      minimum-idle: 1
+      maximum-pool-size: 100
   jackson:
     time-zone: UTC
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+        jdbc:
+          batch:
+            size: 20
+          lob:
+            non_contextual_creation: true
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
