@@ -99,7 +99,6 @@
           formControlName="locale"
           [class.error]="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">
           <option value="en">English</option>
-          <option value="es">Español</option>
           <option value="uk">Українська</option>
         </select>
         <div class="error-message" *ngIf="registrationForm.get('locale')?.invalid && registrationForm.get('locale')?.touched">
