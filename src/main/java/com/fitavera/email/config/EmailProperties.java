@@ -1,6 +1,7 @@
 package com.fitavera.email.config;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
@@ -17,6 +18,9 @@ public class EmailProperties {
     @NotNull
     @Email
     private String from;
+
+    @NotBlank
+    private String senderName;
 
     @NotNull
     @URL

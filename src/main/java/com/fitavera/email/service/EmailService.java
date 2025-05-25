@@ -7,6 +7,7 @@ import com.fitavera.user.repository.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -37,13 +38,13 @@ public class EmailService {
 
             String content = templateEngine.process("email/%s/confirmation".formatted(locale.getLanguage()), context);
 
-            helper.setFrom(emailProperties.getFrom());
+            helper.setFrom(emailProperties.getFrom(), emailProperties.getSenderName());
             helper.setTo(to);
             helper.setSubject("Confirm your email");
             helper.setText(content, true);
 
             mailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to send confirmation email", e);
         }
     }
@@ -64,13 +65,13 @@ public class EmailService {
             String content = templateEngine.process("email/%s/client-invitation"
                     .formatted(tenant.getLocale().getLanguage()), context);
 
-            helper.setFrom(emailProperties.getFrom());
+            helper.setFrom(emailProperties.getFrom(), emailProperties.getSenderName());
             helper.setTo(invitation.getEmail());
             helper.setSubject("You've been invited to " + tenant.getName() + " by " + inviterFullName);
             helper.setText(content, true);
 
             mailSender.send(message);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Failed to send client invitation email", e);
         }
     }

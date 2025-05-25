@@ -40,6 +40,7 @@ jwt:
 
 mail:
   from: noreply@fitavera.com
+  sender-name: Fitavera CRM
   confirmationUrl: ${fitavera.base-url}/auth/confirm-email
   clientRegistrationUrl: ${fitavera.base-url}/tenants/%s/clients/signup/%s
 
