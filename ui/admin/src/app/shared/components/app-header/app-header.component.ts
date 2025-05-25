@@ -27,16 +27,16 @@ import { AuthService } from '../../../core/services/auth.service';
       <div class="toolbar-container">
         <div class="logo-section">
           <a routerLink="/dashboard" class="app-title">
-            <span class="fitny">Fitny</span><span class="crm">CRM</span>
+            <span class="fitavera">Fitavera</span><span class="crm">CRM</span>
           </a>
         </div>
-        
+
         <div class="actions-section">
           <app-language-switcher></app-language-switcher>
-          
-          <button mat-icon-button 
-                  (click)="logout()" 
-                  aria-label="Logout" 
+
+          <button mat-icon-button
+                  (click)="logout()"
+                  aria-label="Logout"
                   [matTooltip]="'header.logout' | translate">
             <mat-icon>exit_to_app</mat-icon>
           </button>
@@ -52,16 +52,16 @@ import { AuthService } from '../../../core/services/auth.service';
       width: 100%;
       padding: 0 16px;
     }
-    
+
     .logo-section {
       display: flex;
       align-items: center;
-      
+
       a {
         text-decoration: none;
         color: inherit;
       }
-      
+
       .app-title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -70,7 +70,7 @@ import { AuthService } from '../../../core/services/auth.service';
         display: flex;
         align-items: center;
       }
-      .fitny {
+      .fitavera {
         color: #2c3e50;
         font-weight: 700;
       }
@@ -84,7 +84,7 @@ import { AuthService } from '../../../core/services/auth.service';
         font-weight: 700;
       }
     }
-    
+
     .actions-section {
       display: flex;
       align-items: center;
@@ -95,9 +95,9 @@ import { AuthService } from '../../../core/services/auth.service';
 export class AppHeaderComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
-  
+
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-} 
+}
