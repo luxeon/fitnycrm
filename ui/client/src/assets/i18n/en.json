@@ -77,7 +77,7 @@
     }
   },
   "dashboard": {
-    "appName": "FITNYAPP",
+    "appName": "FITAVERA APP",
     "welcome": "Welcome back, {{firstName}} {{lastName}}!",
     "club": {
       "loading": "Loading your sport club...",

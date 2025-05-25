@@ -39,9 +39,9 @@ jwt:
   expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
 
 mail:
-  from: noreply@fitnycrm.com
-  confirmationUrl: ${fitny.base-url}/auth/confirm-email
-  clientRegistrationUrl: ${fitny.base-url}/tenants/%s/clients/signup/%s
+  from: noreply@fitavera.com
+  confirmationUrl: ${fitavera.base-url}/auth/confirm-email
+  clientRegistrationUrl: ${fitavera.base-url}/tenants/%s/clients/signup/%s
 
 localization:
   supported-locales:

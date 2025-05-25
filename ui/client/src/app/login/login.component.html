@@ -3,18 +3,18 @@
     <mat-card class="login-card">
       <mat-card-header>
         <div class="logo-container">
-          <div class="logo">FITNY<span>APP</span></div>
+          <div class="logo">FITAVERA<span>APP</span></div>
         </div>
       </mat-card-header>
 
       <mat-card-content>
         <h2>{{ 'login.title' | translate }}</h2>
         <p class="subtitle">{{ 'login.subtitle' | translate }}</p>
-        
+
         <div *ngIf="hasPendingInvitation" class="info-message">
           {{ 'login.invitationMessage' | translate }}
         </div>
-        
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ 'login.form.email.label' | translate }}</mat-label>

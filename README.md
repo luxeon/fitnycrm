@@ -1,8 +1,8 @@
-# FitnyCRM — Open-Source Fitness Club Management & Booking System
+# Fitavera CRM — Open-Source Fitness Club Management & Booking System
 
 ## Development is in progress, product is not released yet!
 
-**FitnyCRM** is a free, open-source CRM and scheduling platform designed for fitness clubs, studios, and gyms. It helps automate client bookings, manage class schedules, and handle payments — solving real-world problems faced by gym owners and personal trainers.
+**Fitavera CRM** is a free, open-source CRM and scheduling platform designed for fitness clubs, studios, and gyms. It helps automate client bookings, manage class schedules, and handle payments — solving real-world problems faced by gym owners and personal trainers.
 
 ## 🚀 Key Features
 
@@ -15,7 +15,7 @@
 - **Instructor management:** Assign instructors to any session.
 - **Visit monitoring:** Track attendance, skipped sessions, and notify clients about their remaining visits.
 
-## 🧠 Why FitnyCRM?
+## 🧠 Why Fitavera CRM?
 
 Many fitness club owners still rely on paper lists, spreadsheets, or messaging apps to manage bookings. That creates confusion, especially when:
 
@@ -23,7 +23,7 @@ Many fitness club owners still rely on paper lists, spreadsheets, or messaging a
 - A client tries to cancel minutes before class, but your cancellation policy doesn’t allow it.
 - You need to track payments and visits manually across locations and staff.
 
-**FitnyCRM automates these tasks and gives you full control.**
+**Fitavera CRM automates these tasks and gives you full control.**
 
 ## 📦 Tech Stack
 
@@ -42,7 +42,7 @@ Many fitness club owners still rely on paper lists, spreadsheets, or messaging a
 
 ## 🔓 Open Source & License
 
-FitnyCRM is proudly open-source and released under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+Fitavera CRM is proudly open-source and released under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
 
 This means:
 

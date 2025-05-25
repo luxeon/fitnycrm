@@ -12,7 +12,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
   imports: [MatIconModule, MatButtonModule, TranslateModule, LanguageSwitcherComponent],
   template: `
     <header class="app-header">
-      <span class="app-title">FITNYAPP</span>
+      <span class="app-title">FITAVERA APP</span>
       <div class="actions-section">
         <app-language-switcher></app-language-switcher>
         <button mat-icon-button aria-label="Logout" (click)="logout()">
