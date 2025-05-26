@@ -34,7 +34,10 @@
     "subscriptionExpiration": "Підписка закінчується",
     "return": "Повернутися",
     "custom": "Індивідуальний",
-    "remaining": "залишилось"
+    "remaining": "залишилось",
+    "error": {
+      "invalid": "Невірне значення"
+    }
   },
   "login": {
     "pageTitle": "Вхід",
@@ -355,7 +358,8 @@
       "firstName": {
         "label": "Ім'я",
         "placeholder": "Введіть ваше ім'я",
-        "required": "Ім'я обов'язкове"
+        "required": "Ім'я обов'язкове",
+        "minLength": "Ім'я має містити щонайменше 2 символи"
       },
       "lastName": {
         "label": "Прізвище",

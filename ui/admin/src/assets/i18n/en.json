@@ -34,7 +34,10 @@
     "subscriptionExpiration": "Subscription Expires On",
     "return": "Return",
     "custom": "Custom",
-    "remaining": "remaining"
+    "remaining": "remaining",
+    "error": {
+      "invalid": "Invalid value"
+    }
   },
   "login": {
     "pageTitle": "Login",
@@ -355,7 +358,8 @@
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter your first name",
-        "required": "First name is required"
+        "required": "First name is required",
+        "minLength": "First name must be at least 2 characters"
       },
       "lastName": {
         "label": "Last Name",
