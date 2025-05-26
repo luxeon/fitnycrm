@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TenantService, CreateTenantRequest } from '../../core/services/tenant.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-create-tenant',
@@ -21,7 +21,7 @@ import { firstValueFrom } from 'rxjs';
         <p class="subtitle">{{ 'tenant.create.subtitle' | translate }}</p>
 
         <div *ngIf="errorMessage" class="error-banner">
-          {{ errorMessage }}
+          {{ errorMessage | translate }}
         </div>
 
         <form [formGroup]="tenantForm" (ngSubmit)="onSubmit()" class="tenant-form">
@@ -177,19 +177,47 @@ import { firstValueFrom } from 'rxjs';
     }
   `]
 })
-export class CreateTenantComponent {
+export class CreateTenantComponent implements OnDestroy {
   private readonly tenantService = inject(TenantService);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
+  private readonly destroy$ = new Subject<void>();
 
   tenantForm: FormGroup = this.fb.group({
     name: ['', [Validators.required]],
     description: [''],
-    locale: ['en', [Validators.required]]
+    locale: [this.translate.currentLang || 'en', [Validators.required]]
   });
 
   errorMessage: string | null = null;
   isLoading = false;
+
+  constructor() {
+    // Subscribe to locale changes from the form
+    this.tenantForm.get('locale')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(locale => {
+        if (this.translate.currentLang !== locale) {
+          this.translate.use(locale);
+          localStorage.setItem('selectedLanguage', locale);
+        }
+      });
+
+    // Subscribe to language changes from the language switcher
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(event => {
+        if (this.tenantForm.get('locale')?.value !== event.lang) {
+          this.tenantForm.patchValue({ locale: event.lang }, { emitEvent: false });
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   async onSubmit(): Promise<void> {
     if (this.tenantForm.valid) {
