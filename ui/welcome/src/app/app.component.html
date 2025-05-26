@@ -198,7 +198,7 @@
     </div> -->
 
     <div class="navigation-cards">
-      <div class="card admin-card" (click)="navigateToAdmin()" tabindex="0" role="button">
+      <div class="card admin-card" (click)="navigateToAdmin()">
         <div class="card-icon">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 3.5C14.8 3.4 14.6 3.4 14.5 3.5L9 7V9H21ZM21 10H9V21H11V15H13V21H15V15H17V21H19V15H21V10Z" fill="currentColor"/>
@@ -207,16 +207,14 @@
         <h3 class="card-title">Admin Application</h3>
         <p class="card-description">Manage users, fitness programs, and system settings</p>
         <div class="card-footer">
-          <a class="card-action" href="/admin" (click)="$event.stopPropagation()">
-            Access Admin Panel
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
+          <span class="card-action">Access Admin Panel</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
       </div>
 
-      <div class="card client-card" (click)="navigateToClient()" tabindex="0" role="button">
+      <div class="card client-card" (click)="navigateToClient()">
         <div class="card-icon">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z" fill="currentColor"/>
@@ -225,12 +223,10 @@
         <h3 class="card-title">Client Application</h3>
         <p class="card-description">Track your fitness journey and access your personal dashboard</p>
         <div class="card-footer">
-          <a class="card-action" href="/client" (click)="$event.stopPropagation()">
-            Start Your Journey
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
+          <span class="card-action">Start Your Journey</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
       </div>
     </div>

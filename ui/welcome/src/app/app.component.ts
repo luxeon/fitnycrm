@@ -10,15 +10,15 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'FitAvera - Fitness Management Platform';
-  
+  title = 'Fitavera - Fitness Management Platform';
+
   currentYear = new Date().getFullYear();
 
   navigateToAdmin(): void {
-    window.location.href = '/admin';
+    window.location.href = '/admin/';
   }
 
   navigateToClient(): void {
-    window.location.href = '/client';
+    window.location.href = '/client/';
   }
 }
