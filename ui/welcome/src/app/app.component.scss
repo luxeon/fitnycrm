@@ -47,7 +47,6 @@ $shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 
 // Main container
 .welcome-container {
   min-height: 100vh;
-  height: 100vh;
   position: relative;
   background: linear-gradient(135deg, 
     #667eea 0%, 
@@ -60,7 +59,6 @@ $shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  overflow-y: auto;
 }
 
 @keyframes gradientShift {
@@ -130,7 +128,7 @@ $shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 
 
 // Main content
 .main-content {
-  flex: 1;
+  flex: 1 0 auto;
   position: relative;
   z-index: 10;
   padding: 2rem;
@@ -140,7 +138,6 @@ $shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: calc(100vh - 120px);
 }
 
 // Welcome section
@@ -337,6 +334,7 @@ $shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 
   text-align: center;
   padding: 2rem;
   animation: fadeInUp 0.8s ease-out 0.8s both;
+  flex-shrink: 0;
 
   p {
     color: rgba(255, 255, 255, 0.8);
