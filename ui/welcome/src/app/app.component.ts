@@ -12,16 +12,13 @@ import { RouterOutlet } from '@angular/router';
 export class AppComponent {
   title = 'FitAvera - Fitness Management Platform';
   
-  adminUrl = '/admin';
-  clientUrl = '/client';
-  
   currentYear = new Date().getFullYear();
-  
+
   navigateToAdmin(): void {
-    window.location.href = this.adminUrl;
+    window.location.href = '/admin';
   }
-  
+
   navigateToClient(): void {
-    window.location.href = this.clientUrl;
+    window.location.href = '/client';
   }
 }
