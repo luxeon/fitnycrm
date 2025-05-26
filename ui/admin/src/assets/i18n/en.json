@@ -260,6 +260,27 @@
       "countryRequired": "Country is required",
       "timezone": "Timezone",
       "timezoneRequired": "Timezone is required"
+    },
+    "timezones": {
+      "America/New_York": "Eastern Time (US & Canada)",
+      "America/Chicago": "Central Time (US & Canada)",
+      "America/Denver": "Mountain Time (US & Canada)",
+      "America/Los_Angeles": "Pacific Time (US & Canada)",
+      "America/Anchorage": "Alaska",
+      "Pacific/Honolulu": "Hawaii",
+      "America/Phoenix": "Arizona",
+      "Europe/Madrid": "Madrid",
+      "Europe/London": "London",
+      "Europe/Paris": "Paris",
+      "Europe/Berlin": "Berlin",
+      "Europe/Warsaw": "Warsaw",
+      "Europe/Kyiv": "Kyiv",
+      "Europe/Moscow": "Moscow",
+      "Asia/Dubai": "Dubai",
+      "Asia/Shanghai": "Shanghai",
+      "Asia/Tokyo": "Tokyo",
+      "Australia/Sydney": "Sydney",
+      "Pacific/Auckland": "Auckland"
     }
   },
   "training": {

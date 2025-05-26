@@ -260,6 +260,27 @@
       "countryRequired": "Країна обов'язкова",
       "timezone": "Часовий пояс",
       "timezoneRequired": "Часовий пояс обов'язковий"
+    },
+    "timezones": {
+      "America/New_York": "Східний час (США та Канада)",
+      "America/Chicago": "Центральний час (США та Канада)",
+      "America/Denver": "Гірський час (США та Канада)",
+      "America/Los_Angeles": "Тихоокеанський час (США та Канада)",
+      "America/Anchorage": "Аляска",
+      "Pacific/Honolulu": "Гаваї",
+      "America/Phoenix": "Арізона",
+      "Europe/Madrid": "Мадрид",
+      "Europe/London": "Лондон",
+      "Europe/Paris": "Париж",
+      "Europe/Berlin": "Берлін",
+      "Europe/Warsaw": "Варшава",
+      "Europe/Kyiv": "Київ",
+      "Europe/Moscow": "Москва",
+      "Asia/Dubai": "Дубай",
+      "Asia/Shanghai": "Шанхай",
+      "Asia/Tokyo": "Токіо",
+      "Australia/Sydney": "Сідней",
+      "Pacific/Auckland": "Окленд"
     }
   },
   "training": {
