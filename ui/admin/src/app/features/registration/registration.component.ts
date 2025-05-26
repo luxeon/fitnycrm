@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,7 @@ import { AuthService, UserSignupRequest } from '../../core/services/auth.service
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-registration',
@@ -20,10 +21,11 @@ import { LanguageSwitcherComponent } from '../../shared/components/language-swit
   templateUrl: './registration.component.html',
   styleUrls: ['./registration.component.scss']
 })
-export class RegistrationComponent {
+export class RegistrationComponent implements OnDestroy {
   registrationForm: FormGroup;
   errorMessage: string | null = null;
   isLoading = false;
+  private destroy$ = new Subject<void>();
 
   private readonly passwordPattern = '^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$';
   private readonly phonePattern = '^\\+[1-9]\\d{7,14}$';
@@ -45,10 +47,32 @@ export class RegistrationComponent {
         Validators.pattern(this.passwordPattern)
       ]],
       confirmPassword: ['', [Validators.required]],
-      locale: ['en', [Validators.required]]
+      locale: [this.translate.currentLang || 'en', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
+
+    // Subscribe to locale changes from the form
+    this.registrationForm.get('locale')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(locale => {
+        this.translate.use(locale);
+        localStorage.setItem('selectedLanguage', locale);
+      });
+
+    // Subscribe to language changes from the language switcher
+    this.translate.onLangChange
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(event => {
+        if (this.registrationForm.get('locale')?.value !== event.lang) {
+          this.registrationForm.patchValue({ locale: event.lang }, { emitEvent: false });
+        }
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   passwordMatchValidator(form: FormGroup) {
