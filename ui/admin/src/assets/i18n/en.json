@@ -540,7 +540,8 @@
   "payment": {
     "status": {
       "completed": "Completed",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "pending": "Pending"
     }
   }
 }
