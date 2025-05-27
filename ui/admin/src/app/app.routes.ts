@@ -58,7 +58,8 @@ export const routes: Routes = [
       },
       {
         path: 'tenants/:tenantId/clients/:clientId',
-        component: ClientDetailsComponent
+        component: ClientDetailsComponent,
+        data: { titleKey: 'dashboard.clients.details.pageTitle' }
       },
       {
         path: '',

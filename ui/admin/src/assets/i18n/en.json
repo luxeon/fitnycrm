@@ -153,6 +153,7 @@
       },
       "details": {
         "title": "Client Details: {{name}}",
+        "pageTitle": "Client Details",
         "payments": {
           "title": "Payment History",
           "empty": "No payments found",
@@ -212,7 +213,7 @@
     },
     "details": {
       "pageTitle": "Club Location Details",
-      "title": "Club Details",
+      "title": "Club Location Details",
       "club_location_title": "Club Location Details",
       "tabs": {
         "workouts": "Workouts",
