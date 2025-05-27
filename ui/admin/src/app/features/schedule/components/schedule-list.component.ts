@@ -47,7 +47,7 @@ interface SchedulesByDay {
               <div class="day-header">
                 <span class="day-name">{{ 'schedule.days.' + day.toLowerCase() | translate }}</span>
                 <span class="schedule-count" *ngIf="schedulesByDay[day].length">
-                  {{ schedulesByDay[day].length }} {{ 'schedule.classes' | translate }}
+                  {{ 'schedule.classes' | translate }} {{ schedulesByDay[day].length }}
                 </span>
               </div>
               <div class="day-schedules">
@@ -97,7 +97,7 @@ interface SchedulesByDay {
         <div class="daily-header">
           <h3 class="day-title">{{ 'schedule.days.' + selectedDay.toLowerCase() | translate }}</h3>
           <span class="schedule-count" *ngIf="schedulesByDay[selectedDay].length">
-            {{ schedulesByDay[selectedDay].length }} {{ 'schedule.classes' | translate }}
+            {{ 'schedule.classes' | translate }} {{ schedulesByDay[selectedDay].length }}
           </span>
         </div>
         <div class="daily-schedules">
