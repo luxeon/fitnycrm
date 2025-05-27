@@ -52,6 +52,18 @@ export class RegistrationComponent implements OnDestroy {
       validators: this.passwordMatchValidator
     });
 
+    // Subscribe to phone number changes to auto-remove spaces
+    this.registrationForm.get('phoneNumber')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        if (value) {
+          const cleanValue = value.replace(/[\s()]/g, '');
+          if (cleanValue !== value) {
+            this.registrationForm.patchValue({ phoneNumber: cleanValue }, { emitEvent: false });
+          }
+        }
+      });
+
     // Subscribe to locale changes from the form
     this.registrationForm.get('locale')?.valueChanges
       .pipe(takeUntil(this.destroy$))

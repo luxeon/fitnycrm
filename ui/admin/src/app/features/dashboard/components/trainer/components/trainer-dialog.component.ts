@@ -140,6 +140,16 @@ export class TrainerDialogComponent {
       ]],
       specialization: [data.trainer?.specialization ?? '']
     });
+
+    // Subscribe to phone number changes to auto-remove spaces and braces
+    this.form.get('phoneNumber')?.valueChanges.subscribe(value => {
+      if (value) {
+        const cleanValue = value.replace(/[\s()]/g, '');
+        if (cleanValue !== value) {
+          this.form.patchValue({ phoneNumber: cleanValue }, { emitEvent: false });
+        }
+      }
+    });
   }
 
   onSubmit(): void {

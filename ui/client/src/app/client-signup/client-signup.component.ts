@@ -71,14 +71,24 @@ export class ClientSignupComponent implements OnInit {
 
     // Initialize the form
     this.signupForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.pattern(/^\+[1-9]\d{1,14}$/)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
+      phoneNumber: ['', [Validators.pattern('^\\+?[1-9]\\d{1,14}$')]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
       confirmPassword: ['', [Validators.required]],
       locale: ['en', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
+    });
+
+    // Subscribe to phone number changes to auto-remove spaces and braces
+    this.signupForm.get('phoneNumber')?.valueChanges.subscribe(value => {
+      if (value) {
+        const cleanValue = value.replace(/[\s()]/g, '');
+        if (cleanValue !== value) {
+          this.signupForm.patchValue({ phoneNumber: cleanValue }, { emitEvent: false });
+        }
+      }
     });
   }
 
