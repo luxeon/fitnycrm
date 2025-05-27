@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -6,10 +6,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { TrainerDetailsResponse } from '../../../../../core/services/trainer.service';
+import { TrainerDetailsResponse, TrainerService } from '../../../../../core/services/trainer.service';
+import { ErrorHandlerService } from '../../../../../core/services/error-handler.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 
 export interface TrainerDialogData {
   trainer?: TrainerDetailsResponse;
+  tenantId: string;
 }
 
 @Component({
@@ -29,6 +33,11 @@ export interface TrainerDialogData {
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
       <mat-dialog-content>
         <div class="form-container">
+          <!-- Error message display -->
+          <div *ngIf="errorMessage" class="error-banner">
+            {{ errorMessage }}
+          </div>
+
           <div class="form-row">
             <mat-form-field appearance="outline">
               <mat-label>{{ 'trainer.form.firstName.label' | translate }}</mat-label>
@@ -76,11 +85,11 @@ export interface TrainerDialogData {
         </div>
       </mat-dialog-content>
       <mat-dialog-actions align="end">
-        <button mat-button type="button" (click)="onCancel()">
+        <button mat-button type="button" (click)="onCancel()" [disabled]="isSubmitting">
           {{ 'common.cancel' | translate }}
         </button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-          {{ (data.trainer ? 'common.save' : 'common.create') | translate }}
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting">
+          {{ isSubmitting ? 'common.saving' : (data.trainer ? 'common.save' : 'common.create') | translate }}
         </button>
       </mat-dialog-actions>
     </form>
@@ -118,10 +127,26 @@ export interface TrainerDialogData {
     mat-dialog-actions {
       padding: 1rem;
     }
+
+    .error-banner {
+      background-color: #ffebee;
+      color: #c62828;
+      padding: 12px 16px;
+      border-radius: 4px;
+      border-left: 4px solid #f44336;
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
   `]
 })
 export class TrainerDialogComponent {
+  private readonly trainerService = inject(TrainerService);
+  private readonly errorHandler = inject(ErrorHandlerService);
+
   form: FormGroup;
+  errorMessage: string | null = null;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -152,9 +177,35 @@ export class TrainerDialogComponent {
     });
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      this.dialogRef.close(this.form.value);
+  async onSubmit(): Promise<void> {
+    if (this.form.valid && !this.isSubmitting) {
+      this.errorMessage = null;
+      this.isSubmitting = true;
+
+      try {
+        if (this.data.trainer) {
+          // Update existing trainer
+          await firstValueFrom(this.trainerService.updateTrainer(
+            this.data.tenantId, 
+            this.data.trainer.id, 
+            this.form.value
+          ));
+        } else {
+          // Create new trainer
+          await firstValueFrom(this.trainerService.createTrainer(
+            this.data.tenantId, 
+            this.form.value
+          ));
+        }
+        
+        // Success - close dialog with success result
+        this.dialogRef.close({ success: true, isUpdate: !!this.data.trainer });
+      } catch (error: any) {
+        // Handle error - show in dialog
+        const errorMessage = this.errorHandler.processError(error as HttpErrorResponse, 'trainer');
+        this.errorMessage = errorMessage.message;
+        this.isSubmitting = false;
+      }
     }
   }
 

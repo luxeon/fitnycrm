@@ -36,7 +36,12 @@
     "custom": "Custom",
     "remaining": "remaining",
     "error": {
-      "invalid": "Invalid value"
+      "invalid": "Invalid value",
+      "generic": "An error occurred. Please try again.",
+      "notFound": "The requested resource was not found.",
+      "forbidden": "You don't have permission to perform this action.",
+      "serverError": "A server error occurred. Please try again later.",
+      "emailExists": "An account with this email address already exists."
     }
   },
   "login": {
@@ -437,7 +442,12 @@
     "create": {
       "pageTitle": "Add Trainer",
       "title": "Add New Trainer",
-      "subtitle": "Fill in the trainer's details below"
+      "subtitle": "Fill in the trainer's details below",
+      "success": "Trainer created successfully",
+      "error": {
+        "emailExists": "A trainer with this email address already exists. Please use a different email.",
+        "generic": "Failed to create trainer. Please try again."
+      }
     },
     "edit": {
       "pageTitle": "Edit Trainer",
@@ -445,7 +455,11 @@
       "subtitle": "Update trainer's details"
     },
     "update": {
-      "success": "Trainer data updated"
+      "success": "Trainer data updated",
+      "error": {
+        "emailExists": "A trainer with this email address already exists. Please use a different email.",
+        "generic": "Failed to update trainer. Please try again."
+      }
     },
     "delete": {
       "title": "Delete Trainer",
