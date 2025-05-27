@@ -95,7 +95,7 @@ interface SchedulesByDay {
 
       <div class="daily-view" *ngIf="viewMode === 'daily'">
         <div class="daily-header">
-          <h3 class="day-title">{{ selectedDay }}</h3>
+          <h3 class="day-title">{{ 'schedule.days.' + selectedDay.toLowerCase() | translate }}</h3>
           <span class="schedule-count" *ngIf="schedulesByDay[selectedDay].length">
             {{ schedulesByDay[selectedDay].length }} {{ 'schedule.classes' | translate }}
           </span>

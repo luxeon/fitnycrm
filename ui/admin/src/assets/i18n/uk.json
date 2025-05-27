@@ -548,6 +548,16 @@
     "no_schedules": "Немає розкладів на цей день",
     "weekly_view": "Тижневий вигляд",
     "daily_view": "Щоденний вигляд",
+    "classes": "занять",
+    "days": {
+      "monday": "Понеділок",
+      "tuesday": "Вівторок",
+      "wednesday": "Середа",
+      "thursday": "Четвер",
+      "friday": "П'ятниця",
+      "saturday": "Субота",
+      "sunday": "Неділя"
+    },
     "form": {
       "workout": "Тренування",
       "selectWorkout": "Виберіть тренування",
@@ -563,16 +573,7 @@
       "endTimeRequired": "Потрібно вказати час завершення",
       "capacity": "Максимальна місткість",
       "capacityRequired": "Максимальна місткість обовʼязкова",
-      "capacityMin": "Місткість має бути щонайменше 1",
-      "days": {
-        "monday": "Понеділок",
-        "tuesday": "Вівторок",
-        "wednesday": "Середа",
-        "thursday": "Четвер",
-        "friday": "П'ятниця",
-        "saturday": "Субота",
-        "sunday": "Неділя"
-      }
+      "capacityMin": "Місткість має бути щонайменше 1"
     }
   },
   "payment": {

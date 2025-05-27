@@ -549,6 +549,15 @@
     "weekly_view": "Weekly View",
     "daily_view": "Daily View",
     "classes": "classes",
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
     "form": {
       "workout": "Workout",
       "selectWorkout": "Select a workout",
@@ -564,16 +573,7 @@
       "endTimeRequired": "End time is required",
       "capacity": "Maximum Capacity",
       "capacityRequired": "Maximum capacity is required",
-      "capacityMin": "Capacity must be at least 1",
-      "days": {
-        "monday": "Monday",
-        "tuesday": "Tuesday",
-        "wednesday": "Wednesday",
-        "thursday": "Thursday",
-        "friday": "Friday",
-        "saturday": "Saturday",
-        "sunday": "Sunday"
-      }
+      "capacityMin": "Capacity must be at least 1"
     }
   },
   "payment": {
