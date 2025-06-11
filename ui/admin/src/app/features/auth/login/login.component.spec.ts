@@ -263,4 +263,45 @@ describe('LoginComponent', () => {
     expect(emailLabel.nativeElement.textContent).toBe(translations.login.email.label);
     expect(passwordLabel.nativeElement.textContent).toBe(translations.login.password.label);
   });
+
+  it('should use language from localStorage if available', fakeAsync(() => {
+    // Mock localStorage
+    let store: { [key: string]: string } = {};
+    spyOn(localStorage, 'getItem').and.callFake((key) => store[key] || null);
+
+    // Set language in localStorage before component initialization
+    store['selectedLanguage'] = 'uk';
+
+    // Create a new instance to trigger constructor with our localStorage value
+    TestBed.resetTestingModule();
+
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login', 'hasRole']);
+
+    TestBed.configureTestingModule({
+      imports: [
+        LoginComponent,
+        ReactiveFormsModule,
+        TranslateModule.forRoot()
+      ],
+      providers: [
+        { provide: AuthService, useValue: authServiceSpy },
+        provideRouter([]),
+        provideHttpClient()
+      ]
+    });
+
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    translateService = TestBed.inject(TranslateService);
+
+    // Spy on translateService.use to verify it's called with the correct language
+    const spy = spyOn(translateService, 'use').and.callThrough();
+
+    // Initialize the component
+    fixture.detectChanges();
+    tick();
+
+    // Verify the language from localStorage was used
+    expect(spy).toHaveBeenCalledWith('uk');
+  }));
 });

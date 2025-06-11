@@ -10,6 +10,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-tariffs',
@@ -19,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
     TranslateModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatTooltipModule,
     ConfirmationDialogComponent
   ],
   animations: [
@@ -49,10 +51,10 @@ import { TranslateService } from '@ngx-translate/core';
       <div class="tariffs-grid" *ngIf="!isLoading && tariffs?.length">
         <div class="tariff-card" *ngFor="let tariff of tariffs">
           <div class="card-actions">
-            <button class="edit-btn" (click)="onEditTariff(tariff)">
+            <button class="edit-btn" (click)="onEditTariff(tariff)" matTooltip="{{ 'common.edit' | translate }}">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteClick(tariff)">
+            <button class="delete-btn" (click)="onDeleteClick(tariff)" matTooltip="{{ 'common.delete' | translate }}">
               <span class="delete-icon">×</span>
             </button>
           </div>

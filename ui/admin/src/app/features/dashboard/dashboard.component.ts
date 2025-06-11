@@ -290,27 +290,18 @@ export class DashboardComponent implements OnInit {
   onAddTrainer(): void {
     if (this.tenantDetails) {
       const dialogRef = this.dialog.open(TrainerDialogComponent, {
-        data: {},
+        data: { tenantId: this.tenantDetails.id },
         width: '500px'
       });
 
-      dialogRef.afterClosed().subscribe(async result => {
-        if (result && this.tenantDetails) {
-          try {
-            await firstValueFrom(this.trainerService.createTrainer(this.tenantDetails.id, result));
-            this.snackBar.open(
-              this.translate.instant('trainer.create.success'),
-              this.translate.instant('common.close'),
-              { duration: 3000 }
-            );
-            this.loadTrainers(this.tenantDetails.id);
-          } catch (error: any) {
-            this.snackBar.open(
-              this.translate.instant('trainer.create.error'),
-              this.translate.instant('common.close'),
-              { duration: 3000 }
-            );
-          }
+      dialogRef.afterClosed().subscribe(result => {
+        if (result?.success && this.tenantDetails) {
+          this.snackBar.open(
+            this.translate.instant('trainer.create.success'),
+            this.translate.instant('common.close'),
+            { duration: 3000 }
+          );
+          this.loadTrainers(this.tenantDetails.id);
         }
       });
     }

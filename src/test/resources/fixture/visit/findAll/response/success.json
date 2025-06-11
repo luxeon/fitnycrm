@@ -17,14 +17,14 @@
     {
       "id": "${json-unit.any-string}",
       "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
-      "date": "2025-05-07",
+      "date": "${json-unit.any-string}",
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     },
     {
       "id": "${json-unit.any-string}",
       "scheduleId": "9a7632b1-e932-48fd-9296-001036b4ec19",
-      "date": "2025-05-09",
+      "date": "${json-unit.any-string}",
       "createdAt": "${json-unit.any-string}",
       "updatedAt": "${json-unit.any-string}"
     }

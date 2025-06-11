@@ -1,38 +1,43 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TimezoneService {
-  private readonly timezones = [
-    { value: 'America/New_York', label: 'Eastern Time (US & Canada)' },
-    { value: 'America/Chicago', label: 'Central Time (US & Canada)' },
-    { value: 'America/Denver', label: 'Mountain Time (US & Canada)' },
-    { value: 'America/Los_Angeles', label: 'Pacific Time (US & Canada)' },
-    { value: 'America/Anchorage', label: 'Alaska' },
-    { value: 'Pacific/Honolulu', label: 'Hawaii' },
-    { value: 'America/Phoenix', label: 'Arizona' },
-    { value: 'Europe/Madrid', label: 'Madrid' },
-    { value: 'Europe/London', label: 'London' },
-    { value: 'Europe/Paris', label: 'Paris' },
-    { value: 'Europe/Berlin', label: 'Berlin' },
-    { value: 'Europe/Warsaw', label: 'Warsaw' },
-    { value: 'Europe/Kyiv', label: 'Kyiv' },
-    { value: 'Europe/Moscow', label: 'Moscow' },
-    { value: 'Asia/Dubai', label: 'Dubai' },
-    { value: 'Asia/Shanghai', label: 'Shanghai' },
-    { value: 'Asia/Tokyo', label: 'Tokyo' },
-    { value: 'Australia/Sydney', label: 'Sydney' },
-    { value: 'Pacific/Auckland', label: 'Auckland' }
+  private readonly translate = inject(TranslateService);
+
+  private readonly timezoneValues = [
+    'America/New_York',
+    'America/Chicago',
+    'America/Denver',
+    'America/Los_Angeles',
+    'America/Anchorage',
+    'Pacific/Honolulu',
+    'America/Phoenix',
+    'Europe/Madrid',
+    'Europe/London',
+    'Europe/Paris',
+    'Europe/Berlin',
+    'Europe/Warsaw',
+    'Europe/Kyiv',
+    'Europe/Moscow',
+    'Asia/Dubai',
+    'Asia/Shanghai',
+    'Asia/Tokyo',
+    'Australia/Sydney',
+    'Pacific/Auckland'
   ];
 
   getTimezones() {
-    return this.timezones;
+    return this.timezoneValues.map(value => ({
+      value,
+      label: this.translate.instant(`location.timezones.${value}`)
+    }));
   }
 
   getTimezoneLabel(value: string): string {
-    const timezone = this.timezones.find(tz => tz.value === value);
-    return timezone?.label || value;
+    return this.translate.instant(`location.timezones.${value}`, { defaultValue: value });
   }
 
   getUserTimezone(): string {
@@ -40,22 +45,22 @@ export class TimezoneService {
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       // First try to find exact match
-      const exactMatch = this.timezones.find(tz => tz.value === userTimezone);
+      const exactMatch = this.timezoneValues.find(tz => tz === userTimezone);
       if (exactMatch) {
-        return exactMatch.value;
+        return exactMatch;
       }
 
       // If no exact match, try to find timezone in same region
       const userRegion = userTimezone.split('/')[0];
-      const sameRegion = this.timezones.find(tz => tz.value.startsWith(userRegion + '/'));
+      const sameRegion = this.timezoneValues.find(tz => tz.startsWith(userRegion + '/'));
       if (sameRegion) {
-        return sameRegion.value;
+        return sameRegion;
       }
 
-      // Default to New York if no match found
+      // Default to Madrid if no match found
       return 'Europe/Madrid';
     } catch {
-      // Fallback to New York if browser API fails
+      // Fallback to Madrid if browser API fails
       return 'Europe/Madrid';
     }
   }

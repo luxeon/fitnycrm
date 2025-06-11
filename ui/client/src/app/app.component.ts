@@ -16,9 +16,12 @@ export class AppComponent {
   constructor() {
     // Set default language
     this.translate.setDefaultLang('en');
-    this.translate.use('en');
+    
+    // Use browser language if available, otherwise use default
+    const browserLang = this.translate.getBrowserLang();
+    this.translate.use(browserLang?.match(/en|uk/) ? browserLang : 'en');
 
     // Add languages
-    this.translate.addLangs(['en']);
+    this.translate.addLangs(['en', 'uk']);
   }
 }

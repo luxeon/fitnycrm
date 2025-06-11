@@ -229,8 +229,8 @@ export class ScheduleDialogComponent implements OnInit {
     this.scheduleForm = this.fb.group({
       trainingId: ['', Validators.required],
       defaultTrainerId: ['', Validators.required],
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
+      startTime: [this.parseTimeString('08:00'), Validators.required],
+      endTime: [this.parseTimeString('09:00'), Validators.required],
       days: [[], Validators.required],
       clientCapacity: [10, [Validators.required, Validators.min(1)]]
     });

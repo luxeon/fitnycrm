@@ -3,7 +3,7 @@
     <mat-card class="signup-card">
       <mat-card-header>
         <div class="logo-container">
-          <div class="logo">FITNY<span>APP</span></div>
+          <div class="logo">FITAVERA<span>APP</span></div>
         </div>
       </mat-card-header>
 
@@ -101,6 +101,17 @@
             </mat-error>
             <mat-error *ngIf="confirmPasswordControl?.hasError('passwordMismatch')">
               {{ 'signup.form.confirmPassword.mismatch' | translate }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>{{ 'signup.form.locale.label' | translate }}</mat-label>
+            <mat-select formControlName="locale">
+              <mat-option value="en">English</mat-option>
+              <mat-option value="uk">Українська</mat-option>
+            </mat-select>
+            <mat-error *ngIf="localeControl?.hasError('required')">
+              {{ 'signup.form.locale.required' | translate }}
             </mat-error>
           </mat-form-field>
 

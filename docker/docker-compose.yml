@@ -5,7 +5,7 @@ services:
   db:
     image: postgres:17.4
     restart: always
-    container_name: fittrackcrm-db
+    container_name: fitavera-db
     shm_size: '256mb'
     environment:
       POSTGRES_PASSWORD: postgres
@@ -14,4 +14,4 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ~/data/docker/fitnycrm/db:/var/lib/postgresql/data:delegated
+      - ~/data/docker/fitavera/db:/var/lib/postgresql/data:delegated

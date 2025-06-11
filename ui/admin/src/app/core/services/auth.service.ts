@@ -12,6 +12,7 @@ export interface UserSignupRequest {
   email: string;
   phoneNumber?: string;
   password: string;
+  locale: string;
 }
 
 export interface UserDetailsResponse {

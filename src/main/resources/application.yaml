@@ -1,10 +1,27 @@
 spring:
   application:
     name: core
+  datasource:
+    hikari:
+      connection-test-query: select 1
+      minimum-idle: 1
+      maximum-pool-size: 100
   jackson:
     time-zone: UTC
   jpa:
     open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        order_inserts: true
+        order_updates: true
+        generate_statistics: false
+        jdbc:
+          batch:
+            size: 20
+          lob:
+            non_contextual_creation: true
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -22,6 +39,12 @@ jwt:
   expirationMs: ${JWT_EXPIRATION_MS:86400000} # 24 hours
 
 mail:
-  from: noreply@fitnycrm.com
-  confirmationUrl: ${fitny.base-url}/auth/confirm-email
-  clientRegistrationUrl: ${fitny.base-url}/tenants/%s/clients/signup/%s
+  from: noreply@fitavera.com
+  sender-name: Fitavera CRM
+  confirmationUrl: ${fitavera.base-url}/auth/confirm-email
+  clientRegistrationUrl: ${fitavera.base-url}/tenants/%s/clients/signup/%s
+
+localization:
+  supported-locales:
+    - en
+    - uk

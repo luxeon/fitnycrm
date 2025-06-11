@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -25,6 +26,7 @@ import { TranslateModule } from '@ngx-translate/core';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
     TranslateModule
   ],
   templateUrl: './client-signup.component.html',
@@ -69,13 +71,24 @@ export class ClientSignupComponent implements OnInit {
 
     // Initialize the form
     this.signupForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.pattern(/^\+[1-9]\d{1,14}$/)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]]
+      firstName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
+      lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
+      phoneNumber: ['', [Validators.pattern('^\\+?[1-9]\\d{1,14}$')]],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
+      confirmPassword: ['', [Validators.required]],
+      locale: ['en', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
+    });
+
+    // Subscribe to phone number changes to auto-remove spaces and braces
+    this.signupForm.get('phoneNumber')?.valueChanges.subscribe(value => {
+      if (value) {
+        const cleanValue = value.replace(/[\s()]/g, '');
+        if (cleanValue !== value) {
+          this.signupForm.patchValue({ phoneNumber: cleanValue }, { emitEvent: false });
+        }
+      }
     });
   }
 
@@ -85,7 +98,8 @@ export class ClientSignupComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(255)]],
       phoneNumber: ['', [Validators.pattern('^\\+?[1-9]\\d{1,14}$')]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(255)]],
-      confirmPassword: ['', [Validators.required]]
+      confirmPassword: ['', [Validators.required]],
+      locale: ['en', [Validators.required]]
     }, {
       validators: this.passwordMatchValidator
     });
@@ -117,7 +131,8 @@ export class ClientSignupComponent implements OnInit {
       firstName: this.signupForm.get('firstName')!.value,
       lastName: this.signupForm.get('lastName')!.value,
       phoneNumber: this.signupForm.get('phoneNumber')!.value,
-      password: this.signupForm.get('password')!.value
+      password: this.signupForm.get('password')!.value,
+      locale: this.signupForm.get('locale')!.value
     };
 
     this.clientSignupService.signup(this.tenantId, this.inviteId, request)
@@ -165,4 +180,5 @@ export class ClientSignupComponent implements OnInit {
   get phoneNumberControl() { return this.signupForm.get('phoneNumber'); }
   get passwordControl() { return this.signupForm.get('password'); }
   get confirmPasswordControl() { return this.signupForm.get('confirmPassword'); }
+  get localeControl() { return this.signupForm.get('locale'); }
 }

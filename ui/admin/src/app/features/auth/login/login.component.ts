@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { firstValueFrom } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { LanguageSwitcherComponent } from '../../../shared/components/language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     ReactiveFormsModule,
     RouterLink,
     TranslateModule,
+    LanguageSwitcherComponent
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -35,11 +37,16 @@ export class LoginComponent implements OnInit {
   errorMessages: { [key: string]: string } = {};
 
   constructor() {
-    // Set default language
     this.translate.setDefaultLang('en');
-    // Use browser language if available, otherwise use default
-    const browserLang = this.translate.getBrowserLang();
-    this.translate.use(browserLang?.match(/en|es/) ? browserLang : 'en');
+
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+
+    if (savedLanguage && savedLanguage.match(/en|uk/)) {
+      this.translate.use(savedLanguage);
+    } else {
+      const browserLang = this.translate.getBrowserLang();
+      this.translate.use(browserLang?.match(/en|uk/) ? browserLang : 'en');
+    }
   }
 
   async ngOnInit() {

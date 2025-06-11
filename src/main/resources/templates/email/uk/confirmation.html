@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Підтвердження електронної пошти</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff !important;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<h2>Ласкаво просимо до Fitavera CRM!</h2>
+<p>Дякуємо за реєстрацію. Будь ласка, підтвердіть свою електронну адресу, натиснувши кнопку нижче:</p>
+
+<a th:href="${confirmationUrl}" class="button">Підтвердити електронну пошту</a>
+
+<p>Якщо кнопка не працює, ви також можете скопіювати та вставити це посилання у свій браузер:</p>
+<p th:text="${confirmationUrl}"></p>
+
+<div class="footer">
+    <p>Цей лист надіслано автоматично. Будь ласка, не відповідайте на цей лист.</p>
+    <p>&copy; 2025 Fitavera CRM. Усі права захищені.</p>
+</div>
+</body>
+</html>

@@ -18,12 +18,12 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
   template: `
     <div class="locations-container">
       <app-breadcrumb [tenantId]="tenantId"></app-breadcrumb>
-      
+
       <h2 class="locations-title">{{ 'locations.title' | translate }}</h2>
-      
+
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length">
-        <div 
-          class="location-card" 
+        <div
+          class="location-card"
           *ngFor="let location of locations?.content"
           (click)="viewSchedules(location.id)"
         >
@@ -44,7 +44,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
       </div>
 
       <div class="pagination" *ngIf="locations && locations.totalPages > 1">
-        <button 
+        <button
           [disabled]="locations.first"
           (click)="loadPage(locations.number - 1)">
           {{ 'common.previous' | translate }}
@@ -52,7 +52,7 @@ import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcru
         <span class="page-info">
           {{ 'common.page' | translate }} {{ locations.number + 1 }} {{ 'common.of' | translate }} {{ locations.totalPages }}
         </span>
-        <button 
+        <button
           [disabled]="locations.last"
           (click)="loadPage(locations.number + 1)">
           {{ 'common.next' | translate }}
@@ -167,7 +167,7 @@ export class LocationListComponent implements OnInit {
   private locationService = inject(LocationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  
+
   locations: Page<LocationPageItemResponse> | null = null;
   isLoading = false;
   tenantId = '';
@@ -192,6 +192,6 @@ export class LocationListComponent implements OnInit {
   }
 
   viewSchedules(locationId: string): void {
-    this.router.navigate(['/tenant', this.tenantId, 'locations', locationId, 'schedules']);
+    this.router.navigate(['/tenant', this.tenantId, 'locations', locationId]);
   }
-} 
+}

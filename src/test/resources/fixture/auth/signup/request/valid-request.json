@@ -3,5 +3,6 @@
     "lastName": "Doe",
     "email": "john.doe@example.com",
     "password": "Password1@",
-    "phoneNumber": "+12345678901"
+    "phoneNumber": "+12345678901",
+    "locale": "en"
 } 

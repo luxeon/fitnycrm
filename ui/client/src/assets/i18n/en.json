@@ -65,6 +65,10 @@
         "required": "Please confirm your password",
         "mismatch": "Passwords do not match"
       },
+      "locale": {
+        "label": "Language",
+        "required": "Please select your preferred language"
+      },
       "submit": "Create Account"
     },
     "login": {
@@ -73,7 +77,7 @@
     }
   },
   "dashboard": {
-    "appName": "FITNYAPP",
+    "appName": "FITAVERA APP",
     "welcome": "Welcome back, {{firstName}} {{lastName}}!",
     "club": {
       "loading": "Loading your sport club...",
@@ -93,13 +97,16 @@
     "close": "Close"
   },
   "breadcrumb": {
-    "dashboard": "Dashboard",
+    "dashboard": "Clubs",
     "locations": "Locations"
   },
   "locations": {
     "title": "Locations",
     "noLocations": "No locations found",
     "loading": "Loading locations..."
+  },
+  "locationDetails": {
+    "title": "Location details"
   },
   "schedules": {
     "title": "Schedules",
@@ -118,11 +125,45 @@
     "cancel_visit": "Cancel Visit",
     "your_visits": "Your visits",
     "book_more_dates": "Register more visits",
+    "purchase_required": "Purchase required",
+    "days": {
+      "MONDAY": "Monday",
+      "TUESDAY": "Tuesday",
+      "WEDNESDAY": "Wednesday",
+      "THURSDAY": "Thursday",
+      "FRIDAY": "Friday",
+      "SATURDAY": "Saturday",
+      "SUNDAY": "Sunday"
+    },
     "errors": {
       "noCredits": "You need to purchase training credits first before booking this visit",
       "capacityExceeded": "This class is already full",
       "invalidDate": "Selected date is not available for this schedule",
+      "shouldPayFOrVisit": "Unable to book visit: you should pay for the training first",
       "generic": "An error occurred while booking your visit. Please try again."
+    }
+  },
+  "payment": {
+    "history": {
+      "title": "Payment History",
+      "show": "Show payment history",
+      "hide": "Hide payment history",
+      "empty": "No payment records found",
+      "date": "Date",
+      "training": "Training",
+      "units": "Units",
+      "amount": "Amount",
+      "status": "Status",
+      "valid_for": "valid for",
+      "days": "days",
+      "remaining": "Remaining",
+      "expires": "Expires"
+    },
+    "status": {
+      "completed": "Completed",
+      "pending": "Pending",
+      "canceled": "Canceled",
+      "expired": "Expired"
     }
   }
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Email Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff !important;
+            color: white !important;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<h2>Welcome to Fitavera CRM!</h2>
+<p>Thank you for registering. Please confirm your email address by clicking the button below:</p>
+
+<a th:href="${confirmationUrl}" class="button">Confirm Email</a>
+
+<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+<p th:text="${confirmationUrl}"></p>
+
+<div class="footer">
+    <p>This email was sent automatically. Please do not reply to this email.</p>
+    <p>&copy; 2025 Fitavera CRM. All rights reserved.</p>
+</div>
+</body>
+</html> 

@@ -1,6 +1,7 @@
 {
   "id": "${json-unit.any-string}",
   "name": "New Test Tenant",
+  "locale": "en",
   "createdAt": "${json-unit.any-string}",
   "updatedAt": "${json-unit.any-string}"
 } 

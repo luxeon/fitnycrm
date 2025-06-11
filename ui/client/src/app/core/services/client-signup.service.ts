@@ -7,6 +7,7 @@ export interface SignupClientRequest {
   lastName: string;
   phoneNumber: string;
   password: string;
+  locale: string;
 }
 
 export interface ClientDetailsResponse {

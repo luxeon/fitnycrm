@@ -8,6 +8,7 @@ import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { LocationDialogComponent } from './location-dialog.component';
 import { catchError, finalize } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -20,6 +21,7 @@ import { of } from 'rxjs';
     TranslateModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatTooltipModule,
     ConfirmationDialogComponent
   ],
   animations: [
@@ -45,10 +47,10 @@ import { of } from 'rxjs';
       <div class="locations-grid" *ngIf="!isLoading && locations?.content?.length" @fadeInOut>
         <div class="location-card" *ngFor="let location of locations?.content" (click)="onLocationClick(location)">
           <div class="card-actions" (click)="$event.stopPropagation()">
-            <button class="edit-btn" (click)="onEditClick(location)">
+            <button class="edit-btn" (click)="onEditClick(location)" matTooltip="{{ 'dashboard.locations.edit' | translate }}">
               <span class="edit-icon">✎</span>
             </button>
-            <button class="delete-btn" (click)="onDeleteClick(location)">
+            <button class="delete-btn" (click)="onDeleteClick(location)" matTooltip="{{ 'dashboard.locations.delete.confirm' | translate }}">
               <span class="delete-icon">×</span>
             </button>
           </div>

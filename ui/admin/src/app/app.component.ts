@@ -17,7 +17,22 @@ export class AppComponent {
   private readonly translateService = inject(TranslateService);
 
   constructor() {
+    this.setupLanguage();
     this.setupTitleUpdates();
+  }
+
+  private setupLanguage(): void {
+    // Set default language
+    this.translateService.setDefaultLang('en');
+
+    const savedLanguage = localStorage.getItem('selectedLanguage');
+
+    if (savedLanguage && savedLanguage.match(/en|uk/)) {
+      this.translateService.use(savedLanguage);
+    } else {
+      const browserLang = this.translateService.getBrowserLang();
+      this.translateService.use(browserLang?.match(/en|uk/) ? browserLang : 'en');
+    }
   }
 
   private setupTitleUpdates(): void {
@@ -31,11 +46,11 @@ export class AppComponent {
         return route;
       }),
       filter(route => route.data['titleKey'] !== undefined),
-      mergeMap(route => 
+      mergeMap(route =>
         this.translateService.get(route.data['titleKey'])
       )
     ).subscribe(translatedTitle => {
-      this.titleService.setTitle(`${translatedTitle} - FitNYC`);
+      this.titleService.setTitle(`${translatedTitle} - Fitavera CRM`);
     });
   }
 }

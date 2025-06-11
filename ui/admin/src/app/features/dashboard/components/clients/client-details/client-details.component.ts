@@ -48,7 +48,7 @@ import { EMPTY, of } from 'rxjs';
             </div>
             <div class="info-item">
               <span class="label">{{ 'common.joinedAt' | translate }}</span>
-              <span class="value">{{ client.createdAt | date }}</span>
+              <span class="value">{{ client.createdAt | date:'fullDate':undefined:translate.currentLang }}</span>
             </div>
             <div class="info-item" *ngIf="trainingCredits?.remainingTrainings !== undefined">
               <span class="label">{{ 'common.remainingTrainings' | translate }}</span>
@@ -56,7 +56,7 @@ import { EMPTY, of } from 'rxjs';
             </div>
             <div class="info-item" *ngIf="trainingCredits?.expiresAt">
               <span class="label">{{ 'common.subscriptionExpiration' | translate }}</span>
-              <span class="value">{{ trainingCredits?.expiresAt | date }}</span>
+              <span class="value">{{ trainingCredits?.expiresAt | date:'fullDate':undefined:translate.currentLang }}</span>
             </div>
           </div>
         </div>
@@ -170,7 +170,7 @@ export class ClientDetailsComponent implements OnInit {
   private userService = inject(UserService);
   private trainingService = inject(TrainingService);
   private snackBar = inject(MatSnackBar);
-  private translate = inject(TranslateService);
+  public translate = inject(TranslateService);
   private dialog = inject(MatDialog);
 
   client: ClientDetailsResponse | null = null;

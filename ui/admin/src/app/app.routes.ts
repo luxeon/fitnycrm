@@ -9,8 +9,10 @@ import { ClubDetailsComponent } from './features/location/club-details.component
 import { EmailConfirmationComponent } from './features/auth/email-confirmation/email-confirmation.component';
 import { ConfirmEmailComponent } from './features/auth/confirm-email/confirm-email.component';
 import { ClientDetailsComponent } from './features/dashboard/components/clients/client-details/client-details.component';
+import { AppLayoutComponent } from './shared/components/app-layout/app-layout.component';
 
 export const routes: Routes = [
+  // Public routes without layout
   {
     path: 'register',
     component: RegistrationComponent,
@@ -31,32 +33,39 @@ export const routes: Routes = [
     component: ConfirmEmailComponent,
     data: { titleKey: 'confirmEmail.pageTitle' }
   },
-  {
-    path: 'create-tenant',
-    component: CreateTenantComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'tenant.create.pageTitle' }
-  },
-  {
-    path: 'tenant/:tenantId/location/:locationId',
-    component: ClubDetailsComponent,
-    canActivate: [adminGuard],
-    data: { titleKey: 'location.details.pageTitle' }
-  },
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [adminGuard, tenantCheckGuard],
-    data: { titleKey: 'dashboard.pageTitle' }
-  },
-  {
-    path: 'tenants/:tenantId/clients/:clientId',
-    component: ClientDetailsComponent,
-    canActivate: [adminGuard]
-  },
+  
+  // Authenticated routes with layout
   {
     path: '',
-    redirectTo: 'dashboard',
-    pathMatch: 'full'
+    component: AppLayoutComponent,
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: 'create-tenant',
+        component: CreateTenantComponent,
+        data: { titleKey: 'tenant.create.pageTitle' }
+      },
+      {
+        path: 'tenant/:tenantId/location/:locationId',
+        component: ClubDetailsComponent,
+        data: { titleKey: 'location.details.pageTitle' }
+      },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [tenantCheckGuard],
+        data: { titleKey: 'dashboard.pageTitle' }
+      },
+      {
+        path: 'tenants/:tenantId/clients/:clientId',
+        component: ClientDetailsComponent,
+        data: { titleKey: 'dashboard.clients.details.pageTitle' }
+      },
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      }
+    ]
   }
 ];

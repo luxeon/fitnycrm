@@ -15,10 +15,15 @@ export interface AuthResponse {
 
 export interface UserClaims {
   sub: string;
+  id: string;
+  tenantIds: string[];
   firstName: string;
   lastName: string;
   email: string;
+  phoneNumber?: string;
+  roles?: any[];
   exp: number;
+  iat?: number;
 }
 
 @Injectable({
@@ -56,7 +61,13 @@ export class AuthService {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(window.atob(base64));
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
     } catch (e) {
       console.error('Error decoding token:', e);
       return null;

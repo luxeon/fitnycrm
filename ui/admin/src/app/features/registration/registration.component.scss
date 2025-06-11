@@ -94,6 +94,31 @@ h2 {
       color: #a0aec0;
     }
   }
+
+  select {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+    background-color: white;
+    cursor: pointer;
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    &.error {
+      border-color: #ef4444;
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
+    }
+  }
 }
 
 .error-message {
@@ -138,4 +163,10 @@ button {
       text-decoration: underline;
     }
   }
+}
+
+.language-switcher-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 }

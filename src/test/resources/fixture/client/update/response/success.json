@@ -4,6 +4,7 @@
     "lastName": "Bond Updated",
     "email": "james.bond.updated@example.com",
     "phoneNumber": "+12345678903",
+    "locale": "en",
     "createdAt": "${json-unit.any-string}",
     "updatedAt": "${json-unit.any-string}"
 } 
