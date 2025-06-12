@@ -104,7 +104,7 @@ class AuthRestControllerTest {
         MimeMessage receivedMessage = receivedMessages[0];
         assertThat(receivedMessage.getAllRecipients()).hasSize(1);
         assertThat(receivedMessage.getAllRecipients()[0].toString()).isEqualTo("john.doe@example.com");
-        assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your email");
+        assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your email on Fitavera");
     }
 
     @Test

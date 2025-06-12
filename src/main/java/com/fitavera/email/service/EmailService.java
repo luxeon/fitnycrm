@@ -4,10 +4,9 @@ import com.fitavera.email.config.EmailProperties;
 import com.fitavera.tenant.repository.entity.Tenant;
 import com.fitavera.user.repository.entity.ClientInvitation;
 import com.fitavera.user.repository.entity.User;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +24,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final EmailProperties emailProperties;
     private final SpringTemplateEngine templateEngine;
+    private final MessageSource messageSource;
 
     @Async
     public void sendConfirmationEmail(String to, String token, Locale locale) {
@@ -40,7 +40,7 @@ public class EmailService {
 
             helper.setFrom(emailProperties.getFrom(), emailProperties.getSenderName());
             helper.setTo(to);
-            helper.setSubject("Confirm your email");
+            helper.setSubject(messageSource.getMessage("email.subject.admin.registration", null, locale));
             helper.setText(content, true);
 
             mailSender.send(message);
@@ -67,7 +67,9 @@ public class EmailService {
 
             helper.setFrom(emailProperties.getFrom(), emailProperties.getSenderName());
             helper.setTo(invitation.getEmail());
-            helper.setSubject("You've been invited to " + tenant.getName() + " by " + inviterFullName);
+            helper.setSubject(messageSource.getMessage("email.subject.client.registration",
+                    new Object[]{tenant.getName(), inviterFullName},
+                    tenant.getLocale()));
             helper.setText(content, true);
 
             mailSender.send(message);
