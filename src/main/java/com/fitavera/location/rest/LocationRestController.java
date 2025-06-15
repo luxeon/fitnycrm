@@ -24,7 +24,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants/{tenantId}/locations")
-@Tag(name = "location", description = "Location management endpoints")
+@Tag(name = "Location", description = "Location management endpoints")
 public class LocationRestController {
 
     private final LocationFacade locationFacade;

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "auth", description = "Authentication endpoints")
+@Tag(name = "Auth", description = "Authentication endpoints")
 public class AuthRestController {
 
     private final AuthFacade facade;

@@ -25,7 +25,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants/{tenantId}/trainings")
-@Tag(name = "training", description = "Training management endpoints")
+@Tag(name = "Training", description = "Training management endpoints")
 public class TrainingRestController {
 
     private final TrainingFacade trainingFacade;

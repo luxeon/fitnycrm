@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/tenants/{tenantId}/tariffs")
 @RequiredArgsConstructor
-@Tag(name = "Payment Tariffs", description = "Payment tariffs management API")
+@Tag(name = "Payment tariffs", description = "Payment tariffs management API")
 public class PaymentTariffRestController {
 
     private final PaymentTariffFacade paymentTariffFacade;

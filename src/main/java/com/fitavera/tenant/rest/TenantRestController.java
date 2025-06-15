@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@Tag(name = "tenant")
+@Tag(name = "Tenant")
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants")
 public class TenantRestController {

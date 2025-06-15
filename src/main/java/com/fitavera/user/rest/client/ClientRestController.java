@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants/{tenantId}/clients")
-@Tag(name = "client", description = "Client management endpoints")
+@Tag(name = "Client", description = "Client management endpoints")
 public class ClientRestController {
 
     private final ClientFacade clientFacade;

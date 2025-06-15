@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tenants/{tenantId}/locations/{locationId}/schedules")
-@Tag(name = "schedule", description = "Schedule management endpoints")
+@Tag(name = "Schedule", description = "Schedule management endpoints")
 public class ScheduleRestController {
 
     private final ScheduleFacade scheduleFacade;
