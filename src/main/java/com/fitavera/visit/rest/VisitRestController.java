@@ -3,9 +3,10 @@ package com.fitavera.visit.rest;
 import com.fitavera.user.service.auth.model.AuthenticatedUserDetails;
 import com.fitavera.visit.facade.VisitFacade;
 import com.fitavera.visit.rest.model.CreateVisitRequest;
+import com.fitavera.visit.rest.model.ScheduleViewRequest;
+import com.fitavera.visit.rest.model.ScheduleViewResponse;
 import com.fitavera.visit.rest.model.VisitDetailsResponse;
 import com.fitavera.visit.rest.model.VisitPageItemResponse;
-import com.fitavera.visit.rest.model.ScheduleViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -77,12 +78,12 @@ public class VisitRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Schedules retrieved successfully",
                     content = @Content(schema = @Schema(implementation = ScheduleViewResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid date range"),
             @ApiResponse(responseCode = "403", description = "Access denied"),
             @ApiResponse(responseCode = "404", description = "Location not found")
     })
     public ScheduleViewResponse getSchedulesView(@PathVariable UUID tenantId, @PathVariable UUID locationId,
-                                                 @RequestParam LocalDate dateFrom,
-                                                 @RequestParam LocalDate dateTo) {
-        return facade.getSchedulesView(tenantId, locationId, dateFrom, dateTo);
+                                                 @Valid ScheduleViewRequest request) {
+        return facade.getSchedulesView(tenantId, locationId, request.dateFrom(), request.dateTo());
     }
 }
