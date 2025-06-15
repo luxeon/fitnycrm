@@ -85,7 +85,7 @@ export interface ScheduleDialogData {
                 [checked]="selectedDays.includes(day)"
                 (change)="onDayChange($event, day)"
                 class="day-checkbox">
-                {{ 'schedule.form.days.' + day.toLowerCase() | translate }}
+                {{ 'schedule.days.' + day.toLowerCase() | translate }}
               </mat-checkbox>
             </div>
             <div class="error-message" *ngIf="!selectedDays.length && scheduleForm.get('days')?.touched">
