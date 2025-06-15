@@ -2,6 +2,7 @@ package com.fitavera.visit.facade;
 
 import com.fitavera.visit.facade.mapper.VisitResponseMapper;
 import com.fitavera.visit.rest.model.CreateVisitRequest;
+import com.fitavera.visit.rest.model.ScheduleViewResponse;
 import com.fitavera.visit.rest.model.VisitDetailsResponse;
 import com.fitavera.visit.rest.model.VisitPageItemResponse;
 import com.fitavera.visit.service.VisitService;
@@ -31,5 +32,9 @@ public class VisitFacade {
     public Page<VisitPageItemResponse> findAll(UUID tenantId, UUID locationId, UUID clientId, LocalDate dateFrom, LocalDate dateTo, Pageable pageable) {
         return service.findAll(tenantId, locationId, clientId, dateFrom, dateTo, pageable)
                 .map(responseMapper::toVisitPageItemResponse);
+    }
+
+    public ScheduleViewResponse getSchedulesView(UUID tenantId, UUID locationId, LocalDate dateFrom, LocalDate dateTo) {
+        return responseMapper.toScheduleViewResponse(service.getSchedulesView(tenantId, locationId, dateFrom, dateTo));
     }
 }

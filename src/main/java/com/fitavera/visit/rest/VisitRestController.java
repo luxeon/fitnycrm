@@ -5,6 +5,7 @@ import com.fitavera.visit.facade.VisitFacade;
 import com.fitavera.visit.rest.model.CreateVisitRequest;
 import com.fitavera.visit.rest.model.VisitDetailsResponse;
 import com.fitavera.visit.rest.model.VisitPageItemResponse;
+import com.fitavera.visit.rest.model.ScheduleViewResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -68,5 +69,20 @@ public class VisitRestController {
                                                @AuthenticationPrincipal AuthenticatedUserDetails user,
                                                Pageable pageable) {
         return facade.findAll(tenantId, locationId, user.getId(), dateFrom, dateTo, pageable);
+    }
+
+    @GetMapping("/schedules/view")
+    @PreAuthorize("(hasRole('ROLE_CLIENT') || hasRole('ROLE_ADMIN')) && @permissionEvaluator.check(#tenantId)")
+    @Operation(summary = "Get schedules view with sessions data")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Schedules retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ScheduleViewResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Access denied"),
+            @ApiResponse(responseCode = "404", description = "Location not found")
+    })
+    public ScheduleViewResponse getSchedulesView(@PathVariable UUID tenantId, @PathVariable UUID locationId,
+                                                 @RequestParam LocalDate dateFrom,
+                                                 @RequestParam LocalDate dateTo) {
+        return facade.getSchedulesView(tenantId, locationId, dateFrom, dateTo);
     }
 }

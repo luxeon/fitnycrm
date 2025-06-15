@@ -8,11 +8,14 @@ import com.fitavera.schedule.service.ScheduleService;
 import com.fitavera.user.repository.entity.User;
 import com.fitavera.user.service.client.ClientService;
 import com.fitavera.visit.repository.VisitRepository;
+import com.fitavera.visit.repository.dto.VisitCountView;
 import com.fitavera.visit.repository.entity.Visit;
 import com.fitavera.visit.rest.model.CreateVisitRequest;
+import com.fitavera.visit.service.dto.ScheduleRegistrationSummaryView;
 import com.fitavera.visit.service.exception.VisitCancellationException;
 import com.fitavera.visit.service.exception.VisitNotFoundException;
 import com.fitavera.visit.service.exception.VisitRegistrationException;
+import com.fitavera.visit.service.mapper.ScheduleRegistrationSummaryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +26,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +43,7 @@ public class VisitService {
     private final VisitRepository visitRepository;
     private final ClientPaymentService clientPaymentService;
     private final LocationService locationService;
+    private final ScheduleRegistrationSummaryMapper mapper;
 
     @Transactional
     public Visit register(UUID tenantId, UUID locationId, UUID scheduleId, CreateVisitRequest request, UUID clientId) {
@@ -102,5 +109,20 @@ public class VisitService {
         User client = clientService.findById(tenantId, clientId);
         Location location = locationService.findById(tenantId, locationId);
         return visitRepository.findAllByClientAndLocationAndDateBetween(client, location, dateFrom, dateTo, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ScheduleRegistrationSummaryView> getSchedulesView(UUID tenantId, UUID locationId, LocalDate dateFrom, LocalDate dateTo) {
+        List<Schedule> schedules = scheduleService.findByLocation(tenantId, locationId);
+        List<VisitCountView> visitCounts = visitRepository.findVisitCountsByLocationAndDateRange(locationId, dateFrom, dateTo);
+
+        Map<UUID, List<VisitCountView>> visitCountsBySchedule = visitCounts.stream()
+                .collect(Collectors.groupingBy(VisitCountView::scheduleId));
+
+        return schedules.stream()
+                .map(schedule -> mapper.toSummaryView(
+                        schedule,
+                        visitCountsBySchedule.getOrDefault(schedule.getId(), List.of())
+                )).toList();
     }
 }
