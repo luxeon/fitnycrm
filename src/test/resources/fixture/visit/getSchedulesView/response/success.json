@@ -1,0 +1,45 @@
+{
+  "schedules": [
+    {
+      "id": "1b350914-43f5-4433-a82e-ff60dc8aa47a",
+      "startTime": "08:00:00",
+      "endTime": "09:30:00",
+      "clientCapacity": 20,
+      "defaultTrainer": {
+        "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
+        "firstName": "Bob",
+        "lastName": "Trainer"
+      },
+      "training": {
+        "id": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+        "name": "Basic Training",
+        "description": "Basic training session",
+        "durationMinutes": 60
+      },
+      "sessions": []
+    },
+    {
+      "id": "9a7632b1-e932-48fd-9296-001036b4ec19",
+      "startTime": "09:00:00",
+      "endTime": "10:00:00",
+      "clientCapacity": 10,
+      "defaultTrainer": {
+        "id": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
+        "firstName": "John",
+        "lastName": "Trainer"
+      },
+      "training": {
+        "id": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+        "name": "Basic Training",
+        "description": "Basic training session",
+        "durationMinutes": 60
+      },
+      "sessions": [
+        {
+          "date": "2099-12-27",
+          "registeredClientsCount": 10
+        }
+      ]
+    }
+  ]
+}

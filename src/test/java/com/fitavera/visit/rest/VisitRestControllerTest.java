@@ -27,6 +27,7 @@ class VisitRestControllerTest {
     private static final String CANCEL_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules/9a7632b1-e932-48fd-9296-001036b4ec19/visits/{visitId}";
     private static final String REGISTER_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules/9a7632b1-e932-48fd-9296-001036b4ec19/visits";
     private static final String FIND_ALL_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/visits?sort=createdAt";
+    private static final String SCHEDULES_VIEW_URL = "/api/tenants/7a7632b1-e932-48fd-9296-001036b4ec19/locations/c35ac7f5-3e4f-462a-a76d-524bd3a5fd01/schedules/view";
 
     private static final UUID LOCATION_ID = UUID.fromString("c35ac7f5-3e4f-462a-a76d-524bd3a5fd01");
     private static final UUID SCHEDULE_ID = UUID.fromString("9a7632b1-e932-48fd-9296-001036b4ec19");
@@ -246,5 +247,18 @@ class VisitRestControllerTest {
         mockMvc.perform(get(FIND_ALL_URL)
                         .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void getSchedulesView_whenValidRequest_thenReturnSchedulesView() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/success.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateFrom", "2099-12-25")
+                        .param("dateTo", "2099-12-28")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
     }
 }
