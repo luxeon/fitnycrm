@@ -261,4 +261,63 @@ class VisitRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(json().isEqualTo(expectedResponse));
     }
+
+    @Test
+    void getSchedulesView_whenDateFromIsAfterDateTo_thenReturnBadRequest() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/invalid-date-order.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateFrom", "2100-01-21")
+                        .param("dateTo", "2100-01-15")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getSchedulesView_whenPeriodExceedsMaxDays_thenReturnBadRequest() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/period-too-long.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateFrom", "2100-01-01")
+                        .param("dateTo", "2100-01-10")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getSchedulesView_whenDateFromIsNull_thenReturnBadRequest() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/missing-date-from.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateTo", "2100-01-21")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    void getSchedulesView_whenDateToIsNull_thenReturnBadRequest() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/missing-date-to.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateFrom", "2100-01-15")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateTestJwtToken(UserRole.Name.CLIENT)))
+                .andExpect(status().isBadRequest())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
+
+    @Test
+    @Sql("/db/visit/insert.sql")
+    void getSchedulesView_whenAdminRole_thenReturnSchedulesView() throws Exception {
+        var expectedResponse = readFile("fixture/visit/getSchedulesView/response/success.json");
+
+        mockMvc.perform(get(SCHEDULES_VIEW_URL)
+                        .param("dateFrom", "2099-12-25")
+                        .param("dateTo", "2099-12-28")
+                        .header(HttpHeaders.AUTHORIZATION, jwtTokenCreator.generateAdminTestJwtToken()))
+                .andExpect(status().isOk())
+                .andExpect(json().isEqualTo(expectedResponse));
+    }
 }
