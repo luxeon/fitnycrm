@@ -1,17 +1,5 @@
 [
   {
-    "id": "9a7632b1-e932-48fd-9296-001036b4ec19",
-    "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
-    "daysOfWeek": [
-      "MONDAY",
-      "SUNDAY"
-    ],
-    "startTime": "09:00:00",
-    "endTime": "10:00:00",
-    "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
-    "clientCapacity": 10
-  },
-  {
     "id": "1b350914-43f5-4433-a82e-ff60dc8aa47a",
     "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
     "daysOfWeek": [
@@ -23,5 +11,17 @@
     "endTime": "09:30:00",
     "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd01",
     "clientCapacity": 20
+  },
+  {
+    "id": "9a7632b1-e932-48fd-9296-001036b4ec19",
+    "trainingId": "ae4d661a-ed70-4e36-9caf-048ee8060290",
+    "daysOfWeek": [
+      "MONDAY",
+      "SUNDAY"
+    ],
+    "startTime": "09:00:00",
+    "endTime": "10:00:00",
+    "defaultTrainerId": "c35ac7f5-3e4f-462a-a76d-524bd3a5fd03",
+    "clientCapacity": 10
   }
 ]

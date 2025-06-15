@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface ScheduleRepository extends JpaRepository<Schedule, UUID> {
 
     @EntityGraph(attributePaths = {"defaultTrainer", "training"})
-    List<Schedule> findAllByLocation(Location location);
+    List<Schedule> findAllByLocationOrderByUpdatedAtDesc(Location location);
 }

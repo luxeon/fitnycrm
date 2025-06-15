@@ -80,6 +80,6 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<Schedule> findByLocation(UUID tenantId, UUID locationId) {
         Location location = locationService.findById(tenantId, locationId);
-        return scheduleRepository.findAllByLocation(location);
+        return scheduleRepository.findAllByLocationOrderByUpdatedAtDesc(location);
     }
 } 
